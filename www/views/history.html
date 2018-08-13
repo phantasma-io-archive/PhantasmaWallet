@@ -1,0 +1,26 @@
+{{#if transactions}}
+<table class="table table-striped">
+	<thead>
+	  <tr>
+		<th class="col-1">Date (UTC)</th>
+		<th class="col-4">Hash</th>
+		<th class="col-7">Description</th>
+	  </tr>
+	</thead>
+	<tbody>
+		{{#each transactions}}
+	  <tr>
+		<td class="col-1">{{#date date}}</td>
+		<td class="col-4"><small><a href="http://soultracker.io/tx/{{hash}}">{{hash}}</small></a></td>
+		<td class="col-7">{{description}}</td>
+	  </tr>
+	  {{/each}}
+	</tbody>
+</table>
+{{#else}}
+<div class="alert alert-warning" role="alert">
+  <strong>Warning!</strong><br>If you want to keep this address then you should save this private key in a safe place. It won't be displayed again.
+</div>
+
+{{/if}}
+	

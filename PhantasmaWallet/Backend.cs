@@ -2,9 +2,8 @@
 using LunarLabs.WebServer.Core;
 using LunarLabs.WebServer.Templates;
 using LunarLabs.WebServer.HTTP;
-using Phantasma.Utils;
 using Phantasma.Cryptography;
-using System.Linq;
+using System;
 
 namespace PhantasmaWallet
 {
@@ -16,6 +15,13 @@ namespace PhantasmaWallet
         public bool enabled;
     }
 
+    public struct Transaction
+    {
+        public DateTime date;
+        public string hash;
+        public string description;
+    }
+
     class Backend
     {
         static MenuEntry[] menuEntries = new MenuEntry[]
@@ -23,13 +29,18 @@ namespace PhantasmaWallet
             new MenuEntry(){ id = "portfolio", icon = "fa-wallet", caption = "Portfolio", enabled = true},
             new MenuEntry(){ id = "send", icon = "fa-paper-plane", caption = "Send", enabled = true},
             new MenuEntry(){ id = "receive", icon = "fa-qrcode", caption = "Receive", enabled = true},
-            new MenuEntry(){ id = "transactions", icon = "fa-receipt", caption = "Transaction History", enabled = true},
+            new MenuEntry(){ id = "history", icon = "fa-receipt", caption = "Transaction History", enabled = true},
             new MenuEntry(){ id = "storage", icon = "fa-hdd", caption = "Storage", enabled = true},
             new MenuEntry(){ id = "exchange", icon = "fa-chart-bar", caption = "Exchange", enabled = true},
             new MenuEntry(){ id = "sales", icon = "fa-certificate", caption = "Crowdsales", enabled = true},
             new MenuEntry(){ id = "offline", icon = "fa-file-export", caption = "Offline Operation", enabled = true},
             new MenuEntry(){ id = "settings", icon = "fa-cog", caption = "Settings", enabled = true},
             new MenuEntry(){ id = "logout", icon = "fa-sign-out-alt", caption = "Log Out", enabled = true},
+        };
+
+        static Transaction[] transactions = new Transaction[]
+        {
+            new Transaction(){date =DateTime.UtcNow, hash = "982f14ce20a47b35d864c41bac016ed0d6b970d532102b72bb064866f3e36852", description = "Dummy transaction"}
         };
 
         static bool HasLogin(HTTPRequest request)
@@ -50,6 +61,8 @@ namespace PhantasmaWallet
                 var keyPair = request.session.Get<KeyPair>("login");
                 context["name"] = "Anonymous";
                 context["address"] = keyPair.Address;
+
+                context["transactions"] = transactions;
             }
 
             context["active"] = request.session.Contains("active")?request.session.Get<string>("active"):"portfolio";
@@ -107,8 +120,9 @@ namespace PhantasmaWallet
                 {
                     keyPair = KeyPair.FromWIF(key);
                 }
-                catch 
+                catch  (Exception e)
                 {
+                    Console.WriteLine(e);
                     PushError(request, "Error decoding key...");
                     return HTTPResponse.Redirect("/login");
                 }

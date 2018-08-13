@@ -32,16 +32,26 @@ div.well{
   width: 50%; 
   height: 75%;
   min-width: 400px;
-  max-width: 700px;
+  max-width: 720px;
   padding: 40px;
 }
 
 #logo-container{
   margin: auto;
   margin-bottom:32px;
-  width:400px;
+  min-width: 400px;
+  max-width: 720px;
   height:200px;  
 }	
+
+#logo-img {
+	width:200px; 
+	height:200px; 
+	margin-left:auto;
+	margin-right:auto;
+	display:block;
+}
+
   </style>
 </head>
 <body>
@@ -50,7 +60,7 @@ div.well{
   <div class="row">
     <div class="Absolute-Center is-Responsive">
       <div id="logo-container">
-	  <img src="/img/phantasma_logo.png" style="width:200px; height:200px; margin-left:100px; " />
+	  <img src="/img/phantasma_logo.png" id="logo-img" />
 	  </div>
       <div class="col-sm-12 col-md-10 col-md-offset-1">
 	  
@@ -92,7 +102,7 @@ div.well{
 	</div>
 	
 	<p>Address:<br><em>{{address}}</em></p>
-	<p>Private Key:<br><em>{{WIF}}</em>&nbsp; <a href="#" onclick="copyText('{{address}}', 'Private key')"><i class="fas fa-copy"></i></a></p>
+	<p>Private Key:<br><em>{{WIF}}</em>&nbsp; <a href="#" onclick="copyText('{{WIF}}', 'Private key')"><i class="fas fa-copy"></i></a></p>
 	<br>
 	<button type="button" class="btn btn-primary btn-block" onclick="location.reload()">Generate another</button>
 	{{#else}}
