@@ -57,6 +57,7 @@
 	.token-icon {
 	width:16px;
 	height:16px;
+	margin-right:4px;
 	}
   </style>
 </head>
@@ -76,7 +77,7 @@
       <ul class="nav navbar-nav">
 		{{#each menu}}
 		{{#if enabled}}
-        <li{{#if url=active}} class="active"{{/if}}><a href="{{url}}"><i class="fas {{icon}} menu-icon"></i>{{caption}}</a></li>
+        <li{{#if url=active}} class="active"{{/if}}><a href="/{{id}}"><i class="fas {{icon}} menu-icon"></i>{{caption}}</a></li>
 		{{/if}}
 		{{/each}}
       </ul><br>
@@ -94,7 +95,7 @@
       <ul class="nav nav-pills nav-stacked">	  
 		{{#each menu}}
 		{{#if enabled}}
-        <li{{#if url=active}} class="active"{{/if}}><a href="{{url}}"><i class="fas {{icon}} menu-icon"></i>{{caption}}</a></li>
+        <li{{#if url=active}} class="active"{{/if}}><a href="/{{id}}"><i class="fas {{icon}} menu-icon"></i>{{caption}}</a></li>
 		{{/if}}
 		{{/each}}
       </ul><br>
