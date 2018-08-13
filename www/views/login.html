@@ -32,7 +32,7 @@ div.well{
   width: 50%; 
   height: 75%;
   min-width: 400px;
-  max-width: 720px;
+  max-width: 740px;
   padding: 40px;
 }
 
@@ -40,7 +40,7 @@ div.well{
   margin: auto;
   margin-bottom:32px;
   min-width: 400px;
-  max-width: 720px;
+  max-width: 740px;
   height:200px;  
 }	
 
@@ -50,6 +50,12 @@ div.well{
 	margin-left:auto;
 	margin-right:auto;
 	display:block;
+}
+
+.copy-pad {
+	display:inline-block;
+	width:6px;
+	height:10px;
 }
 
   </style>
@@ -102,7 +108,7 @@ div.well{
 	</div>
 	
 	<p>Address:<br><em>{{address}}</em></p>
-	<p>Private Key:<br><em>{{WIF}}</em>&nbsp; <a href="#" onclick="copyText('{{WIF}}', 'Private key')"><i class="fas fa-copy"></i></a></p>
+	<p>Private Key:<br><em>{{WIF}}</em><span class="copy-pad"></span><a href="#" onclick="copyText('{{WIF}}', 'Private key')"><i class="fas fa-copy"></i></a></p>
 	<br>
 	<button type="button" class="btn btn-primary btn-block" onclick="location.reload()">Generate another</button>
 	{{#else}}
