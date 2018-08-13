@@ -1,0 +1,35 @@
+<div class="well">
+<h4>Receive</h4>
+<p><strong>{{address}}</strong>&nbsp; <a href="#" onclick="copyAddress()"><i class="fas fa-copy"></i></a></p>
+<input type="hidden" value="{{address}}" id="myAddress">
+
+<div id="qrcode"></div>
+</div>
+
+<script type="text/javascript">
+
+var target = document.getElementById("qrcode");
+var qrcode = new QRCode(target, {
+    text: "phantasma://{{address}}",
+    width: 256,
+    height: 256,
+    colorDark : "#000000",
+    colorLight : "#ffffff",
+    correctLevel : QRCode.CorrectLevel.H
+});
+
+function copyAddress() {
+
+	navigator.clipboard.writeText("{{address}}").then(function() {
+		bootbox.alert("Address was copied to the clipboard.");		
+	}, function(err) {
+		bootbox.alert("Could not copy address...");
+  });
+  
+/*  var copyText = document.getElementById("myAddress");
+  copyText.select();
+  document.execCommand("copy");
+*/  
+}
+
+</script>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Phantasma Wallet</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>  
+  <script src="js/bootbox.min.js" ></script>  
+  <style>
+body{ 
+  background: linear-gradient(to right, #F4F9FC, #DDE8F4);
+  color: black;
+}
+
+div.well{
+  height: 250px;
+} 
+
+.Absolute-Center {
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+}
+
+.Absolute-Center.is-Responsive {
+  width: 50%; 
+  height: 50%;
+  min-width: 300px;
+  max-width: 600px;
+  padding: 40px;
+}
+
+#logo-container{
+  margin: auto;
+  margin-bottom: 10px;
+  width:300px;
+  height:156px;  
+}	
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="row">
+    <div class="Absolute-Center is-Responsive">
+      <div id="logo-container">
+	  <img src="img/phantasma_logo.png" style="width:150px; height:150px; margin-left:75px; " />
+	  </div>
+      <div class="col-sm-12 col-md-10 col-md-offset-1">
+        <form action="" id="loginForm">
+          <div class="form-group input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+            <input class="form-control" type="password" name='private_key' id='private_key' placeholder="private key"/>     
+          </div>
+          <div class="form-group">
+            <button type="button" class="btn btn-primary btn-block" onclick="onLogin()">Login</button>
+          </div>
+		  
+		 {{#if error}}
+		<div class="alert alert-danger">{{error}}</div>
+		{{/if}}
+		  
+        </form>        
+      </div>  
+    </div>    
+  </div>
+</div>
+
+<script>
+function onLogin(){
+	var pk = document.getElementById("private_key");
+	if (pk.value.length != 52) {
+		bootbox.alert("Invalid private key, must have 64 characters of length!");	
+		return;
+	}
+
+	window.location.replace("/login/"+pk.value);	
+}
+</script>
+
+</body>
+</html>
+
