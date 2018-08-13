@@ -23,6 +23,8 @@
     .sidenav {
       background-color: #f1f1f1;
       height: 100%;
+	  padding:30px;
+	  padding-top:10px;
     }
         
     /* On small screens, set height to 'auto' for the grid */
@@ -68,7 +70,9 @@
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
 		{{#each menu}}
+		{{#if enabled}}
         <li{{#if url=active}} class="active"{{/if}}><a href="{{url}}"><i class="fas {{icon}} menu-icon"></i>{{caption}}</a></li>
+		{{/if}}
 		{{/each}}
       </ul><br>
     </div>
@@ -77,21 +81,23 @@
 
 <div class="container-fluid">
   <div class="row content">
-    <div class="col-sm-3 sidenav hidden-xs">
+    <div class="col-sm-4 sidenav hidden-xs">
       <h2><img src="img/phantasma_logo.png" style="display:inline; height:32px; margin-right:8px;" />Phantasma Wallet</h2>
 	  <h5><em>{{name}}</em></h5>
 	  <h6>{{address}}</h6>
 	  <hr/>
       <ul class="nav nav-pills nav-stacked">	  
 		{{#each menu}}
-        <li{{#if url=active}} class="active"{{/if}}><a href="/{{id}}"><i class="fas {{icon}} menu-icon"></i>{{caption}}</a></li>
+		{{#if enabled}}
+        <li{{#if url=active}} class="active"{{/if}}><a href="{{url}}"><i class="fas {{icon}} menu-icon"></i>{{caption}}</a></li>
+		{{/if}}
 		{{/each}}
       </ul><br>
     </div>
     <br>
   
-    <div class="col-sm-9">
-		{{#body}}
+    <div class="col-sm-8">
+		<div class="well">{{#body}}</div>		
     </div>
   </div>
 </div>
