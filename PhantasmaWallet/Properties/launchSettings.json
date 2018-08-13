@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PhantasmaWallet": {
+      "commandName": "Project",
+      "commandLineArgs": "--path=C:\\Code\\PhantasmaWallet\\www\\"
+    }
+  }
+}
