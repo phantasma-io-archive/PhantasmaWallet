@@ -1,0 +1,111 @@
+{{#if holdings}}
+<h4 id="title">Pick an asset:</h4>
+<div class="form-group">
+	<div class="btn-group">
+	  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+		Asset <span class="caret"></span>
+	  </button>
+	  <ul class="dropdown-menu" role="menu">
+		{{#each holdings}}
+		<li><a class="dropdown-item" href="#" onclick="pickToken('{{name}}', '{{symbol}}', '{{icon}}', {{amount}})"><img class="token-icon" src="img/{{icon}}.png"/>{{name}}</a></li>
+		  {{/each}}
+	  </ul>  
+	</div>
+</div>
+
+<div id="send_form">
+	<div class="form-group input-group">
+		<span class="input-group-addon" id="token-symbol">???</span>
+		<input type="number" class="form-control" placeholder="Amount" id="amount">
+	</div>
+	
+	<div class="form-group">
+		<button type="button" class="btn btn-primary pull-right" onclick="pickMax()">Max Amount</button>
+		<br>
+	</div>
+
+	<div class="form-group">
+		<label for="destination">Destination:</label>
+		<input type="text" class="form-control" placeholder="Destination" id="destination">		
+	</div>
+	
+	<div class="form-group">
+		<button type="button" class="btn btn-primary pull-right" onclick="confirmSend()">Send</button>
+		<br>
+	</div>
+</div>
+
+<script>
+var form_visible = false;
+var selected_name = null;
+var selected_symbol = null;
+var max_amount = 0;
+
+$("#send_form").hide();
+
+function pickToken(name, symbol, icon, amount) {
+	selected_name = name;
+	selected_symbol = symbol;
+	max_amount = amount;
+	
+	$("#title").html("<img src='img/"+icon+".png' class='token-icon'/>" +name+ " transfer");
+	$("#token-symbol").html(symbol);
+	
+	if (!form_visible) {
+		form_visible = true;
+		$("#send_form").fadeIn();
+	}
+}
+
+function pickMax() {
+	$("#amount").val(max_amount);
+}
+
+function confirmSend(){
+	let amount =  $("#amount").val();
+	let target_address =  $("#destination").val();
+	
+	if (amount <= 0) {
+		bootbox.alert("Please insert a valid amount!");	
+		return;
+	}
+
+	if (target_address.length == 0) {
+		bootbox.alert("Please insert an destination address!");	
+		return;
+	}
+	
+	if (target_address.length != 45) {
+		bootbox.alert("Please insert a valid destination address!");	
+		return;
+	}
+
+	if (target_address == '{{address}}') {
+		bootbox.alert("The destination address cannot be the same as your own address!");	
+		return;
+	}
+
+	bootbox.confirm({	
+		title: "Transfer confirmation",
+		message: "Send <strong>"+amount + " "+selected_symbol+"</strong> to address <strong>"+target_address+"</strong>?",
+		buttons: {
+			cancel: {
+				label: '<i class="fa fa-times"></i> Cancel'
+			},
+			confirm: {
+				label: '<i class="fa fa-check"></i> Confirm'
+			}
+		},
+		callback: function (result) {
+			console.log('This was logged in the callback: ' + result);
+		}
+	});
+}
+</script>
+{{#else}}
+<h4>Not assets available</h4>
+<div class="alert alert-info" role="alert">
+  This address is still new and does not have any assets yet.
+</div>
+{{/if}}
+
