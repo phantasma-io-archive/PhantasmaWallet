@@ -24,6 +24,7 @@ namespace PhantasmaWallet
             new MenuEntry(){ id = "send", icon = "fa-paper-plane", caption = "Send", enabled = true},
             new MenuEntry(){ id = "receive", icon = "fa-qrcode", caption = "Receive", enabled = true},
             new MenuEntry(){ id = "transactions", icon = "fa-receipt", caption = "Transactions", enabled = true},
+            new MenuEntry(){ id = "storage", icon = "fa-hdd", caption = "Storage", enabled = true},
             new MenuEntry(){ id = "exchange", icon = "fa-chart-bar", caption = "Exchange", enabled = true},
             new MenuEntry(){ id = "sales", icon = "fa-certificate", caption = "Crowdsales", enabled = true},
             new MenuEntry(){ id = "settings", icon = "fa-cog", caption = "Settings", enabled = true},
