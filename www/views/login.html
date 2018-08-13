@@ -84,8 +84,13 @@ div.well{
   
   <div class="tab-pane fade" id="create" role="tabpanel" aria-labelledby="create-tab">  
 	{{#if WIF}}
-	<p>Address: <em>{{address}}</em></p>
-	<p>Private Key: <em>{{WIF}}</em></p>
+	<div class="alert alert-warning" role="alert">
+	  <strong>Warning!</strong><br>If you want to keep this address then you should save this private key in a safe place. It won't be displayed again.
+	</div>
+	
+	<p>Address:<br><em>{{address}}</em></p>
+	<p>Private Key:<br><em>{{WIF}}</em></p>
+	<br>
 	<button type="button" class="btn btn-primary btn-block" onclick="location.reload()">Generate another</button>
 	{{#else}}
 	<button type="button" class="btn btn-primary btn-block" onclick="location.href='/create'">Generate address</button>
