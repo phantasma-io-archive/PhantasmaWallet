@@ -4,11 +4,14 @@
   <title>Phantasma Wallet</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>  
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/fontawesome.css">
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>  
+  <script src="js/fontawesome.min.js"></script>
   <script src="js/bootbox.min.js" ></script>  
+  <script src="js/qrcode.min.js"></script>  
+  <script src="js/wallet.js"></script>  
   <style>
 body{ 
   background: linear-gradient(to right, #F4F9FC, #DDE8F4);
@@ -16,7 +19,7 @@ body{
 }
 
 div.well{
-  height: 250px;
+  height: 300px;
 } 
 
 .Absolute-Center {
@@ -27,17 +30,17 @@ div.well{
 
 .Absolute-Center.is-Responsive {
   width: 50%; 
-  height: 50%;
-  min-width: 300px;
-  max-width: 600px;
+  height: 75%;
+  min-width: 400px;
+  max-width: 700px;
   padding: 40px;
 }
 
 #logo-container{
   margin: auto;
-  margin-bottom: 10px;
-  width:300px;
-  height:156px;  
+  margin-bottom:32px;
+  width:400px;
+  height:200px;  
 }	
   </style>
 </head>
@@ -47,7 +50,7 @@ div.well{
   <div class="row">
     <div class="Absolute-Center is-Responsive">
       <div id="logo-container">
-	  <img src="/img/phantasma_logo.png" style="width:150px; height:150px; margin-left:75px; " />
+	  <img src="/img/phantasma_logo.png" style="width:200px; height:200px; margin-left:100px; " />
 	  </div>
       <div class="col-sm-12 col-md-10 col-md-offset-1">
 	  
@@ -68,7 +71,7 @@ div.well{
   <div class="tab-pane fade active" id="login" role="tabpanel" aria-labelledby="login-tab">
 	<form action="" id="loginForm">
 	  <div class="form-group input-group">
-		<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+		<span class="input-group-addon"><i class="fas fa-lock"></i></span>
 		<input class="form-control" type="password" name='private_key' id='private_key' placeholder="private key"/>     
 	  </div>
 	  <div class="form-group">
@@ -89,7 +92,7 @@ div.well{
 	</div>
 	
 	<p>Address:<br><em>{{address}}</em></p>
-	<p>Private Key:<br><em>{{WIF}}</em></p>
+	<p>Private Key:<br><em>{{WIF}}</em>&nbsp; <a href="#" onclick="copyText('{{address}}')"><i class="fas fa-copy"></i></a></p>
 	<br>
 	<button type="button" class="btn btn-primary btn-block" onclick="location.reload()">Generate another</button>
 	{{#else}}
