@@ -23,10 +23,11 @@ namespace PhantasmaWallet
             new MenuEntry(){ id = "portfolio", icon = "fa-wallet", caption = "Portfolio", enabled = true},
             new MenuEntry(){ id = "send", icon = "fa-paper-plane", caption = "Send", enabled = true},
             new MenuEntry(){ id = "receive", icon = "fa-qrcode", caption = "Receive", enabled = true},
-            new MenuEntry(){ id = "transactions", icon = "fa-receipt", caption = "Transactions", enabled = true},
+            new MenuEntry(){ id = "transactions", icon = "fa-receipt", caption = "Transaction History", enabled = true},
             new MenuEntry(){ id = "storage", icon = "fa-hdd", caption = "Storage", enabled = true},
             new MenuEntry(){ id = "exchange", icon = "fa-chart-bar", caption = "Exchange", enabled = true},
             new MenuEntry(){ id = "sales", icon = "fa-certificate", caption = "Crowdsales", enabled = true},
+            new MenuEntry(){ id = "offline", icon = "fa-file-export", caption = "Offline Operation", enabled = true},
             new MenuEntry(){ id = "settings", icon = "fa-cog", caption = "Settings", enabled = true},
             new MenuEntry(){ id = "logout", icon = "fa-sign-out-alt", caption = "Log Out", enabled = true},
         };
@@ -119,6 +120,17 @@ namespace PhantasmaWallet
             site.Get("/login", (request) =>
             {
                 var context = CreateContext(request);
+                return templates.Render(site, context, new string[] { "login" });
+            });
+
+            site.Get("/create", (request) =>
+            {
+                var context = CreateContext(request);
+
+                var keyPair = KeyPair.Generate();
+                context["WIF"] = keyPair.ToWIF();
+                context["address"] = keyPair.Address;
+
                 return templates.Render(site, context, new string[] { "login" });
             });
 

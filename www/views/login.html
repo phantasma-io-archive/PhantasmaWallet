@@ -47,23 +47,57 @@ div.well{
   <div class="row">
     <div class="Absolute-Center is-Responsive">
       <div id="logo-container">
-	  <img src="img/phantasma_logo.png" style="width:150px; height:150px; margin-left:75px; " />
+	  <img src="/img/phantasma_logo.png" style="width:150px; height:150px; margin-left:75px; " />
 	  </div>
       <div class="col-sm-12 col-md-10 col-md-offset-1">
-        <form action="" id="loginForm">
-          <div class="form-group input-group">
-            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-            <input class="form-control" type="password" name='private_key' id='private_key' placeholder="private key"/>     
-          </div>
-          <div class="form-group">
-            <button type="button" class="btn btn-primary btn-block" onclick="onLogin()">Login</button>
-          </div>
-		  
-		 {{#if error}}
-		<div class="alert alert-danger">{{error}}</div>
-		{{/if}}
-		  
-        </form>        
+	  
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="login-tab" data-toggle="tab" href="#login" role="tab" aria-controls="login" aria-selected="true">Login</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="create-tab" data-toggle="tab" href="#create" role="tab" aria-controls="create" aria-selected="false">Create Account</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="offline-tab" data-toggle="tab" href="#offline" role="tab" aria-controls="offline" aria-selected="false">Offline Operation</a>
+  </li>
+</ul>
+<br>
+
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade active" id="login" role="tabpanel" aria-labelledby="login-tab">
+	<form action="" id="loginForm">
+	  <div class="form-group input-group">
+		<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+		<input class="form-control" type="password" name='private_key' id='private_key' placeholder="private key"/>     
+	  </div>
+	  <div class="form-group">
+		<button type="button" class="btn btn-primary btn-block" onclick="onLogin()">Login</button>
+	  </div>
+	  
+	 {{#if error}}
+	<div class="alert alert-danger">{{error}}</div>
+	{{/if}}
+	  
+	</form>         
+  </div>
+  
+  <div class="tab-pane fade" id="create" role="tabpanel" aria-labelledby="create-tab">  
+	{{#if WIF}}
+	<p>Address: <em>{{address}}</em></p>
+	<p>Private Key: <em>{{WIF}}</em></p>
+	<button type="button" class="btn btn-primary btn-block" onclick="location.reload()">Generate another</button>
+	{{#else}}
+	<button type="button" class="btn btn-primary btn-block" onclick="location.href='/create'">Generate address</button>
+	{{/if}}
+  </div>
+  
+  <div class="tab-pane fade" id="offline" role="tabpanel" aria-labelledby="offline-tab">
+  TODO...
+  </div>
+</div>
+
+	  
       </div>  
     </div>    
   </div>
@@ -79,6 +113,12 @@ function onLogin(){
 
 	window.location.replace("/login/"+pk.value);	
 }
+
+{{#if WIF}}
+$('#myTab li:nth-child(2) a').tab('show');
+{{#else}}
+$('#myTab li:first-child a').tab('show');
+{{/if}}
 </script>
 
 </body>
