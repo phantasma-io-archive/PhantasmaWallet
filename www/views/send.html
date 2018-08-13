@@ -1,4 +1,5 @@
 {{#if holdings}}
+
 <h4 id="title">Pick an asset:</h4>
 <div class="form-group">
 	<div class="btn-group">
@@ -30,9 +31,40 @@
 	</div>
 	
 	<div class="form-group">
-		<button type="button" class="btn btn-primary pull-right" onclick="confirmSend()">Send</button>
+		<button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#scanModal">Scan</button>
 		<br>
 	</div>
+	
+	<div class="form-group">
+		<br>
+		<div class="col-sm-12 text-center"> 
+			<button type="button" class="btn btn-primary btn-lg" style="width:200px" onclick="confirmSend()">Send</button>
+		</div>		
+		<br>
+	</div>
+	
+</div>
+
+<!-- Modal -->
+<div id="scanModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Address Scanner</h4>
+      </div>
+      <div class="modal-body">
+        <p>Scan a valid Phantasma QR code.</p>
+		<video id="preview"></video>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <script>
@@ -42,6 +74,45 @@ var selected_symbol = null;
 var max_amount = 0;
 
 $("#send_form").hide();
+
+$('#scanModal').on('shown.bs.modal', function (e) {
+  startScan();
+})
+
+function stopScan(scanner){
+	scanner.stop();
+	$('#scanModal').modal('hide');
+}
+
+function startScan(){
+	let tag = "phantasma://";
+	let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+
+	scanner.addListener('scan', function (content) {		
+		if (content.startsWith(tag)) {
+			var address = content.substring(tag.length);
+			$("#destination").val(address);
+		}
+		else {
+			bootbox.alert("A QR code was read but does not seem to be a valid Phantasma QR code.");	
+		}			
+
+		stopScan(scanner);
+	});
+
+	Instascan.Camera.getCameras().then(function (cameras) {
+		if (cameras.length > 0) {
+		  scanner.start(cameras[0]);
+		} else {
+			bootbox.alert("Sorry, camera not found.");	
+			$('#scanModal').modal('hide');
+			
+		  return;
+		}
+		}).catch(function (e) {
+		console.error(e);
+	});
+}
 
 function pickToken(name, symbol, icon, amount) {
 	selected_name = name;
