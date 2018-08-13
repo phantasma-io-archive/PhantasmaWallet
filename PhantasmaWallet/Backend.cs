@@ -13,6 +13,7 @@ namespace PhantasmaWallet
         public string icon;
         public string caption;
         public bool enabled;
+        public int count;
     }
 
     public struct Holding
@@ -39,7 +40,7 @@ namespace PhantasmaWallet
             new MenuEntry(){ id = "portfolio", icon = "fa-wallet", caption = "Portfolio", enabled = true},
             new MenuEntry(){ id = "send", icon = "fa-paper-plane", caption = "Send", enabled = true},
             new MenuEntry(){ id = "receive", icon = "fa-qrcode", caption = "Receive", enabled = true},
-            new MenuEntry(){ id = "history", icon = "fa-receipt", caption = "Transaction History", enabled = true},
+            new MenuEntry(){ id = "history", icon = "fa-receipt", caption = "Transactions", enabled = true, count = 1},
             new MenuEntry(){ id = "storage", icon = "fa-hdd", caption = "Storage", enabled = false},
             new MenuEntry(){ id = "exchange", icon = "fa-chart-bar", caption = "Exchange", enabled = false},
             new MenuEntry(){ id = "sales", icon = "fa-certificate", caption = "Crowdsales", enabled = false},
