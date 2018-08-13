@@ -1,65 +1,26 @@
-<div class="well">
-<h4>Dashboard</h4>
-<p>Here will be some charts..</p>
+<h4>Portfolio</h4>
+{{#if holdings}}
+<table class="table table-striped">
+	<thead>
+	  <tr>
+		<th class="col-6">Name</th>
+		<th class="col-3">Amount</th>
+		<th class="col-3">Value (USD)</th>
+	  </tr>
+	</thead>
+	<tbody>
+		{{#each holdings}}
+	  <tr>
+		<td class="col-6"><img class="token-icon" src="img/{{icon}}.png"/> {{name}}</td>
+		<td class="col-3">{{amount}} {{symbol}}</td>
+		<td class="col-3">{{usd}}$</td>
+	  </tr>
+	  {{/each}}
+	</tbody>
+</table>
+{{#else}}
+<div class="alert alert-info" role="alert">
+  This address is still new and does not have any assets yet.
 </div>
-<div class="row">
-<div class="col-sm-3">
-  <div class="well">
-	<h4>Users</h4>
-	<p>1 Million</p> 
-  </div>
-</div>
-<div class="col-sm-3">
-  <div class="well">
-	<h4>Pages</h4>
-	<p>100 Million</p> 
-  </div>
-</div>
-<div class="col-sm-3">
-  <div class="well">
-	<h4>Sessions</h4>
-	<p>10 Million</p> 
-  </div>
-</div>
-<div class="col-sm-3">
-  <div class="well">
-	<h4>Bounce</h4>
-	<p>30%</p> 
-  </div>
-</div>
-</div>
-<div class="row">
-<div class="col-sm-4">
-  <div class="well">
-	<p>Text</p> 
-	<p>Text</p> 
-	<p>Text</p> 
-  </div>
-</div>
-<div class="col-sm-4">
-  <div class="well">
-	<p>Text</p> 
-	<p>Text</p> 
-	<p>Text</p> 
-  </div>
-</div>
-<div class="col-sm-4">
-  <div class="well">
-	<p>Text</p> 
-	<p>Text</p> 
-	<p>Text</p> 
-  </div>
-</div>
-</div>
-<div class="row">
-<div class="col-sm-8">
-  <div class="well">
-	<p>Text</p> 
-  </div>
-</div>
-<div class="col-sm-4">
-  <div class="well">
-	<p>Text</p> 
-  </div>
-</div>
-</div>
+
+{{/if}}

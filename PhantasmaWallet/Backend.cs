@@ -15,6 +15,16 @@ namespace PhantasmaWallet
         public bool enabled;
     }
 
+    public struct Holding
+    {
+        public string name;
+        public string symbol;
+        public string icon;
+        public decimal amount;
+        public decimal rate;
+        public decimal usd => amount * rate;
+    }
+
     public struct Transaction
     {
         public DateTime date;
@@ -30,9 +40,9 @@ namespace PhantasmaWallet
             new MenuEntry(){ id = "send", icon = "fa-paper-plane", caption = "Send", enabled = true},
             new MenuEntry(){ id = "receive", icon = "fa-qrcode", caption = "Receive", enabled = true},
             new MenuEntry(){ id = "history", icon = "fa-receipt", caption = "Transaction History", enabled = true},
-            new MenuEntry(){ id = "storage", icon = "fa-hdd", caption = "Storage", enabled = true},
-            new MenuEntry(){ id = "exchange", icon = "fa-chart-bar", caption = "Exchange", enabled = true},
-            new MenuEntry(){ id = "sales", icon = "fa-certificate", caption = "Crowdsales", enabled = true},
+            new MenuEntry(){ id = "storage", icon = "fa-hdd", caption = "Storage", enabled = false},
+            new MenuEntry(){ id = "exchange", icon = "fa-chart-bar", caption = "Exchange", enabled = false},
+            new MenuEntry(){ id = "sales", icon = "fa-certificate", caption = "Crowdsales", enabled = false},
             new MenuEntry(){ id = "offline", icon = "fa-file-export", caption = "Offline Operation", enabled = true},
             new MenuEntry(){ id = "settings", icon = "fa-cog", caption = "Settings", enabled = true},
             new MenuEntry(){ id = "logout", icon = "fa-sign-out-alt", caption = "Log Out", enabled = true},
@@ -40,7 +50,13 @@ namespace PhantasmaWallet
 
         static Transaction[] transactions = new Transaction[]
         {
-            new Transaction(){date =DateTime.UtcNow, hash = "982f14ce20a47b35d864c41bac016ed0d6b970d532102b72bb064866f3e36852", description = "Dummy transaction"}
+            new Transaction(){ date =DateTime.UtcNow, hash = "982f14ce20a47b35d864c41bac016ed0d6b970d532102b72bb064866f3e36852", description = "Dummy transaction"}
+        };
+
+        static Holding[] holdings = new Holding[]
+        {
+            new Holding(){ name = "Phantasma", symbol = "SOUL", icon = "phantasma_logo", amount = 250, rate = 0.1m },
+            new Holding(){ name = "Funny token", symbol = "LOL", icon = "dummy_logo", amount = 1000, rate = 0.002m }
         };
 
         static bool HasLogin(HTTPRequest request)
@@ -63,6 +79,7 @@ namespace PhantasmaWallet
                 context["address"] = keyPair.Address;
 
                 context["transactions"] = transactions;
+                context["holdings"] = holdings;
             }
 
             context["active"] = request.session.Contains("active")?request.session.Get<string>("active"):"portfolio";
