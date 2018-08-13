@@ -92,7 +92,7 @@ div.well{
 	</div>
 	
 	<p>Address:<br><em>{{address}}</em></p>
-	<p>Private Key:<br><em>{{WIF}}</em>&nbsp; <a href="#" onclick="copyText('{{address}}')"><i class="fas fa-copy"></i></a></p>
+	<p>Private Key:<br><em>{{WIF}}</em>&nbsp; <a href="#" onclick="copyText('{{address}}', 'Private key')"><i class="fas fa-copy"></i></a></p>
 	<br>
 	<button type="button" class="btn btn-primary btn-block" onclick="location.reload()">Generate another</button>
 	{{#else}}
