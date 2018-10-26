@@ -103,7 +103,7 @@ namespace PhantasmaWallet
         static void Main(string[] args)
         {
             // initialize a logger
-            var log = new LunarLabs.WebServer.Core.Logger();
+            var log = new ConsoleLogger();
 
             // either parse the settings from the program args or initialize them manually
             var settings = ServerSettings.Parse(args);
@@ -152,7 +152,7 @@ namespace PhantasmaWallet
             site.Get("/login", (request) =>
             {
                 var context = CreateContext(request);
-                return templates.Render(site, context, new string[] { "login" });
+                return templates.Render(context, "login");
             });
 
             site.Get("/create", (request) =>
@@ -163,7 +163,7 @@ namespace PhantasmaWallet
                 context["WIF"] = keyPair.ToWIF();
                 context["address"] = keyPair.Address;
 
-                return templates.Render(site, context, new string[] { "login" });
+                return templates.Render(context, "login");
             });
 
             foreach (var entry in menuEntries)
@@ -189,12 +189,12 @@ namespace PhantasmaWallet
 
                         request.session.Set("active", url);
                         var context = CreateContext(request);
-                        return templates.Render(site, context, new string[] { "layout", entry.id });
+                        return templates.Render(site, "layout", entry.id);
                     });
                 }
             }
 
-            server.Run();
+            server.Run(site);
         }
     }
 }
