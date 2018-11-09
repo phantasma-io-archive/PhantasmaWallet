@@ -2,7 +2,7 @@
   "profiles": {
     "PhantasmaWallet": {
       "commandName": "Project",
-      "commandLineArgs": "--path=C:\\Code\\PhantasmaWallet\\www\\"
+      "commandLineArgs": "--path=C:\\Phantasma\\PhantasmaWallet\\PhantasmaWallet\\www\\"
     }
   }
 }
