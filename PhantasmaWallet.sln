@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhantasmaWallet", "PhantasmaWallet\PhantasmaWallet.csproj", "{DED88A7B-9CF3-40CD-8772-3692CD5BD73A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Phantasma.Wallet", "PhantasmaWallet\Phantasma.Wallet.csproj", "{DED88A7B-9CF3-40CD-8772-3692CD5BD73A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Phantasma.Core", "..\PhantasmaChain\Phantasma.Core\Phantasma.Core.csproj", "{964F3AE1-7E46-4C9D-BF49-32F9860F9F6F}"
 EndProject

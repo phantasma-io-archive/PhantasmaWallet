@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <title>Phantasma Wallet</title>
@@ -106,7 +106,7 @@
       <ul class="nav nav-pills nav-stacked">	  
 		{{#each menu}}
 		{{#if enabled}}
-        <li{{#if url=active}} class="active"{{/if}}><a href="/{{id}}"><i class="fas {{icon}} menu-icon"></i>{{caption}}{{#if !count=0}}&nbsp;<span class="badge">{{count}}</span>{{/if}}</a></li>
+        <li {{#if url=active}} class="active"{{/if}}><a href="/{{id}}"><i class="fas {{icon}} menu-icon"></i>{{caption}}{{#if !count=0}}&nbsp;<span class="badge">{{count}}</span>{{/if}}</a></li>
 		{{/if}}
 		{{/each}}
       </ul><br>

@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "PhantasmaWallet": {
+    "Phantasma.Wallet": {
       "commandName": "Project",
       "commandLineArgs": "--path=.",
       "workingDirectory": "www"

@@ -5,6 +5,6 @@
   </PropertyGroup>
   <PropertyGroup>
     <_LastSelectedProfileId>C:\Code\PhantasmaWallet\PhantasmaWallet\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
-    <ShowAllFiles>true</ShowAllFiles>
+    <ShowAllFiles>false</ShowAllFiles>
   </PropertyGroup>
 </Project>
