@@ -83,7 +83,7 @@ namespace PhantasmaWallet
                 context["holdings"] = holdings;
             }
 
-            context["active"] = request.session.Contains("active")?request.session.Get<string>("active"):"portfolio";
+            context["active"] = request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio";
 
             if (request.session.Contains("error"))
             {
@@ -138,7 +138,7 @@ namespace PhantasmaWallet
                 {
                     keyPair = KeyPair.FromWIF(key);
                 }
-                catch  (Exception e)
+                catch (Exception e)
                 {
                     Console.WriteLine(e);
                     PushError(request, "Error decoding key...");
