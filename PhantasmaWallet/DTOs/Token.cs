@@ -8,6 +8,9 @@ namespace Phantasma.Wallet.DTOs
         [JsonProperty("symbol")]
         public string Symbol { get; set; }
 
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
         [JsonProperty("chains")]
         public List<Chain> Chains { get; set; }
     }

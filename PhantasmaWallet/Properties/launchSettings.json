@@ -2,7 +2,7 @@
   "profiles": {
     "Phantasma.Wallet": {
       "commandName": "Project",
-      "commandLineArgs": "--path=.",
+      "commandLineArgs": "--path=. --port=12345",
       "workingDirectory": "www"
     }
   }
