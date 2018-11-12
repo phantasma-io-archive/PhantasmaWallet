@@ -12,7 +12,7 @@ namespace Phantasma.Wallet.DTOs
         public long Amount { get; set; }
 
         [JsonProperty("txs")]
-        public List<AccountTx> Txs { get; set; }
+        public List<AccountTx> Txs { get; set; } = new List<AccountTx>();
 
         public static AccountTransactions FromJson(string json) => JsonConvert.DeserializeObject<AccountTransactions>(json, JsonUtils.Settings);
         public string ToJson() => JsonConvert.SerializeObject(this, JsonUtils.Settings);
