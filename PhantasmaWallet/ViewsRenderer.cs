@@ -162,7 +162,7 @@ namespace Phantasma.Wallet
         private string RouteLogin(HTTPRequest request)
         {
             //CreateContext(request);
-            return RendererView("layout", "login");
+            return RendererView("login");
         }
 
         private string RouteCreateAccount(HTTPRequest request)
@@ -172,7 +172,7 @@ namespace Phantasma.Wallet
             var keyPair = KeyPair.Generate();
             Context["WIF"] = keyPair.ToWIF();
             Context["address"] = keyPair.Address;
-            return RendererView("layout", "login");
+            return RendererView("login");
         }
 
         private HTTPResponse RouteLogout(HTTPRequest request)
