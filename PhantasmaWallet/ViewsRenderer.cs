@@ -94,7 +94,7 @@ namespace Phantasma.Wallet
                 Context["name"] = "Anonymous";
                 Context["address"] = keyPair.Address;
 
-                Context["transactions"] = transactions;
+                Context["transactions"] = AccountController.GetAccountTransactions(keyPair.Address.Text, 20).Result; //todo remove .Result
                 Context["holdings"] = AccountController.GetAccountInfo(keyPair.Address.Text).Result; //todo remove .Result
             }
 

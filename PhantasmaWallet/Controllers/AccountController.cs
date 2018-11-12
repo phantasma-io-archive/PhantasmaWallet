@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Phantasma.Core.Types;
 using Phantasma.Wallet.Services;
 
 namespace Phantasma.Wallet.Controllers
@@ -40,6 +42,23 @@ namespace Phantasma.Wallet.Controllers
             }
 
             return holdings.ToArray();
+        }
+
+        public async Task<Transaction[]> GetAccountTransactions(string address, int amount)
+        {
+            var txs = new List<Transaction>();
+            var accountTxs = await _phantasmaApi.GetAccountTxs(address, amount);
+            foreach (var tx in accountTxs.Txs)
+            {
+                txs.Add(new Transaction
+                {
+                    date = new Timestamp(tx.Timestamp),
+                    hash = tx.Txid,
+                    description = tx.ChainName,
+                });
+            }
+
+            return txs.ToArray();
         }
     }
 }
