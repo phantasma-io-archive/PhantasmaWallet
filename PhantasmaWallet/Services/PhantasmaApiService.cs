@@ -11,7 +11,7 @@ namespace Phantasma.Wallet.Services
 
         public PhantasmaApiService()
         {
-            _restClient = new HttpClient() { BaseAddress = new Uri("http://localhost:49153/api/") };
+            _restClient = new HttpClient() { BaseAddress = new Uri("http://localhost:7074/api/") };
         }
 
         public async Task<Account> GetAccount(string address)
