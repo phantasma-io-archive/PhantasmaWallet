@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Phantasma.Blockchain;
+using Phantasma.Blockchain.Tokens;
 using Phantasma.Core.Types;
+using Phantasma.Cryptography;
+using Phantasma.Numerics;
+using Phantasma.VM.Utils;
 using Phantasma.Wallet.Services;
 
 namespace Phantasma.Wallet.Controllers
@@ -54,11 +59,19 @@ namespace Phantasma.Wallet.Controllers
                 {
                     date = new Timestamp(tx.Timestamp),
                     hash = tx.Txid,
-                    description = tx.ChainName,
+                    description = tx.Description,
                 });
             }
 
             return txs.ToArray();
+        }
+
+        public void MakeTransaction(KeyPair source, Address dest, Chain chain, Token token, BigInteger amount)
+        {
+            var script = ScriptUtils.CallContractScript(chain, "TransferTokens", source.Address, dest, token.Symbol, amount);
+            var tx = new Phantasma.Blockchain.Transaction(script, 0, 0, DateTime.UtcNow, 0);
+            tx.Sign(source);
+
         }
     }
 }
