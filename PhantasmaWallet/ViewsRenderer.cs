@@ -44,7 +44,7 @@ namespace Phantasma.Wallet
 
         public void Init()
         {
-            foreach (var menuEntry in menuEntries)
+            foreach (var menuEntry in MenuEntries)
             {
 
                 UpdateContext(menuEntry.id, menuEntry);
@@ -82,9 +82,9 @@ namespace Phantasma.Wallet
             request.session.Set("error", msg);
         }
 
-        async Task CreateContext(HTTPRequest request)
+       void CreateContext(HTTPRequest request)
         {
-            Context["menu"] = menuEntries;
+            Context["menu"] = MenuEntries;
 
             if (HasLogin(request))
             {
@@ -110,86 +110,92 @@ namespace Phantasma.Wallet
 
         public void SetupHandlers() //todo separate each call
         {
-            TemplateEngine.Site.Get("/", (request) =>
-            {
-                if (HasLogin(request))
-                {
-                    return HTTPResponse.Redirect("/portfolio");
-                }
-                else
-                {
-                    return HTTPResponse.Redirect("/login");
-                }
-            });
+            TemplateEngine.Site.Get("/", RouteHome);
 
-            TemplateEngine.Site.Get("/login/{key}", (request) =>
-            {
-                CreateContext(request);
+            TemplateEngine.Site.Get("/login/{key}", RouteLoginWithParams);
 
-                var key = request.GetVariable("key");
-                KeyPair keyPair;
+            TemplateEngine.Site.Get("/login", RouteLogin);
 
-                try
-                {
-                    keyPair = KeyPair.FromWIF(key);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    PushError(request, "Error decoding key...");
-                    return HTTPResponse.Redirect("/login");
-                }
+            TemplateEngine.Site.Get("/create", RouteCreateAccount);
 
-                request.session.Set("login", keyPair);
-                return HTTPResponse.Redirect("/portfolio");
-            });
-
-            TemplateEngine.Site.Get("/login", (request) =>
-            {
-                CreateContext(request);
-                return RendererView("layout", "login");
-            });
-
-            TemplateEngine.Site.Get("/create", (request) =>
-            {
-                CreateContext(request);
-
-                var keyPair = KeyPair.Generate();
-                Context["WIF"] = keyPair.ToWIF();
-                Context["address"] = keyPair.Address;
-                return RendererView("layout", "login");
-            });
-
-            foreach (var entry in menuEntries)
+            foreach (var entry in MenuEntries)
             {
                 var url = $"/{entry.id}";
 
                 if (entry.id == "logout")
                 {
-                    TemplateEngine.Site.Get(url, (request) =>
-                    {
-                        request.session.Remove("login");
-                        return HTTPResponse.Redirect("/login");
-                    });
+                    TemplateEngine.Site.Get(url, RouteLogout);
                 }
                 else
                 {
-                    TemplateEngine.Site.Get(url, (request) =>
-                    {
-                        if (!HasLogin(request))
-                        {
-                            return HTTPResponse.Redirect("/login");
-                        }
-
-                        request.session.Set("active", url);
-                        CreateContext(request);
-                        return RendererView("layout", entry.id);
-                    });
+                    TemplateEngine.Site.Get(url, request => RouteMenuItems(request, url, entry.id));
                 }
             }
         }
 
-        static MenuEntry[] menuEntries = new MenuEntry[]
+        #region Routes
+        private HTTPResponse RouteHome(HTTPRequest request)
+        {
+            return HTTPResponse.Redirect(HasLogin(request) ? "/portfolio" : "/login");
+        }
+
+        private HTTPResponse RouteLoginWithParams(HTTPRequest request)
+        {
+            var key = request.GetVariable("key");
+            KeyPair keyPair;
+
+            try
+            {
+                keyPair = KeyPair.FromWIF(key);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                PushError(request, "Error decoding key...");
+                return HTTPResponse.Redirect("/login");
+            }
+
+            request.session.Set("login", keyPair);
+            return HTTPResponse.Redirect("/portfolio");
+        }
+
+        private string RouteLogin(HTTPRequest request)
+        {
+            //CreateContext(request);
+            return RendererView("layout", "login");
+        }
+
+        private string RouteCreateAccount(HTTPRequest request)
+        {
+            CreateContext(request);
+
+            var keyPair = KeyPair.Generate();
+            Context["WIF"] = keyPair.ToWIF();
+            Context["address"] = keyPair.Address;
+            return RendererView("layout", "login");
+        }
+
+        private HTTPResponse RouteLogout(HTTPRequest request)
+        {
+            request.session.Remove("login");
+            return HTTPResponse.Redirect("/login");
+        }
+
+        private object RouteMenuItems(HTTPRequest request, string url, string entry)
+        {
+            if (!HasLogin(request))
+            {
+                return HTTPResponse.Redirect("/login");
+            }
+            request.session.Set("active", url);
+
+            CreateContext(request);
+            return RendererView("layout", entry);
+        }
+        #endregion
+
+
+        private static readonly MenuEntry[] MenuEntries = new MenuEntry[]
         {
             new MenuEntry(){ id = "portfolio", icon = "fa-wallet", caption = "Portfolio", enabled = true},
             new MenuEntry(){ id = "send", icon = "fa-paper-plane", caption = "Send", enabled = true},
@@ -202,17 +208,5 @@ namespace Phantasma.Wallet
             new MenuEntry(){ id = "settings", icon = "fa-cog", caption = "Settings", enabled = true},
             new MenuEntry(){ id = "logout", icon = "fa-sign-out-alt", caption = "Log Out", enabled = true},
         };
-
-        static Transaction[] transactions = new Transaction[]
-        {
-            new Transaction(){ date =DateTime.UtcNow, hash = "982f14ce20a47b35d864c41bac016ed0d6b970d532102b72bb064866f3e36852", description = "Dummy transaction"}
-        };
-
-        static Holding[] holdings = new Holding[]
-        {
-            new Holding(){ name = "Phantasma", symbol = "SOUL", icon = "phantasma_logo", amount = 250, rate = 0.1m },
-            new Holding(){ name = "Funny token", symbol = "LOL", icon = "dummy_logo", amount = 1000, rate = 0.002m }
-        };
-
     }
 }

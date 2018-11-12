@@ -35,7 +35,7 @@ namespace Phantasma.Wallet
             if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<string>(reader);
             long l;
-            if (Int64.TryParse(value, out l))
+            if (long.TryParse(value, out l))
             {
                 return l;
             }

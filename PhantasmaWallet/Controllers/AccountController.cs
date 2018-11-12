@@ -14,6 +14,7 @@ namespace Phantasma.Wallet.Controllers
     public class AccountController
     {
         private readonly PhantasmaApiService _phantasmaApi;
+
         public AccountController()
         {
             _phantasmaApi = new PhantasmaApiService();
