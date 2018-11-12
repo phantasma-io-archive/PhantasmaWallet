@@ -97,9 +97,9 @@
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav">
                     {{#each menu}}
-                    {{#if enabled}}
+                    {{#if Enabled}}
                     <li{{#if url=active}} class="active" {{/if}}>
-                        <a href="/{{id}}"><i class="fas {{icon}} menu-icon"></i>{{caption}}</a></li>
+                        <a href="/{{Id}}"><i class="fas {{Icon}} menu-icon"></i>{{Caption}}</a></li>
                         {{/if}}
                         {{/each}}
                 </ul><br>
@@ -116,8 +116,8 @@
                 <hr />
                 <ul class="nav nav-pills nav-stacked">
                     {{#each menu}}
-                    {{#if enabled}}
-                    <li {{#if url=active}} class="active" {{/if}}><a href="/{{id}}"><i class="fas {{icon}} menu-icon"></i>{{caption}}{{#if count>0}}&nbsp;<span class="badge">{{count}}</span>{{/if}}</a></li>
+                    {{#if Enabled}}
+                    <li {{#if url=active}} class="active" {{/if}}><a href="/{{Id}}"><i class="fas {{Icon}} menu-icon"></i>{{Caption}}{{#if Count>0}}&nbsp;<span class="badge">{{Count}}</span>{{/if}}</a></li>
                     {{/if}}
                     {{/each}}
                 </ul><br>

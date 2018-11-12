@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using LunarLabs.WebServer.HTTP;
 using LunarLabs.WebServer.Templates;
@@ -8,13 +9,13 @@ using Phantasma.Wallet.Controllers;
 
 namespace Phantasma.Wallet
 {
-    public struct MenuEntry
+    public class MenuEntry
     {
-        public string id;
-        public string icon;
-        public string caption;
-        public bool enabled;
-        public int count;
+        public string Id { get; set; }
+        public string Icon { get; set; }
+        public string Caption { get; set; }
+        public bool Enabled { get; set; }
+        public int Count { get; set; }
     }
 
     public struct Holding
@@ -47,7 +48,7 @@ namespace Phantasma.Wallet
             foreach (var menuEntry in MenuEntries)
             {
 
-                UpdateContext(menuEntry.id, menuEntry);
+                UpdateContext(menuEntry.Id, menuEntry);
             }
         }
 
@@ -82,7 +83,7 @@ namespace Phantasma.Wallet
             request.session.Set("error", msg);
         }
 
-       void CreateContext(HTTPRequest request)
+        void CreateContext(HTTPRequest request)
         {
             Context["menu"] = MenuEntries;
 
@@ -94,7 +95,11 @@ namespace Phantasma.Wallet
                 Context["name"] = "Anonymous";
                 Context["address"] = keyPair.Address;
 
-                Context["transactions"] = AccountController.GetAccountTransactions(keyPair.Address.Text, 20).Result; //todo remove .Result
+                var txs = AccountController.GetAccountTransactions(keyPair.Address.Text, 20).Result; //todo remove .Result
+                var entry = MenuEntries.FirstOrDefault(e => e.Id == "history");
+                entry.Count = txs.Length;
+
+                Context["transactions"] = txs;
                 Context["holdings"] = AccountController.GetAccountInfo(keyPair.Address.Text).Result; //todo remove .Result
             }
 
@@ -120,15 +125,15 @@ namespace Phantasma.Wallet
 
             foreach (var entry in MenuEntries)
             {
-                var url = $"/{entry.id}";
+                var url = $"/{entry.Id}";
 
-                if (entry.id == "logout")
+                if (entry.Id == "logout")
                 {
                     TemplateEngine.Site.Get(url, RouteLogout);
                 }
                 else
                 {
-                    TemplateEngine.Site.Get(url, request => RouteMenuItems(request, url, entry.id));
+                    TemplateEngine.Site.Get(url, request => RouteMenuItems(request, url, entry.Id));
                 }
             }
         }
@@ -200,16 +205,16 @@ namespace Phantasma.Wallet
 
         private static readonly MenuEntry[] MenuEntries = new MenuEntry[]
         {
-            new MenuEntry(){ id = "portfolio", icon = "fa-wallet", caption = "Portfolio", enabled = true},
-            new MenuEntry(){ id = "send", icon = "fa-paper-plane", caption = "Send", enabled = true},
-            new MenuEntry(){ id = "receive", icon = "fa-qrcode", caption = "Receive", enabled = true},
-            new MenuEntry(){ id = "history", icon = "fa-receipt", caption = "Transactions", enabled = true},
-            new MenuEntry(){ id = "storage", icon = "fa-hdd", caption = "Storage", enabled = false},
-            new MenuEntry(){ id = "exchange", icon = "fa-chart-bar", caption = "Exchange", enabled = false},
-            new MenuEntry(){ id = "sales", icon = "fa-certificate", caption = "Crowdsales", enabled = false},
-            new MenuEntry(){ id = "offline", icon = "fa-file-export", caption = "Offline Operation", enabled = true},
-            new MenuEntry(){ id = "settings", icon = "fa-cog", caption = "Settings", enabled = true},
-            new MenuEntry(){ id = "logout", icon = "fa-sign-out-alt", caption = "Log Out", enabled = true},
+            new MenuEntry(){ Id = "portfolio", Icon = "fa-wallet", Caption = "Portfolio", Enabled = true},
+            new MenuEntry(){ Id = "send", Icon = "fa-paper-plane", Caption = "Send", Enabled = true},
+            new MenuEntry(){ Id = "receive", Icon = "fa-qrcode", Caption = "Receive", Enabled = true},
+            new MenuEntry(){ Id = "history", Icon = "fa-receipt", Caption = "Transactions", Enabled = true},
+            new MenuEntry(){ Id = "storage", Icon = "fa-hdd", Caption = "Storage", Enabled = false},
+            new MenuEntry(){ Id = "exchange", Icon = "fa-chart-bar", Caption = "Exchange", Enabled = false},
+            new MenuEntry(){ Id = "sales", Icon = "fa-certificate", Caption = "Crowdsales", Enabled = false},
+            new MenuEntry(){ Id = "offline", Icon = "fa-file-export", Caption = "Offline Operation", Enabled = true},
+            new MenuEntry(){ Id = "settings", Icon = "fa-cog", Caption = "Settings", Enabled = true},
+            new MenuEntry(){ Id = "logout", Icon = "fa-sign-out-alt", Caption = "Log Out", Enabled = true},
         };
     }
 }
