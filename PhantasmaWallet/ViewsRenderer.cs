@@ -189,7 +189,10 @@ namespace Phantasma.Wallet
             }
             request.session.Set("active", url);
 
-            CreateContext(request);
+            if (entry == "portfolio" || entry == "send" || entry == "history")
+            {
+                CreateContext(request);
+            }
             return RendererView("layout", entry);
         }
         #endregion
