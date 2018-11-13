@@ -6,5 +6,7 @@ namespace Phantasma.Wallet.Interfaces
     {
         PhantasmaGetAccount GetAccount { get; }
         PhantasmaGetAccountTransactions GetAccountTransactions { get; }
+        PhantasmaGetChains GetChains { get; }
+        PhantasmaSendRawTx SendRawTx { get; }
     }
 }

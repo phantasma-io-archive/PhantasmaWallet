@@ -4,6 +4,7 @@
     {
         getaccount,
         getaddresstransactions,
-
+        getchains,
+        sendrawtransaction
     }
 }
