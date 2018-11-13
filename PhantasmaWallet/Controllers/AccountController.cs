@@ -18,6 +18,8 @@ namespace Phantasma.Wallet.Controllers
         private readonly IPhantasmaRestService _phantasmaApi;
         private readonly IPhantasmaRpcService _phantasmaRpcService;
 
+        //todo move this
+        public KeyPair SessionKeyPair;
         public AccountController()
         {
             _phantasmaApi = (IPhantasmaRestService)Backend.AppServices.GetService(typeof(IPhantasmaRestService));
@@ -27,12 +29,12 @@ namespace Phantasma.Wallet.Controllers
 
         public async Task<Chains> GetChains()
         {
-            return await _phantasmaRpcService.GetChains.SendRequestAsync();
+            var x = await _phantasmaRpcService.GetChains.SendRequestAsync();
+            return Chains.FromJson(x);
         }
 
         public async Task<Holding[]> GetAccountInfo(string address)
         {
-            var test = await SendRawTx();
             var holdings = new List<Holding>();
             var account = await _phantasmaApi.GetAccount(address);
 
@@ -76,13 +78,6 @@ namespace Phantasma.Wallet.Controllers
             }
 
             return txs.ToArray();
-        }
-
-        public void MakeTransferTransaction(KeyPair source, Address dest, Chain chain, Token token, BigInteger amount)
-        {
-            var script = ScriptUtils.CallContractScript(chain, "TransferTokens", source.Address, dest, token.Symbol, amount);
-            var tx = new Phantasma.Blockchain.Transaction(script, 0, 0, DateTime.UtcNow, 0);
-            tx.Sign(source);
         }
 
         private string GetTxDescription(AccountTx accountTx)
@@ -138,12 +133,18 @@ namespace Phantasma.Wallet.Controllers
             return string.Empty;
         }
 
-        private async Task<string> SendRawTx()
+        private async Task<string> SendRawTx(string addressTo, string chainAddress, string symbol, decimal amount)
         {
-            var address = "P4uiees8gkQoTNrTqJH6bHizu4kETQfToxt4SgMEC1kaQ";
-            var symbol = "SOUL";
-            var amount = TokenUtils.ToBigInteger(10m, 8);
-            return await _phantasmaRpcService.SendRawTx.SendRequestAsync("main", "teste");
+            var chain = Address.FromText(chainAddress);
+            var dest = Address.FromText(addressTo);
+            var bigIntAmount = TokenUtils.ToBigInteger(amount, 8);
+            var script = ScriptUtils.CallContractScript(chain, "TransferTokens", SessionKeyPair.Address, dest, symbol, bigIntAmount);
+
+            var tx = new Blockchain.Transaction(script, 0, 0, DateTime.UtcNow, 0);
+            tx.Sign(SessionKeyPair);
+
+            //todo main
+            return await _phantasmaRpcService.SendRawTx.SendRequestAsync("main", tx.ToByteArray(true).Base58CheckEncode());
         }
     }
 }

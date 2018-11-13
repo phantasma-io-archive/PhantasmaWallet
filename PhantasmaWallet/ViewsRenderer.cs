@@ -43,9 +43,6 @@ namespace Phantasma.Wallet
             TemplateEngine = new TemplateEngine(site, viewsPath);
         }
 
-        //todo move this
-        public static KeyPair SessionKeyPair;
-
         public void Init()
         {
             foreach (var menuEntry in MenuEntries)
@@ -95,15 +92,16 @@ namespace Phantasma.Wallet
                 Context["login"] = true;
 
                 var keyPair = request.session.Get<KeyPair>("login");
-                SessionKeyPair = keyPair;
                 Context["name"] = "Anonymous";
                 Context["address"] = keyPair.Address;
+
+                AccountController.SessionKeyPair = keyPair;//todo move
 
                 var txs = AccountController.GetAccountTransactions(keyPair.Address.Text, 20).Result; //todo remove .Result
                 var entry = MenuEntries.FirstOrDefault(e => e.Id == "history");
                 entry.Count = txs.Length;
 
-                Context["chains"] = AccountController.GetChains().Result;
+                //Context["chains"] = AccountController.GetChains().Result;
                 Context["transactions"] = txs;
                 Context["holdings"] = AccountController.GetAccountInfo(keyPair.Address.Text).Result; //todo remove .Result
             }
