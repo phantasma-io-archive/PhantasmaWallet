@@ -133,12 +133,14 @@ namespace Phantasma.Wallet.Controllers
             return string.Empty;
         }
 
-        private async Task<string> SendRawTx(string addressTo, string chainAddress, string symbol, decimal amount)
+
+        public async Task<string> SendRawTx(string addressTo, string chainAddress, string symbol, string amount)
         {
             var chain = Address.FromText(chainAddress);
             var dest = Address.FromText(addressTo);
-            var bigIntAmount = TokenUtils.ToBigInteger(amount, 8);
-            var script = ScriptUtils.CallContractScript(chain, "TransferTokens", SessionKeyPair.Address, dest, symbol, bigIntAmount);
+            var bigIntAmount = TokenUtils.ToBigInteger(decimal.Parse(amount), 8);
+
+            var script = ScriptUtils.CallContractScript(chain, "TransferTokens", SessionKeyPair.Address, dest, symbol, bigIntAmount);//todo this should be TokenTransferScript
 
             var tx = new Blockchain.Transaction(script, 0, 0, DateTime.UtcNow, 0);
             tx.Sign(SessionKeyPair);

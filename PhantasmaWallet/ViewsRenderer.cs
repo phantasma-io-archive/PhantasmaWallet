@@ -126,6 +126,8 @@ namespace Phantasma.Wallet
 
             TemplateEngine.Site.Get("/create", RouteCreateAccount);
 
+            TemplateEngine.Site.Get("/sendrawtx", RouteSendRawTx);
+
             foreach (var entry in MenuEntries)
             {
                 var url = $"/{entry.Id}";
@@ -202,6 +204,23 @@ namespace Phantasma.Wallet
                 CreateContext(request);
             }
             return RendererView("layout", entry);
+        }
+
+        private object RouteSendRawTx(HTTPRequest request)
+        {
+            if (!HasLogin(request))
+            {
+                return HTTPResponse.Redirect("/login");
+            }
+
+            var addressTo = request.GetVariable("addressTo");
+            var chainAddress = request.GetVariable("chainAddress");
+            var symbol = request.GetVariable("symbol");
+            var amount = request.GetVariable("amount");
+
+            var result = AccountController.SendRawTx(addressTo, chainAddress, symbol, amount).Result;
+
+            return HTTPResponse.Redirect("/portfolio");
         }
         #endregion
 
