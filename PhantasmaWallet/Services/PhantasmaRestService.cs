@@ -2,14 +2,15 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Phantasma.Wallet.DTOs;
+using Phantasma.Wallet.Interfaces;
 
 namespace Phantasma.Wallet.Services
 {
-    public class PhantasmaApiService //todo interface
+    public class PhantasmaRestService : IPhantasmaRestService
     {
         private readonly HttpClient _restClient;
 
-        public PhantasmaApiService()
+        public PhantasmaRestService()
         {
             _restClient = new HttpClient() { BaseAddress = new Uri("http://localhost:7074/api/") };
         }

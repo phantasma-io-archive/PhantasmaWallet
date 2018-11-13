@@ -1,22 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Phantasma.Blockchain;
-using Phantasma.Blockchain.Tokens;
 using Phantasma.Core.Types;
 using Phantasma.Cryptography;
 using Phantasma.Numerics;
 using Phantasma.VM.Utils;
-using Phantasma.Wallet.Services;
+using Phantasma.Wallet.DTOs;
+using Phantasma.Wallet.Interfaces;
+using Chain = Phantasma.Blockchain.Chain;
+using Token = Phantasma.Blockchain.Tokens.Token;
 
 namespace Phantasma.Wallet.Controllers
 {
     public class AccountController
     {
-        private readonly PhantasmaApiService _phantasmaApi;
+        private readonly IPhantasmaRestService _phantasmaApi;
+
         public AccountController()
         {
-            _phantasmaApi = new PhantasmaApiService();
+            _phantasmaApi = (IPhantasmaRestService)Backend.AppServices.GetService(typeof(IPhantasmaRestService));
         }
 
         public async Task<Holding[]> GetAccountInfo(string address)
@@ -59,7 +61,7 @@ namespace Phantasma.Wallet.Controllers
                 {
                     date = new Timestamp(tx.Timestamp),
                     hash = tx.Txid,
-                    description = tx.Description,
+                    description = ""//todo
                 });
             }
 
@@ -71,7 +73,59 @@ namespace Phantasma.Wallet.Controllers
             var script = ScriptUtils.CallContractScript(chain, "TransferTokens", source.Address, dest, token.Symbol, amount);
             var tx = new Phantasma.Blockchain.Transaction(script, 0, 0, DateTime.UtcNow, 0);
             tx.Sign(source);
+        }
 
+        private string GetTxDescription(AccountTx accountTx)
+        {
+            string description = null;
+
+            //Token senderToken = null;
+            //Address senderChain = Address.Null;
+            //Address senderAddress = Address.Null;
+
+            //Token receiverToken = null;
+            //Address receiverChain = Address.Null;
+            //Address receiverAddress = Address.Null;
+
+            //BigInteger amount = 0;
+
+
+            foreach (var evt in accountTx.Events)//todo move this
+            {
+                switch (evt.EvtKind)
+                {
+                    case EvtKind.TokenSend:
+                        {
+
+                        }
+                        break;
+
+                    case EvtKind.TokenReceive:
+                        {
+
+                        }
+                        break;
+
+                    case EvtKind.AddressRegister:
+                        {
+
+                        }
+                        break;
+
+                    case EvtKind.FriendAdd:
+                        {
+
+                        }
+                        break;
+
+                    case EvtKind.FriendRemove:
+                        {
+
+                        }
+                        break;
+                }
+            }
+            return string.Empty;
         }
     }
 }

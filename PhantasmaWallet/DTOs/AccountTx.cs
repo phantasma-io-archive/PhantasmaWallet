@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Phantasma.Wallet.DTOs
 {
@@ -19,25 +20,13 @@ namespace Phantasma.Wallet.DTOs
         [JsonProperty("blockHeight")]
         public uint BlockHeight { get; set; }
 
-        [JsonProperty("amount")]
-        public decimal Amount { get; set; }
-
-        [JsonProperty("asset")]
-        public string Asset { get; set; }
-
-        [JsonProperty("addressTo")]
-        public string AddressTo { get; set; }
-
-        [JsonProperty("addressFrom")]
-        public string AddressFrom { get; set; }
-
-        [JsonProperty("description")]
-        public string Description { get; set; }
-
         [JsonProperty("gasLimit")]
         public decimal GasLimit { get; set; }
 
         [JsonProperty("gasPrice")]
         public decimal GasPrice { get; set; }
+
+        [JsonProperty("events")]
+        public List<Event> Events { get; set; }
     }
 }

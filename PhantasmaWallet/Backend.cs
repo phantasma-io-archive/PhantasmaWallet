@@ -1,9 +1,21 @@
-﻿namespace Phantasma.Wallet
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
+using Phantasma.Wallet.Interfaces;
+using Phantasma.Wallet.RpcClient;
+using Phantasma.Wallet.Services;
+
+namespace Phantasma.Wallet
 {
     class Backend
     {
+        public static IServiceProvider AppServices => _app.Services;
+        private static Application _app;
+
         static void Main(string[] args)
         {
+            IServiceCollection serviceCollection = new ServiceCollection();
+            _app = new Application(serviceCollection);
+
             var site = HostBuilder.CreateSite(args, "public");
             var viewsRenderer = new ViewsRenderer(site, "views");
 
@@ -21,6 +33,23 @@
             //}).Wait();
 
             site.server.Run(site);
+        }
+    }
+
+    public class Application
+    {
+        public IServiceProvider Services { get; set; }
+
+        public Application(IServiceCollection serviceCollection)
+        {
+            ConfigureServices(serviceCollection);
+            Services = serviceCollection.BuildServiceProvider();
+        }
+
+        private void ConfigureServices(IServiceCollection serviceCollection)
+        {
+            serviceCollection.AddScoped<IPhantasmaRestService, PhantasmaRestService>();
+            serviceCollection.AddScoped<IPhantasmaRpcService, PhantasmaRpcService>();
         }
     }
 }
