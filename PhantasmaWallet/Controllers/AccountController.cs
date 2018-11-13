@@ -142,7 +142,10 @@ namespace Phantasma.Wallet.Controllers
 
             var script = ScriptUtils.CallContractScript(chain, "TransferTokens", SessionKeyPair.Address, dest, symbol, bigIntAmount);//todo this should be TokenTransferScript
 
-            var tx = new Blockchain.Transaction(script, 0, 0, DateTime.UtcNow, 0);
+            // TODO this should be a dropdown in the wallet settings!!
+            var nexusName = "simnet";
+
+            var tx = new Blockchain.Transaction(nexusName, script, 0, 0, DateTime.UtcNow, 0);
             tx.Sign(SessionKeyPair);
 
             //todo main
