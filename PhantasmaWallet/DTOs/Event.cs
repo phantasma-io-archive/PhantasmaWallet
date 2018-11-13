@@ -7,10 +7,10 @@ namespace Phantasma.Wallet.DTOs
         [JsonProperty("eventAddress")]
         public string EventAddress { get; set; }
 
-        [JsonProperty("data")]
+        [JsonProperty("eventData")]
         public string Data { get; set; }
 
-        [JsonProperty("evtKind")]
+        [JsonProperty("eventKind")]
         public EvtKind EvtKind { get; set; }
     }
 

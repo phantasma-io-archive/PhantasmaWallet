@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using NeoModules.JsonRpc.Client;
-using Phantasma.Wallet.DTOs;
+﻿using IClient = Phantasma.Wallet.JsonRpc.Client.IClient;
 
 namespace Phantasma.Wallet.RpcClient.API
 {

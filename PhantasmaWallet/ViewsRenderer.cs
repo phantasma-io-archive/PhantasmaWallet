@@ -101,7 +101,7 @@ namespace Phantasma.Wallet
                 var entry = MenuEntries.FirstOrDefault(e => e.Id == "history");
                 entry.Count = txs.Length;
 
-                //Context["chains"] = AccountController.GetChains().Result;
+                Context["chains"] = AccountController.GetChains().Result;
                 Context["transactions"] = txs;
                 Context["holdings"] = AccountController.GetAccountInfo(keyPair.Address.Text).Result; //todo remove .Result
             }

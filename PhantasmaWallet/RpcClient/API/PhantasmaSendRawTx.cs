@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using NeoModules.JsonRpc.Client;
+using IClient = Phantasma.Wallet.JsonRpc.Client.IClient;
+using RpcRequest = Phantasma.Wallet.JsonRpc.Client.RpcRequest;
 
 namespace Phantasma.Wallet.RpcClient.API
 {
-    public class PhantasmaSendRawTx : RpcRequestResponseHandler<string>
+    public class PhantasmaSendRawTx : JsonRpc.Client.RpcRequestResponseHandler<string>
     {
         public PhantasmaSendRawTx(IClient client) : base(client, APIMethods.sendrawtransaction.ToString()) { }
 

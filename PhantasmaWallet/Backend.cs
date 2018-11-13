@@ -1,8 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
-using NeoModules.JsonRpc.Client;
 using Phantasma.Wallet.Interfaces;
-using Phantasma.Wallet.RpcClient;
 using Phantasma.Wallet.Services;
 
 namespace Phantasma.Wallet
@@ -50,7 +48,7 @@ namespace Phantasma.Wallet
         private void ConfigureServices(IServiceCollection serviceCollection)
         {
             serviceCollection.AddScoped<IPhantasmaRestService, PhantasmaRestService>();
-            serviceCollection.AddScoped<IPhantasmaRpcService>(provider => new PhantasmaRpcService(new NeoModules.JsonRpc.Client.RpcClient(new Uri("http://localhost:7077/rpc"))));
+            serviceCollection.AddScoped<IPhantasmaRpcService>(provider => new PhantasmaRpcService(new JsonRpc.Client.RpcClient(new Uri("http://localhost:7077/rpc"))));
         }
     }
 }

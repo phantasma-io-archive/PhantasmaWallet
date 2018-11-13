@@ -1,5 +1,5 @@
 ﻿using System;
-using NeoModules.JsonRpc.Client;
+using IClient = Phantasma.Wallet.JsonRpc.Client.IClient;
 
 namespace Phantasma.Wallet.RpcClient
 {

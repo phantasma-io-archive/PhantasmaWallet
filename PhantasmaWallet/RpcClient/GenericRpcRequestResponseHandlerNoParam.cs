@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using NeoModules.JsonRpc.Client;
+using IClient = Phantasma.Wallet.JsonRpc.Client.IClient;
 
 namespace Phantasma.Wallet.RpcClient
 {
-    public class GenericRpcRequestResponseHandlerNoParam<TResponse> : RpcRequestResponseHandlerNoParam<TResponse>
+    public class GenericRpcRequestResponseHandlerNoParam<TResponse> : JsonRpc.Client.RpcRequestResponseHandlerNoParam<TResponse>
     {
         public GenericRpcRequestResponseHandlerNoParam(IClient client, string methodName) : base(client, methodName)
         {
