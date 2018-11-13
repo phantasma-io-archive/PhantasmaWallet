@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Phantasma.Blockchain;
 using Phantasma.Core.Types;
 using Phantasma.Cryptography;
 using Phantasma.Numerics;
@@ -15,14 +16,23 @@ namespace Phantasma.Wallet.Controllers
     public class AccountController
     {
         private readonly IPhantasmaRestService _phantasmaApi;
+        private readonly IPhantasmaRpcService _phantasmaRpcService;
 
         public AccountController()
         {
             _phantasmaApi = (IPhantasmaRestService)Backend.AppServices.GetService(typeof(IPhantasmaRestService));
+            _phantasmaRpcService = (IPhantasmaRpcService)Backend.AppServices.GetService(typeof(IPhantasmaRpcService));
+        }
+
+
+        public async Task<Chains> GetChains()
+        {
+            return await _phantasmaRpcService.GetChains.SendRequestAsync();
         }
 
         public async Task<Holding[]> GetAccountInfo(string address)
         {
+            var test = await SendRawTx();
             var holdings = new List<Holding>();
             var account = await _phantasmaApi.GetAccount(address);
 
@@ -68,7 +78,7 @@ namespace Phantasma.Wallet.Controllers
             return txs.ToArray();
         }
 
-        public void MakeTransaction(KeyPair source, Address dest, Chain chain, Token token, BigInteger amount)
+        public void MakeTransferTransaction(KeyPair source, Address dest, Chain chain, Token token, BigInteger amount)
         {
             var script = ScriptUtils.CallContractScript(chain, "TransferTokens", source.Address, dest, token.Symbol, amount);
             var tx = new Phantasma.Blockchain.Transaction(script, 0, 0, DateTime.UtcNow, 0);
@@ -126,6 +136,14 @@ namespace Phantasma.Wallet.Controllers
                 }
             }
             return string.Empty;
+        }
+
+        private async Task<string> SendRawTx()
+        {
+            var address = "P4uiees8gkQoTNrTqJH6bHizu4kETQfToxt4SgMEC1kaQ";
+            var symbol = "SOUL";
+            var amount = TokenUtils.ToBigInteger(10m, 8);
+            return await _phantasmaRpcService.SendRawTx.SendRequestAsync("main", "teste");
         }
     }
 }

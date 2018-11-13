@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json;
-using Phantasma.Cryptography;
+﻿using Newtonsoft.Json;
 
 namespace Phantasma.Wallet.DTOs
 {
     public class Event
     {
         [JsonProperty("eventAddress")]
-        public Address EventAddress { get; set; }
+        public string EventAddress { get; set; }
 
         [JsonProperty("data")]
         public string Data { get; set; }
