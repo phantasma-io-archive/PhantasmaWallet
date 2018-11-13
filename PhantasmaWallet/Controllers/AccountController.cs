@@ -29,13 +29,13 @@ namespace Phantasma.Wallet.Controllers
 
         public async Task<Chains> GetChains()
         {
-            var x = await _phantasmaRpcService.GetChains.SendRequestAsync();
-            return Chains.FromJson(x);
+            return await _phantasmaRpcService.GetChains.SendRequestAsync();
         }
 
         public async Task<Holding[]> GetAccountInfo(string address)
         {
             var holdings = new List<Holding>();
+            //var account = await _phantasmaRpcService.GetAccount.SendRequestAsync(address);
             var account = await _phantasmaApi.GetAccount(address);
 
             foreach (var token in account.Tokens)

@@ -100,6 +100,7 @@ namespace Phantasma.Wallet.JsonRpc.Client
                 httpResponseMessage.EnsureSuccessStatusCode();
 
                 var stream = await httpResponseMessage.Content.ReadAsStreamAsync();
+                var test = await httpResponseMessage.Content.ReadAsStringAsync();
                 using (var streamReader = new StreamReader(stream))
                 using (var reader = new JsonTextReader(streamReader))
                 {
@@ -145,6 +146,7 @@ namespace Phantasma.Wallet.JsonRpc.Client
         {
             ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
             var httpClient = _httpClientHandler != null ? new HttpClient(_httpClientHandler) : new HttpClient();
+            
             httpClient.DefaultRequestHeaders.Authorization = _authHeaderValue;
             httpClient.BaseAddress = _baseUrl;
             _httpClientLastCreatedAt = DateTime.UtcNow;
