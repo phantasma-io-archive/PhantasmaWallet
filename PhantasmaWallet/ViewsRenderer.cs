@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
 using LunarLabs.WebServer.HTTP;
 using LunarLabs.WebServer.Templates;
 using Phantasma.Cryptography;
@@ -48,7 +46,6 @@ namespace Phantasma.Wallet
         {
             foreach (var menuEntry in MenuEntries)
             {
-
                 UpdateContext(menuEntry.Id, menuEntry);
             }
         }
@@ -90,59 +87,56 @@ namespace Phantasma.Wallet
             var entry = MenuEntries.FirstOrDefault(e => e.Id == "history");
             entry.Count = txs.Length;
 
-            Context["transactions"] = txs;
-
-            Context["active"] = request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio";
+            UpdateContext("transactions", txs);
+            UpdateContext("active", request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio");
 
             if (request.session.Contains("error"))
             {
                 var error = request.session.Get<string>("error");
-                Context["error"] = error;
+                UpdateContext("error", error);
                 request.session.Remove("error");
             }
         }
 
         void UpdatePortfolioContext(HTTPRequest request)
         {
-            Context["holdings"] = AccountController.GetAccountInfo().Result; //todo remove .Result
-
-            Context["active"] = request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio";
+            UpdateContext("holdings", AccountController.GetAccountInfo().Result);//todo remove .Result
+            UpdateContext("active", request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio");
 
             if (request.session.Contains("error"))
             {
                 var error = request.session.Get<string>("error");
-                Context["error"] = error;
+                UpdateContext("error", error);
                 request.session.Remove("error");
             }
         }
 
         void InitContext(HTTPRequest request)
         {
-            Context["menu"] = MenuEntries;
-
+            UpdateContext("menu", MenuEntries);
             if (HasLogin(request))
             {
-                Context["login"] = true;
+                UpdateContext("login", true);
 
                 var keyPair = request.session.Get<KeyPair>("login");
-                Context["name"] = "Anonymous";
-                Context["address"] = keyPair.Address;
+                UpdateContext("name", "Anonymous");
+                UpdateContext("address", keyPair.Address);
 
                 var txs = AccountController.GetAccountTransactions().Result; //todo remove .Result
                 var entry = MenuEntries.FirstOrDefault(e => e.Id == "history");
                 entry.Count = txs.Length;
 
-                Context["chains"] = AccountController.GetChains().Result;
-                Context["transactions"] = txs;
-                Context["holdings"] = AccountController.GetAccountInfo().Result; //todo remove .Result
+                UpdateContext("chains", AccountController.GetChains().Result);
+                UpdateContext("transactions", txs);
+                UpdateContext("holdings", AccountController.GetAccountInfo().Result);
             }
 
-            Context["active"] = request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio";
+            UpdateContext("active", request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio");
 
             if (request.session.Contains("error"))
             {
                 var error = request.session.Get<string>("error");
-                Context["error"] = error;
+                UpdateContext("error", error);
                 request.session.Remove("error");
             }
 
@@ -210,11 +204,12 @@ namespace Phantasma.Wallet
 
         private string RouteCreateAccount(HTTPRequest request)
         {
-           // InitContext(request);
+            // InitContext(request);
 
             var keyPair = KeyPair.Generate();
-            Context["WIF"] = keyPair.ToWIF();
-            Context["address"] = keyPair.Address;
+            UpdateContext("WIF", keyPair.ToWIF());
+            UpdateContext("address", keyPair.Address);
+
             return RendererView("login");
         }
 

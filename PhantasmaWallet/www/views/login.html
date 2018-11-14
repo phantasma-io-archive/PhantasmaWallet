@@ -1,149 +1,152 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Phantasma Wallet</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/fontawesome.css">
-  <script src="js/jquery.min.js"></script>
-  <script src="js/bootstrap.min.js"></script>  
-  <script src="js/fontawesome.min.js"></script>
-  <script src="js/bootbox.min.js" ></script>  
-  <script src="js/qrcode.min.js"></script>  
-  <script src="js/wallet.js"></script>  
-  <style>
-body{ 
-  background: linear-gradient(to right, #F4F9FC, #DDE8F4);
-  color: black;
-}
+    <title>Phantasma Wallet</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/fontawesome.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/fontawesome.min.js"></script>
+    <script src="js/bootbox.min.js"></script>
+    <script src="js/qrcode.min.js"></script>
+    <script src="js/wallet.js"></script>
+    <style>
+        body {
+            background: linear-gradient(to right, #F4F9FC, #DDE8F4);
+            color: black;
+        }
 
-div.well{
-  height: 300px;
-} 
+        div.well {
+            height: 300px;
+        }
 
-.Absolute-Center {
-  margin: auto;
-  position: absolute;
-  top: 0; left: 0; bottom: 0; right: 0;
-}
+        .Absolute-Center {
+            margin: auto;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+        }
 
-.Absolute-Center.is-Responsive {
-  width: 50%; 
-  height: 75%;
-  min-width: 400px;
-  max-width: 600px;
-  padding: 40px;
-}
+            .Absolute-Center.is-Responsive {
+                width: 50%;
+                height: 75%;
+                min-width: 400px;
+                max-width: 600px;
+                padding: 40px;
+            }
 
-#logo-container{
-  margin: auto;
-  margin-bottom:32px;
-  min-width: 400px;
-  max-width: 600px;
-  height:200px;  
-}	
+        #logo-container {
+            margin: auto;
+            margin-bottom: 32px;
+            min-width: 400px;
+            max-width: 600px;
+            height: 200px;
+        }
 
-#logo-img {
-	width:200px; 
-	height:200px; 
-	margin-left:auto;
-	margin-right:auto;
-	display:block;
-}
+        #logo-img {
+            width: 200px;
+            height: 200px;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
 
-.copy-pad {
-	display:inline-block;
-	width:6px;
-	height:10px;
-}
-
-  </style>
+        .copy-pad {
+            display: inline-block;
+            width: 6px;
+            height: 10px;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container">
-  <div class="row">
-    <div class="Absolute-Center is-Responsive">
-      <div id="logo-container">
-	  <img src="/img/phantasma_logo.png" id="logo-img" />
-	  </div>
-      <div class="col-sm-12">
-	  
-<ul class="nav nav-tabs" id="myTab" role="tablist">
-  <li class="nav-item">
-    <a class="nav-link active" id="login-tab" data-toggle="tab" href="#login" role="tab" aria-controls="login" aria-selected="true">Login</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" id="create-tab" data-toggle="tab" href="#create" role="tab" aria-controls="create" aria-selected="false">Create Account</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" id="offline-tab" data-toggle="tab" href="#offline" role="tab" aria-controls="offline" aria-selected="false">Offline Operation</a>
-  </li>
-</ul>
-<br>
+    <div class="container">
+        <div class="row">
+            <div class="Absolute-Center is-Responsive">
+                <div id="logo-container">
+                    <img src="/img/phantasma_logo.png" id="logo-img" />
+                </div>
+                <div class="col-sm-12">
 
-<div class="tab-content" id="myTabContent">
-  <div class="tab-pane fade active" id="login" role="tabpanel" aria-labelledby="login-tab">
-	<form action="" id="loginForm">
-	  <div class="form-group input-group">
-		<span class="input-group-addon"><i class="fas fa-lock"></i></span>
-		<input class="form-control" type="password" name='private_key' id='private_key' placeholder="private key"/>     
-	  </div>
-	  <div class="form-group">
-		<button type="button" class="btn btn-primary btn-block" onclick="onLogin()">Login</button>
-	  </div>
-	  
-	 {{#if error}}
-	<div class="alert alert-danger">{{error}}</div>
-	{{/if}}
-	  
-	</form>         
-  </div>
-  
-  <div class="tab-pane fade" id="create" role="tabpanel" aria-labelledby="create-tab">  
-	{{#if WIF}}
-	<div class="alert alert-warning" role="alert">
-	  <strong>Warning!</strong><br>If you want to keep this address then you should save this private key in a safe place. It won't be displayed again.
-	</div>
-	
-	<p>Address:<br><em>{{address}}</em></p>
-	<p>Private Key:<br><em>{{WIF}}</em><span class="copy-pad"></span><a href="#" onclick="copyText('{{WIF}}', 'Private key')"><i class="fas fa-copy"></i></a></p>
-	<br>
-	<button type="button" class="btn btn-primary btn-block" onclick="location.reload()">Generate another</button>
-	{{#else}}
-	<button type="button" class="btn btn-primary btn-block" onclick="location.href='/create'">Generate address</button>
-	{{/if}}
-  </div>
-  
-  <div class="tab-pane fade" id="offline" role="tabpanel" aria-labelledby="offline-tab">
-  TODO...
-  </div>
-</div>
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="login-tab" data-toggle="tab" href="#login" role="tab" aria-controls="login" aria-selected="true">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="create-tab" data-toggle="tab" href="#create" role="tab" aria-controls="create" aria-selected="false">Create Account</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="offline-tab" data-toggle="tab" href="#offline" role="tab" aria-controls="offline" aria-selected="false">Offline Operation</a>
+                        </li>
+                    </ul>
+                    <br>
 
-	  
-      </div>  
-    </div>    
-  </div>
-</div>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade active" id="login" role="tabpanel" aria-labelledby="login-tab">
+                            <form action="" id="loginForm" onsubmit="onLogin()">
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon"><i class="fas fa-lock"></i></span>
+                                    <input class="form-control" type="password" name='private_key' id='private_key' placeholder="private key" />
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-primary btn-block" id='login-button' onclick="onLogin()">Login</button>
+                                </div>
 
-<script>
-function onLogin(){
-	var pk = document.getElementById("private_key");
-	if (pk.value.length != 52) {
-		bootbox.alert("Invalid private key, must have 64 characters of length!");	
-		return;
-	}
+                                {{#if error}}
+                                <div class="alert alert-danger">{{error}}</div>
+                                {{/if}}
 
-	window.location.replace("/login/"+pk.value);	
-}
+                            </form>
+                        </div>
 
-{{#if WIF}}
-$('#myTab li:nth-child(2) a').tab('show');
-{{#else}}
-$('#myTab li:first-child a').tab('show');
-{{/if}}
-</script>
+                        <div class="tab-pane fade" id="create" role="tabpanel" aria-labelledby="create-tab">
+                            {{#if WIF}}
+                            <div class="alert alert-warning" role="alert">
+                                <strong>Warning!</strong><br>If you want to keep this address then you should save this private key in a safe place. It won't be displayed again.
+                            </div>
+
+                            <p>Address:<br><em>{{address}}</em></p>
+                            <p>Private Key:<br><em>{{WIF}}</em><span class="copy-pad"></span><a href="#" onclick="copyText('{{WIF}}', 'Private key')"><i class="fas fa-copy"></i></a></p>
+                            <br>
+                            <button type="button" class="btn btn-primary btn-block" onclick="location.reload()">Generate another</button>
+                            {{#else}}
+                            <button type="button" class="btn btn-primary btn-block" onclick="location.href='/create'">Generate address</button>
+                            {{/if}}
+                        </div>
+
+                        <div class="tab-pane fade" id="offline" role="tabpanel" aria-labelledby="offline-tab">
+                            TODO...
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+
+    function onLogin(){
+        var pk = document.getElementById("private_key");
+        if (pk.value.length != 52) {
+            bootbox.alert("Invalid private key, must have 64 characters of length!");
+        } else {
+            window.location.replace("/login/"+pk.value);
+        }
+    }
+
+    {{#if WIF}}
+    $('#myTab li:nth-child(2) a').tab('show');
+    {{#else}}
+    $('#myTab li:first-child a').tab('show');
+    {{/if}}
+    </script>
 
 </body>
 </html>
