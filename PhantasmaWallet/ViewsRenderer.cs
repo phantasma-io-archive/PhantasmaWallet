@@ -209,7 +209,6 @@ namespace Phantasma.Wallet
             {
                 keyPair = KeyPair.FromWIF(key);
                 AccountController.SessionKeyPair = keyPair;//todo move
-                InitContext(request);
             }
             catch (Exception e)
             {
@@ -219,6 +218,7 @@ namespace Phantasma.Wallet
             }
 
             request.session.Set("login", keyPair);
+            InitContext(request);
             return HTTPResponse.Redirect("/portfolio");
         }
 
