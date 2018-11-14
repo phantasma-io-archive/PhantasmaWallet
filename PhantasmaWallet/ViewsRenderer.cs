@@ -126,6 +126,7 @@ namespace Phantasma.Wallet
                     }
                 }
             }
+
             UpdateContext("chainTokens", tokens);
             UpdateContext("availableChains", availableChains);
             if (request.session.Contains("error"))

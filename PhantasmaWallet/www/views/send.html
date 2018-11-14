@@ -1,6 +1,6 @@
 {{#if holdings}}
 
-<h4 id="title">Pick a chain:</h4>
+<!--<h4 id="title">Pick a chain:</h4>
 <div class="form-group">
     <div class="btn-group">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
@@ -14,7 +14,8 @@
             {{/each}}
         </ul>
     </div>
-</div>
+    <span class="input-group-addon" id="">???</span>
+</div>-->
 
 <h4 id="title">Pick an asset:</h4>
 <div class="form-group" id="asset_form">
@@ -87,14 +88,14 @@
 
 <script>
     var form_visible = false;
-    var asset_visible = false;
+    var asset_visible = true;
     var selected_chain = null;
     var selected_name = null;
     var selected_symbol = null;
     var max_amount = 0;
 
     $("#send_form").hide();
-    $("#asset_form").hide();
+    //$("#asset_form").hide();
 
 
     $('#scanModal').on('shown.bs.modal',
@@ -215,7 +216,7 @@
 
 
                     window.location.replace("/sendrawtx?" +
-                        "token= " +
+                        "token=" +
                         symbol +
                         "&amount=" +
                         amount.value +
