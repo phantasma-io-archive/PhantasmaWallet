@@ -12,6 +12,6 @@ namespace Phantasma.Wallet.DTOs
         public string Name { get; set; }
 
         [JsonProperty("chains")]
-        public List<TokenChain> Chains { get; set; }
+        public List<BalanceChain> Chains { get; set; }
     }
 }

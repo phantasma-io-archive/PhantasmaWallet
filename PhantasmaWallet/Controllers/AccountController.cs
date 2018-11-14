@@ -28,7 +28,7 @@ namespace Phantasma.Wallet.Controllers
             return await _phantasmaRpcService.GetChains.SendRequestAsync();
         }
 
-        public async Task<Holding[]> GetAccountInfo(string address = null)
+        public async Task<Holding[]> GetAccountHoldings(string address = null)
         {
             var holdings = new List<Holding>();
             if (address == null) address = SessionKeyPair.Address.Text;
@@ -57,6 +57,13 @@ namespace Phantasma.Wallet.Controllers
             }
 
             return holdings.ToArray();
+        }
+
+        public async Task<List<Token>> GetAccountTokens(string address = null)
+        {
+            if (address == null) address = SessionKeyPair.Address.Text;
+            var account = await _phantasmaApi.GetAccount(address);
+            return account.Tokens;
         }
 
         public async Task<Transaction[]> GetAccountTransactions(string address = null, int amount = 20)
@@ -146,7 +153,9 @@ namespace Phantasma.Wallet.Controllers
             tx.Sign(SessionKeyPair);
 
             //todo main
-            return await _phantasmaRpcService.SendRawTx.SendRequestAsync("main", tx.ToByteArray(true).Encode());
+            var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync("main", tx.ToByteArray(true).Encode());
+            var txHash = txResult?.GetValue("hash");
+            return txHash?.ToString();
         }
     }
 }

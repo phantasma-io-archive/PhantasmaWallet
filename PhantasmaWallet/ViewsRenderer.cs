@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LunarLabs.WebServer.HTTP;
 using LunarLabs.WebServer.Templates;
+using Phantasma.Core;
 using Phantasma.Cryptography;
 using Phantasma.Wallet.Controllers;
 
@@ -100,9 +101,33 @@ namespace Phantasma.Wallet
 
         void UpdatePortfolioContext(HTTPRequest request)
         {
-            UpdateContext("holdings", AccountController.GetAccountInfo().Result);//todo remove .Result
+            UpdateContext("holdings", AccountController.GetAccountHoldings().Result);//todo remove .Result
             UpdateContext("active", request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio");
 
+            if (request.session.Contains("error"))
+            {
+                var error = request.session.Get<string>("error");
+                UpdateContext("error", error);
+                request.session.Remove("error");
+            }
+        }
+
+        void UpdateSendContext(HTTPRequest request)
+        {
+            var tokens = AccountController.GetAccountTokens().Result.ToArray();
+            var availableChains = new List<string>();
+            foreach (var token in tokens)
+            {
+                foreach (var balanceChain in token.Chains)
+                {
+                    if (!availableChains.Contains(balanceChain.ChainName))
+                    {
+                        availableChains.Add(balanceChain.ChainName); //todo add address too
+                    }
+                }
+            }
+            UpdateContext("chainTokens", tokens);
+            UpdateContext("availableChains", availableChains);
             if (request.session.Contains("error"))
             {
                 var error = request.session.Get<string>("error");
@@ -128,7 +153,7 @@ namespace Phantasma.Wallet
 
                 UpdateContext("chains", AccountController.GetChains().Result);
                 UpdateContext("transactions", txs);
-                UpdateContext("holdings", AccountController.GetAccountInfo().Result);
+                UpdateContext("holdings", AccountController.GetAccountHoldings().Result);
             }
 
             UpdateContext("active", request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio");
@@ -139,10 +164,9 @@ namespace Phantasma.Wallet
                 UpdateContext("error", error);
                 request.session.Remove("error");
             }
-
         }
 
-        public void SetupHandlers() //todo separate each call
+        public void SetupHandlers()
         {
             TemplateEngine.Site.Get("/", RouteHome);
 
@@ -204,8 +228,6 @@ namespace Phantasma.Wallet
 
         private string RouteCreateAccount(HTTPRequest request)
         {
-            // InitContext(request);
-
             var keyPair = KeyPair.Generate();
             UpdateContext("WIF", keyPair.ToWIF());
             UpdateContext("address", keyPair.Address);
@@ -235,6 +257,10 @@ namespace Phantasma.Wallet
                 case "history":
                     UpdateHistoryContext(request);
                     break;
+                case "send":
+                    UpdateSendContext(request);
+                    break;
+
                 default: break;
             }
 

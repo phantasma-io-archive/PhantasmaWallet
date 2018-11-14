@@ -2,7 +2,7 @@
 
 namespace Phantasma.Wallet.DTOs
 {
-    public class TokenChain
+    public class BalanceChain
     {
         [JsonProperty("chain")]
         public string ChainName { get; set; }
