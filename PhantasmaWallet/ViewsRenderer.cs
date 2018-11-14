@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using LunarLabs.WebServer.HTTP;
@@ -83,7 +84,39 @@ namespace Phantasma.Wallet
             request.session.Set("error", msg);
         }
 
-        void CreateContext(HTTPRequest request)
+        void UpdateHistoryContext(HTTPRequest request)
+        {
+            var txs = AccountController.GetAccountTransactions().Result; //todo remove .Result
+            var entry = MenuEntries.FirstOrDefault(e => e.Id == "history");
+            entry.Count = txs.Length;
+
+            Context["transactions"] = txs;
+
+            Context["active"] = request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio";
+
+            if (request.session.Contains("error"))
+            {
+                var error = request.session.Get<string>("error");
+                Context["error"] = error;
+                request.session.Remove("error");
+            }
+        }
+
+        void UpdatePortfolioContext(HTTPRequest request)
+        {
+            Context["holdings"] = AccountController.GetAccountInfo().Result; //todo remove .Result
+
+            Context["active"] = request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio";
+
+            if (request.session.Contains("error"))
+            {
+                var error = request.session.Get<string>("error");
+                Context["error"] = error;
+                request.session.Remove("error");
+            }
+        }
+
+        void InitContext(HTTPRequest request)
         {
             Context["menu"] = MenuEntries;
 
@@ -95,15 +128,13 @@ namespace Phantasma.Wallet
                 Context["name"] = "Anonymous";
                 Context["address"] = keyPair.Address;
 
-                AccountController.SessionKeyPair = keyPair;//todo move
-
-                var txs = AccountController.GetAccountTransactions(keyPair.Address.Text, 20).Result; //todo remove .Result
+                var txs = AccountController.GetAccountTransactions().Result; //todo remove .Result
                 var entry = MenuEntries.FirstOrDefault(e => e.Id == "history");
                 entry.Count = txs.Length;
 
                 Context["chains"] = AccountController.GetChains().Result;
                 Context["transactions"] = txs;
-                Context["holdings"] = AccountController.GetAccountInfo(keyPair.Address.Text).Result; //todo remove .Result
+                Context["holdings"] = AccountController.GetAccountInfo().Result; //todo remove .Result
             }
 
             Context["active"] = request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio";
@@ -114,6 +145,7 @@ namespace Phantasma.Wallet
                 Context["error"] = error;
                 request.session.Remove("error");
             }
+
         }
 
         public void SetupHandlers() //todo separate each call
@@ -157,6 +189,8 @@ namespace Phantasma.Wallet
             try
             {
                 keyPair = KeyPair.FromWIF(key);
+                AccountController.SessionKeyPair = keyPair;//todo move
+                InitContext(request);
             }
             catch (Exception e)
             {
@@ -171,13 +205,12 @@ namespace Phantasma.Wallet
 
         private string RouteLogin(HTTPRequest request)
         {
-            //CreateContext(request);
             return RendererView("login");
         }
 
         private string RouteCreateAccount(HTTPRequest request)
         {
-            CreateContext(request);
+           // InitContext(request);
 
             var keyPair = KeyPair.Generate();
             Context["WIF"] = keyPair.ToWIF();
@@ -199,10 +232,17 @@ namespace Phantasma.Wallet
             }
             request.session.Set("active", url);
 
-            if (entry == "portfolio" || entry == "send" || entry == "history")
+            switch (entry)
             {
-                CreateContext(request);
+                case "portfolio":
+                    UpdatePortfolioContext(request);
+                    break;
+                case "history":
+                    UpdateHistoryContext(request);
+                    break;
+                default: break;
             }
+
             return RendererView("layout", entry);
         }
 
@@ -213,9 +253,9 @@ namespace Phantasma.Wallet
                 return HTTPResponse.Redirect("/login");
             }
 
-            var addressTo = request.GetVariable("addressTo");
-            var chainAddress = request.GetVariable("chainAddress");
-            var symbol = request.GetVariable("symbol");
+            var addressTo = request.GetVariable("dest");
+            var chainAddress = "NztsEZP7dtrzRBagogUYVp6mgEFbhjZfvHMVkd2bYWJfE";//request.GetVariable("chainAddress");
+            var symbol = request.GetVariable("token");
             var amount = request.GetVariable("amount");
 
             var result = AccountController.SendRawTx(addressTo, chainAddress, symbol, amount).Result;

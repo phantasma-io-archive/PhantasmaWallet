@@ -4,12 +4,9 @@ using System.Threading.Tasks;
 using Phantasma.Blockchain;
 using Phantasma.Core.Types;
 using Phantasma.Cryptography;
-using Phantasma.Numerics;
-using Phantasma.VM.Utils;
 using Phantasma.Wallet.DTOs;
 using Phantasma.Wallet.Interfaces;
-using Chain = Phantasma.Blockchain.Chain;
-using Token = Phantasma.Blockchain.Tokens.Token;
+using Phantasma.Numerics;
 
 namespace Phantasma.Wallet.Controllers
 {
@@ -26,16 +23,15 @@ namespace Phantasma.Wallet.Controllers
             _phantasmaRpcService = (IPhantasmaRpcService)Backend.AppServices.GetService(typeof(IPhantasmaRpcService));
         }
 
-
         public async Task<Chains> GetChains()
         {
             return await _phantasmaRpcService.GetChains.SendRequestAsync();
         }
 
-        public async Task<Holding[]> GetAccountInfo(string address)
+        public async Task<Holding[]> GetAccountInfo(string address = null)
         {
             var holdings = new List<Holding>();
-            //var account = await _phantasmaRpcService.GetAccount.SendRequestAsync(address);
+            if (address == null) address = SessionKeyPair.Address.Text;
             var account = await _phantasmaApi.GetAccount(address);
 
             foreach (var token in account.Tokens)
@@ -63,9 +59,10 @@ namespace Phantasma.Wallet.Controllers
             return holdings.ToArray();
         }
 
-        public async Task<Transaction[]> GetAccountTransactions(string address, int amount)
+        public async Task<Transaction[]> GetAccountTransactions(string address = null, int amount = 20)
         {
             var txs = new List<Transaction>();
+            if (address == null) address = SessionKeyPair.Address.Text;
             var accountTxs = await _phantasmaApi.GetAccountTxs(address, amount);
             foreach (var tx in accountTxs.Txs)
             {
@@ -149,7 +146,7 @@ namespace Phantasma.Wallet.Controllers
             tx.Sign(SessionKeyPair);
 
             //todo main
-            return await _phantasmaRpcService.SendRawTx.SendRequestAsync("main", tx.ToByteArray(true).Base58CheckEncode());
+            return await _phantasmaRpcService.SendRawTx.SendRequestAsync("main", tx.ToByteArray(true).Encode());
         }
     }
 }
