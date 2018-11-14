@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Phantasma.Blockchain;
+using Phantasma.Blockchain.Contracts;
 using Phantasma.Blockchain.Contracts.Native;
 using Phantasma.Core.Types;
 using Phantasma.Cryptography;
 using Phantasma.Wallet.DTOs;
 using Phantasma.Wallet.Interfaces;
 using Phantasma.Numerics;
+using Event = Phantasma.Wallet.DTOs.Event;
 
 namespace Phantasma.Wallet.Controllers
 {
@@ -78,64 +80,97 @@ namespace Phantasma.Wallet.Controllers
                 {
                     date = new Timestamp(tx.Timestamp),
                     hash = tx.Txid,
-                    description = ""//todo
+                    description = GetTxDescription(tx.Events)
                 });
             }
 
             return txs.ToArray();
         }
 
-        private string GetTxDescription(AccountTx accountTx)
+        private string GetTxDescription(List<Event> events)
         {
             string description = null;
 
-            //Token senderToken = null;
-            //Address senderChain = Address.Null;
-            //Address senderAddress = Address.Null;
+            string senderToken = null;
+            Address senderChain = Address.Null;
+            Address senderAddress = Address.Null;
 
-            //Token receiverToken = null;
-            //Address receiverChain = Address.Null;
-            //Address receiverAddress = Address.Null;
+            string receiverToken = null;
+            Address receiverChain = Address.Null;
+            Address receiverAddress = Address.Null;
 
-            //BigInteger amount = 0;
+            BigInteger amount = 0;
 
-
-            foreach (var evt in accountTx.Events)//todo move this
+            foreach (var evt in events)//todo move this
             {
+                Blockchain.Contracts.Event nativeEvent = null;
+                if (evt.Data != null)
+                {
+                    nativeEvent = new Blockchain.Contracts.Event((EventKind)evt.EvtKind, Address.FromText(evt.EventAddress), Base16.Decode(evt.Data));
+                }
+                else
+                {
+                    nativeEvent = new Blockchain.Contracts.Event((EventKind)evt.EvtKind, Address.FromText(evt.EventAddress));
+                }
+
                 switch (evt.EvtKind)
                 {
                     case EvtKind.TokenSend:
                         {
-
+                            var data = nativeEvent.GetContent<TokenEventData>();
+                            amount = data.value;
+                            senderAddress = nativeEvent.Address;
+                            senderChain = data.chainAddress;
+                            senderToken = (data.symbol);
                         }
                         break;
 
                     case EvtKind.TokenReceive:
                         {
-
+                            var data = nativeEvent.GetContent<TokenEventData>();
+                            amount = data.value;
+                            receiverAddress = nativeEvent.Address;
+                            receiverChain = data.chainAddress;
+                            receiverToken = data.symbol;
                         }
                         break;
 
                     case EvtKind.AddressRegister:
                         {
-
+                            var name = nativeEvent.GetContent<string>();
+                            description = $"{nativeEvent.Address} registered the name '{name}'";
                         }
                         break;
 
                     case EvtKind.FriendAdd:
                         {
-
+                            var address = nativeEvent.GetContent<Address>();
+                            description = $"{nativeEvent.Address} added '{address} to friends.'";
                         }
                         break;
 
                     case EvtKind.FriendRemove:
                         {
-
+                            var address = nativeEvent.GetContent<Address>();
+                            description = $"{nativeEvent.Address} removed '{address} from friends.'";
                         }
                         break;
                 }
             }
-            return string.Empty;
+
+            if (description == null)
+            {
+                if (amount > 0 && senderAddress != Address.Null && receiverAddress != Address.Null && senderToken != null && senderToken == receiverToken)
+                {
+                    var amountDecimal = TokenUtils.ToDecimal(amount, 8);
+                    description = $"{amountDecimal} {senderToken} sent from {senderAddress.Text} to {receiverAddress.Text}";
+                }
+                else
+                {
+                    description = "Custom transaction";
+                }
+            }
+            return description;
         }
 
 
