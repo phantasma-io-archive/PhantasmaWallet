@@ -1,8 +1,16 @@
-<h4>Your public Phantasma address:</h4>
-<p class="text-center"><em>{{address}}</em><span class="copy-pad"></span><a href="#" onclick="copyText('{{address}}', 'Address')"><i class="fas fa-copy"></i></a></p>
-<input type="hidden" value="{{address}}" id="myAddress">
 
-<div id="qrcode" class="qrbox"></div>
+<div class="row" style="padding-top: 50px;">
+
+
+    <div id="qrcode" class="qrbox"></div>
+
+    <h4 style="color: #7C95AB;font-size: 20px; font-weight: 600; text-align: center; padding: 40px;">Your public Phantasma address:</h4>
+
+    <p style="color: #7C95AB;font-size: 20px;  text-align: center; padding: 40px;"><em>{{address}}</em><span class="copy-pad"></span><a href="#" onclick="copyText('{{address}}', 'Address')"><i class="fas fa-copy"></i></a></p>
+
+    <input type="hidden" value="{{address}}" id="myAddress">
+</div>
+
 
 
 <script type="text/javascript">
@@ -10,10 +18,10 @@
 var target = document.getElementById("qrcode");
 var qrcode = new QRCode(target, {
     text: "phantasma://{{address}}",
-    width: 256,
-    height: 256,
+    width: 272,
+    height: 272,
     colorDark : "#000000",
-    colorLight : "#ffffff",
+    colorLight: "#ffffff",
     correctLevel : QRCode.CorrectLevel.H
 });
 

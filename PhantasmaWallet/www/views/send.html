@@ -17,10 +17,10 @@
     <span class="input-group-addon" id="">???</span>
 </div>-->
 
-<h4 id="title">Pick an asset:</h4>
+<h3 class="tab-title" id="title">Pick an asset:</h3>
 <div class="form-group" id="asset_form">
     <div class="btn-group">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <button type="button" class="btn btn-default dropdown-toggle btn-asset-no-border" data-toggle="dropdown">
             Asset <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu">
@@ -32,32 +32,33 @@
         </ul>
     </div>
 </div>
+<br />
 
 <div id="send_form">
-    <div class="form-group input-group">
-        <span class="input-group-addon" id="token-symbol">???</span>
-        <input type="number" class="form-control" placeholder="Amount" id="amount">
+    <div class="form-group input-group borderless-input">
+        <span class="input-group-addon borderless-input" id="token-symbol">???</span>
+        <input type="number" class="form-control borderless-input shadow-box" placeholder="Amount" id="amount">
     </div>
-
     <div class="form-group">
-        <button type="button" class="btn btn-primary pull-right" onclick="pickMax()">Max Amount</button>
+        <button type="button" class="btn btn-primary pull-right btn-normal" onclick="pickMax()">Max Amount</button>
         <br>
     </div>
-
+    <br />
+    <br />
+    <br />
     <div class="form-group">
-        <label for="destination">Destination:</label>
-        <input type="text" class="form-control" placeholder="Destination" id="destination">
+        <input type="text" class="form-control borderless-input shadow-box" placeholder="Destination" id="destination">
     </div>
 
     <div class="form-group">
-        <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#scanModal">Scan</button>
+        <button type="button" class="btn btn-primary pull-right btn-normal" data-toggle="modal" data-target="#scanModal">Scan</button>
         <br>
     </div>
-
+    <br />
     <div class="form-group">
         <br>
         <div class="col-sm-12 text-center">
-            <button type="button" class="btn btn-primary btn-lg" style="width: 200px" onclick="confirmSend()">Send</button>
+            <button type="button" class="btn btn-primary btn-lg btn-normal" style="width: 200px" onclick="confirmSend()">Send</button>
         </div>
         <br>
     </div>

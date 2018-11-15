@@ -24,7 +24,7 @@
     <script src="js/instascan.min.js"></script>
 </head>
 <body>
-    <nav class="navbar navbar-inverse visible-xs">
+    <!--<nav class="navbar navbar-inverse visible-xs">
         <div class="container-fluid">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -45,19 +45,36 @@
                 </ul><br>
             </div>
         </div>
-    </nav>
+    </nav>-->
 
     <div class="container-fluid">
         <div class="row content">
-            <div class="col-sm-4 sidenav hidden-xs">
-                <h2><img src="img/phantasma_logo.png" style="display:inline; height:32px; margin-right:8px;" />Phantasma Wallet</h2>
+            <div class="col-sm-3 sidenav hidden-xs">
+                <br />
+                <div class="media">
+                    <div class="media-left">
+                        <a href="#">
+                            <img src="img/phantasma_logo.png" style="display: inline; height: 34px; margin-top: 10px;" />
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <span class="wallet-title">PHANTASMA</span><br />
+                        <span class="wallet-subtitle">WALLET</span>
+                    </div>
+                </div>
+                <br />
+                <br />
                 <h5><em>{{name}}</em></h5>
                 <h6>{{address}}</h6>
-                <hr />
                 <ul class="nav nav-pills nav-stacked">
                     {{#each menu}}
                     {{#if Enabled}}
-                    <li {{#if url=active}} class="active" {{/if}}><a href="/{{Id}}"><i class="fas {{Icon}} menu-icon"></i>{{Caption}}{{#if Count>0}}&nbsp;<span class="badge">{{Count}}</span>{{/if}}</a></li>
+                    {{#if IsSelected}}
+                    <li {{#if url=active}} class="active shadow-box" {{/if}}><a href="/{{Id}}"><i class="fas {{Icon}} menu-icon"></i>{{Caption}}</a></li>
+
+                    {{#else}}
+                    <li {{#if url=active}} class="active" {{/if}}><a href="/{{Id}}"><i class="fas {{Icon}} menu-icon"></i>{{Caption}}</a></li>
+                    {{/if}}
                     {{/if}}
                     {{/each}}
                 </ul><br>

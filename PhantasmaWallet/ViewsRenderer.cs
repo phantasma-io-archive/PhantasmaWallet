@@ -16,6 +16,7 @@ namespace Phantasma.Wallet
         public string Caption { get; set; }
         public bool Enabled { get; set; }
         public int Count { get; set; }
+        public bool IsSelected { get; set; }
     }
 
     public struct Holding
@@ -249,7 +250,7 @@ namespace Phantasma.Wallet
                 return HTTPResponse.Redirect("/login");
             }
             request.session.Set("active", url);
-
+            UpdateMenus(entry);
             switch (entry)
             {
                 case "portfolio":
@@ -289,16 +290,24 @@ namespace Phantasma.Wallet
 
         private static readonly MenuEntry[] MenuEntries = new MenuEntry[]
         {
-            new MenuEntry(){ Id = "portfolio", Icon = "fa-wallet", Caption = "Portfolio", Enabled = true},
-            new MenuEntry(){ Id = "send", Icon = "fa-paper-plane", Caption = "Send", Enabled = true},
-            new MenuEntry(){ Id = "receive", Icon = "fa-qrcode", Caption = "Receive", Enabled = true},
-            new MenuEntry(){ Id = "history", Icon = "fa-receipt", Caption = "Transactions", Enabled = true},
-            new MenuEntry(){ Id = "storage", Icon = "fa-hdd", Caption = "Storage", Enabled = false},
-            new MenuEntry(){ Id = "exchange", Icon = "fa-chart-bar", Caption = "Exchange", Enabled = false},
-            new MenuEntry(){ Id = "sales", Icon = "fa-certificate", Caption = "Crowdsales", Enabled = false},
-            new MenuEntry(){ Id = "offline", Icon = "fa-file-export", Caption = "Offline Operation", Enabled = true},
-            new MenuEntry(){ Id = "settings", Icon = "fa-cog", Caption = "Settings", Enabled = true},
-            new MenuEntry(){ Id = "logout", Icon = "fa-sign-out-alt", Caption = "Log Out", Enabled = true},
+            new MenuEntry(){ Id = "portfolio", Icon = "fa-wallet", Caption = "Portfolio", Enabled = true, IsSelected = true},
+            new MenuEntry(){ Id = "send", Icon = "fa-paper-plane", Caption = "Send", Enabled = true, IsSelected = false},
+            new MenuEntry(){ Id = "receive", Icon = "fa-qrcode", Caption = "Receive", Enabled = true, IsSelected = false},
+            new MenuEntry(){ Id = "history", Icon = "fa-receipt", Caption = "Transactions", Enabled = true, IsSelected = false},
+            new MenuEntry(){ Id = "storage", Icon = "fa-hdd", Caption = "Storage", Enabled = false, IsSelected = false},
+            new MenuEntry(){ Id = "exchange", Icon = "fa-chart-bar", Caption = "Exchange", Enabled = false, IsSelected = false},
+            new MenuEntry(){ Id = "sales", Icon = "fa-certificate", Caption = "Crowdsales", Enabled = false, IsSelected = false},
+            new MenuEntry(){ Id = "offline", Icon = "fa-file-export", Caption = "Offline Operation", Enabled = true, IsSelected = false},
+            new MenuEntry(){ Id = "settings", Icon = "fa-cog", Caption = "Settings", Enabled = true, IsSelected = false},
+            new MenuEntry(){ Id = "logout", Icon = "fa-sign-out-alt", Caption = "Log Out", Enabled = true, IsSelected = false},
         };
+
+        private void UpdateMenus(string id)
+        {
+            foreach (var menuEntry in MenuEntries)
+            {
+                menuEntry.IsSelected = menuEntry.Id == id;
+            }
+        }
     }
 }

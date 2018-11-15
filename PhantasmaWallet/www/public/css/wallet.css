@@ -26,6 +26,55 @@ body {
     background-size: 100%;
 }
 
+.sidenav {
+    background-color: white;
+    -webkit-box-shadow: 0px 0px 15px -6px rgba(216,216,216,1);
+    -moz-box-shadow: 0px 0px 15px -6px rgba(216,216,216,1);
+    box-shadow: 0px 0px 15px -6px rgba(216,216,216,1);
+}
+
+.wallet-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #06A2DA;
+}
+
+.wallet-subtitle {
+    font-size: 12px;
+    font-weight: 600;
+    color: #7C95AB;
+}
+
+.nav-pills li {
+    margin-bottom: 30px;
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-top: 30px;
+}
+
+.nav-stacked > li + li {
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+.nav-pills > li.active > a /*, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover*/ {
+    color: #7C95AB;
+    text-align: center;
+    background-color: white;
+}
+
+    .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
+        color: #17B0E7;
+        text-align: center;
+        background-color: white;
+    }
+
+.shadow-box {
+    -webkit-box-shadow: 0px 0px 15px -6px rgba(216,216,216,1);
+    -moz-box-shadow: 0px 0px 15px -6px rgba(216,216,216,1);
+    box-shadow: 0px 0px 15px -6px rgba(216,216,216,1);
+}
+
 .menu-icon {
     min-width: 20px;
     margin-right: 2px;
@@ -35,14 +84,39 @@ body {
     min-width: 100px;
 }
 
+.btn-normal {
+    background-color: #17B0E7;
+    font-size: 16px;
+    text-align: center;
+    border: none;
+    border-radius: 0px;
+    color: #FFFFFF;
+}
+
+.btn-asset-no-border {
+    margin-right: 10px;
+    color: #7c95ab;
+    font-size: 20px;
+    border: none;
+    -webkit-box-shadow: 0px 0px 15px -6px rgba(216,216,216,1);
+    -moz-box-shadow: 0px 0px 15px -6px rgba(216,216,216,1);
+    box-shadow: 0px 0px 15px -6px rgba(216,216,216,1);
+}
+
+.btn .caret {
+    margin-left: 20px;
+    color: #7C95AB;
+}
+
 .qrbox {
-    padding: 4px;
+    /*padding: 1px;
     border: 1px solid #e3e3e3;
     border-radius: 4px;
     -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
-    box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
-    width: 264px;
-    height: 264px;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.05);*/
+    width: 272px;
+    height: 272px;
+    align-items: center;
     margin-left: auto;
     margin-right: auto;
     display: block;
@@ -55,11 +129,63 @@ body {
 }
 
 .token-icon {
-    width: 16px;
-    height: 16px;
-    margin-right: 4px;
+    width: 22px;
+    height: 22px;
+    margin-right: 12px;
 }
 
 .well {
     height: 100%;
+    background-color: white;
+    border: none;
+    -webkit-box-shadow: 0px 0px 15px -6px rgba(216,216,216,1);
+    -moz-box-shadow: 0px 0px 15px -6px rgba(216,216,216,1);
+    box-shadow: 0px 0px 15px -6px rgba(216,216,216,1);
 }
+
+.content {
+    padding: 70px;
+}
+
+
+.tab-title {
+    font-size: 25px;
+    padding-bottom: 20px;
+    font-family: "Open Sans";
+    color: #7C95AB;
+}
+
+
+.borderless-input {
+    border-radius: 0px;
+    border: 0px;
+    background-color: transparent;
+}
+
+.table-general {
+    color: #7C95AB;
+    border-spacing: 0 10px;
+    border-collapse: separate;
+}
+
+    .table-general thead tr {
+        border: none;
+        font-size: 16px;
+    }
+
+    .table-general th {
+        font-size: 14px;
+        border: none !important;
+        white-space: normal;
+        width: auto;
+    }
+
+    .table-general tbody tr > td {
+        border: none;
+        font-size: 16px;
+        border-spacing: 20px;
+    }
+
+    .table-general > td {
+        padding-bottom: 20px;
+    }

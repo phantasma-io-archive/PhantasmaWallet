@@ -78,6 +78,7 @@ div.well {
     margin-bottom: 20px;
     font-size: 16px;
 }
+
 .alert-warning {
     font-size: 12px;
 }
@@ -100,6 +101,8 @@ div.well {
 .borderless-input {
     border-radius: 0px;
     border: 0px;
+    color: #7C95AB;
+    font-size: 20px;
 }
 
 .nav-tabs {

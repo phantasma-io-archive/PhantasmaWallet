@@ -28,7 +28,14 @@ namespace Phantasma.Wallet.Controllers
 
         public async Task<Chains> GetChains()
         {
-            return await _phantasmaRpcService.GetChains.SendRequestAsync();
+            try
+            {
+                return await _phantasmaRpcService.GetChains.SendRequestAsync();
+            }
+            catch (Exception ex)
+            {
+                return new Chains();
+            }
         }
 
         public async Task<Holding[]> GetAccountHoldings(string address = null)

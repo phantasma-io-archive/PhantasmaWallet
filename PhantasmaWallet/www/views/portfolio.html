@@ -1,6 +1,6 @@
-<h4>Portfolio</h4>
+<h3 class="tab-title">Portfolio</h3>
 {{#if holdings}}
-<table class="table table-striped">
+<table class="table table-general">
 	<thead>
 	  <tr>
 		<th class="col-6">Name</th>
@@ -10,7 +10,7 @@
 	</thead>
 	<tbody>
 		{{#each holdings}}
-	  <tr>
+	  <tr class="shadow-box">
 		<td class="col-6"><img class="token-icon" src="img/{{icon}}.png"/> {{name}}</td>
 		<td class="col-3">{{amount}} {{symbol}}</td>
         <td class="col-3">${{usd}}</td>
