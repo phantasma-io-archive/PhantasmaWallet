@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="298px" height="161px" viewBox="0 0 298 161" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 43.1 (39012) - http://www.bohemiancoding.com/sketch -->
+    <title>383C9A4A-B41B-402D-88BD-1FA533205535</title>
+    <desc>Created with sketchtool.</desc>
+    <defs>
+        <filter x="-30.3%" y="-150.0%" width="160.7%" height="400.0%" filterUnits="objectBoundingBox" id="filter-1">
+            <feGaussianBlur stdDeviation="20" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Transactions" transform="translate(-70.000000, -391.000000)">
+            <g id="LeftTab" transform="translate(70.000000, 102.000000)">
+                <g id="Receive" transform="translate(50.000000, 289.000000)">
+                    <rect id="Blur-Copy-2" fill="#DFDFDF" opacity="0.5" filter="url(#filter-1)" x="0" y="70" width="197.703673" height="40"></rect>
+                    <rect id="Box-Copy-2" fill="#FFFFFF" x="0" y="70" width="197.703673" height="40" rx="5"></rect>
+                    <g transform="translate(33.000000, 0.000000)" fill="#7C95AB">
+                        <text font-family="OpenSans-Regular, Open Sans" font-size="12" font-weight="normal">
+                            <tspan x="38" y="14">Receive</tspan>
+                        </text>
+                        <g fill-rule="nonzero">
+                            <path d="M0,0 L0,5.249925 L5.249925,5.249925 L5.249925,0 L0,0 Z M3.750075,3.750075 L1.500075,3.750075 L1.500075,1.500075 L3.750075,1.500075 L3.750075,3.750075 Z" id="Shape"></path>
+                            <path d="M0,12.74985 L0,18 L5.249925,18 L5.249925,12.74985 L0,12.74985 Z M3.750075,16.50015 L1.500075,16.50015 L1.500075,14.25015 L3.750075,14.25015 L3.750075,16.50015 Z" id="Shape"></path>
+                            <path d="M12.750075,0 L12.750075,5.249925 L18,5.249925 L18,0 L12.750075,0 Z M16.499925,3.750075 L14.249925,3.750075 L14.249925,1.500075 L16.499925,1.500075 L16.499925,3.750075 Z" id="Shape"></path>
+                            <polygon id="Shape" points="16.499925 6.75 16.499925 11.25 12.750075 11.25 12.750075 12.74985 18 12.74985 18 6.75"></polygon>
+                            <polygon id="Shape" points="12.750075 14.25015 12.750075 18 14.249925 18 14.249925 15.75 16.499925 15.75 16.499925 18 18 18 18 14.25015"></polygon>
+                            <polygon id="Shape" points="6.75 0 6.75 1.500075 9.749925 1.500075 9.749925 5.249925 11.25 5.249925 11.25 0"></polygon>
+                            <polygon id="Shape" points="9.749925 6.75 9.749925 9.75015 6.75 9.75015 6.75 14.25015 9.749925 14.25015 9.749925 18 11.25 18 11.25 12.74985 8.250075 12.74985 8.250075 11.25 11.25 11.25 11.25 8.250075 12.750075 8.250075 12.750075 9.75015 14.249925 9.75015 14.249925 6.75"></polygon>
+                            <rect id="Rectangle-path" x="6.75" y="15.75" width="1.500075" height="2.25"></rect>
+                            <rect id="Rectangle-path" x="2.999925" y="9.75015" width="2.25" height="1.49985"></rect>
+                            <polygon id="Shape" points="6.75 2.999925 6.75 6.75 0 6.75 0 11.25 1.500075 11.25 1.500075 8.250075 8.250075 8.250075 8.250075 2.999925"></polygon>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

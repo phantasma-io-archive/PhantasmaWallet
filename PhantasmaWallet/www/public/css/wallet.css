@@ -1,0 +1,65 @@
+/* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+.row.content {
+    height: 1000px
+}
+
+/* Set gray background color and 100% height */
+.sidenav {
+    background-color: #f1f1f1;
+    height: 100%;
+    padding: 30px;
+    padding-top: 10px;
+}
+
+/* On small screens, set height to 'auto' for the grid */
+@media screen and (max-width: 767px) {
+    .row.content {
+        height: auto;
+    }
+}
+
+body {
+    font-family: Open Sans;
+    background-image: url('../img/background.png');
+    background-repeat: no-repeat;
+    background-color: white;
+    background-size: 100%;
+}
+
+.menu-icon {
+    min-width: 20px;
+    margin-right: 2px;
+}
+
+.btn-primary {
+    min-width: 100px;
+}
+
+.qrbox {
+    padding: 4px;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+    width: 264px;
+    height: 264px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+.copy-pad {
+    display: inline-block;
+    width: 6px;
+    height: 10px;
+}
+
+.token-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+}
+
+.well {
+    height: 100%;
+}
