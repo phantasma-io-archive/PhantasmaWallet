@@ -1,16 +1,18 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Phantasma.Wallet.DTOs
 {
     public class Event
     {
-        [JsonProperty("eventAddress")]
+        [JsonProperty("address")]
         public string EventAddress { get; set; }
 
-        [JsonProperty("eventData")]
+        [JsonProperty("data")]
         public string Data { get; set; }
 
-        [JsonProperty("eventKind")]
+        [JsonProperty("kind")]
+        [JsonConverter(typeof(StringEnumConverter))]
         public EvtKind EvtKind { get; set; }
     }
 
