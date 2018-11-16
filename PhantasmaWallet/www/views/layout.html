@@ -49,12 +49,12 @@
 
     <div class="container-fluid">
         <div class="row content">
-            <div class="col-sm-3 sidenav hidden-xs">
+            <div class="col-sm-2 sidenav hidden-xs">
                 <br />
                 <div class="media">
                     <div class="media-left">
                         <a href="#">
-                            <img src="img/phantasma_logo.png" style="display: inline; height: 34px; margin-top: 10px;" />
+                            <img src="img/phantasma_logo.png" style="display: inline; height: 34px; margin-top: 3px; margin-right: 5px;" />
                         </a>
                     </div>
                     <div class="media-body">
@@ -64,8 +64,8 @@
                 </div>
                 <br />
                 <br />
-                <h5><em>{{name}}</em></h5>
-                <h6>{{address}}</h6>
+                <!--<h5><em>{{name}}</em></h5>
+                <h6>{{address}}</h6>-->
                 <ul class="nav nav-pills nav-stacked">
                     {{#each menu}}
                     {{#if Enabled}}
@@ -80,7 +80,7 @@
                 </ul><br>
             </div>
 
-            <div class="col-sm-8">
+            <div class="col-sm-10">
                 <div class="well">{{#body}}</div>
             </div>
         </div>
