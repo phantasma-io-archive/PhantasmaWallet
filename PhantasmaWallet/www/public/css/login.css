@@ -86,17 +86,17 @@ div.well {
 
 .login-panel {
     padding: 30px;
-    -webkit-box-shadow: 0px 0px 12px 1px rgba(216,216,216,0.25);
-    -moz-box-shadow: 0px 0px 12px 1px rgba(216,216,216,0.25);
-    box-shadow: 0px 0px 12px 1px rgba(216,216,216,0.25);
+    -webkit-box-shadow: 0px 0px 15px 10px rgba(216,216,216,0.25);
+    -moz-box-shadow: 0px 0px 15px 10px rgba(216,216,216,0.25);
+    box-shadow: 0px 0px 15px 10px rgba(216,216,216,0.25);
     background-color: white;
     overflow: hidden;
 }
 
 .shadow-box {
-    -webkit-box-shadow: 0px 0px 15px -6px rgba(216,216,216,1);
-    -moz-box-shadow: 0px 0px 15px -6px rgba(216,216,216,1);
-    box-shadow: 0px 0px 15px -6px rgba(216,216,216,1);
+    -webkit-box-shadow: 0px 0px 15px 10px rgba(216,216,216,0.25);
+    -moz-box-shadow: 0px 0px 15px 10px rgba(216,216,216,0.25);
+    box-shadow: 0px 0px 15px 10px rgba(216,216,216,0.25);
 }
 
 .tab-shadow {
