@@ -181,7 +181,7 @@ namespace Phantasma.Wallet.Controllers
         }
 
 
-        public async Task<string> SendRawTx(string addressTo, string chainAddress, string symbol, string amount)
+        public async Task<string> SendRawTx(string addressTo, string chainName, string chainAddress, string symbol, string amount)
         {
             try
             {
@@ -198,7 +198,7 @@ namespace Phantasma.Wallet.Controllers
                 tx.Sign(SessionKeyPair);
 
                 //todo main
-                var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync("main", tx.ToByteArray(true).Encode());
+                var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(chainName.ToLowerInvariant(), tx.ToByteArray(true).Encode());
                 var txHash = txResult?.GetValue("hash");
                 return txHash?.ToString();
             }

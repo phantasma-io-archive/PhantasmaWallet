@@ -220,7 +220,7 @@ namespace Phantasma.Wallet
 
         private string RouteError(HTTPRequest request)
         {
-            return RendererView("error");
+            return RendererView("layout", "error");
         }
 
         private HTTPResponse RouteLoginWithParams(HTTPRequest request)
@@ -308,7 +308,7 @@ namespace Phantasma.Wallet
             var symbol = request.GetVariable("token");
             var amount = request.GetVariable("amount");
 
-            var result = AccountController.SendRawTx(addressTo, chainAddress, symbol, amount).Result;
+            var result = AccountController.SendRawTx(addressTo, chainName, chainAddress, symbol, amount).Result;
             if (string.IsNullOrEmpty(result))
             {
                 UpdateContext("error", new ErrorContext { ErrorCode = "", ErrorDescription = "Error sending tx." });
