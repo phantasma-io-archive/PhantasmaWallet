@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using LunarLabs.WebServer.HTTP;
 using LunarLabs.WebServer.Templates;
-using Phantasma.Core;
 using Phantasma.Cryptography;
 using Phantasma.Wallet.Controllers;
+using Phantasma.Wallet.DTOs;
 
 namespace Phantasma.Wallet
 {
@@ -34,6 +34,19 @@ namespace Phantasma.Wallet
         public DateTime date;
         public string hash;
         public string description;
+    }
+
+    public class Net
+    {
+        public string Name { get; set; }
+        public int Value { get; set; }
+        public bool IsEnabled { get; set; }
+    }
+
+    public class ErrorContext
+    {
+        public string ErrorDescription { get; set; }
+        public string ErrorCode { get; set; }
     }
 
     public class ViewsRenderer
@@ -141,6 +154,7 @@ namespace Phantasma.Wallet
         void InitContext(HTTPRequest request)
         {
             UpdateContext("menu", MenuEntries);
+            UpdateContext("networks", Networks);
             if (HasLogin(request))
             {
                 UpdateContext("login", true);
@@ -154,6 +168,7 @@ namespace Phantasma.Wallet
                 entry.Count = txs.Length;
 
                 UpdateContext("chains", AccountController.GetChains().Result);
+
                 UpdateContext("transactions", txs);
                 UpdateContext("holdings", AccountController.GetAccountHoldings().Result);
             }
@@ -180,6 +195,8 @@ namespace Phantasma.Wallet
 
             TemplateEngine.Site.Get("/sendrawtx", RouteSendRawTx);
 
+            TemplateEngine.Site.Get("/error", RouteError);
+
             foreach (var entry in MenuEntries)
             {
                 var url = $"/{entry.Id}";
@@ -199,6 +216,11 @@ namespace Phantasma.Wallet
         private HTTPResponse RouteHome(HTTPRequest request)
         {
             return HTTPResponse.Redirect(HasLogin(request) ? "/portfolio" : "/login");
+        }
+
+        private string RouteError(HTTPRequest request)
+        {
+            return RendererView("error");
         }
 
         private HTTPResponse RouteLoginWithParams(HTTPRequest request)
@@ -277,12 +299,21 @@ namespace Phantasma.Wallet
             }
 
             var addressTo = request.GetVariable("dest");
-            var chainAddress = "NztsEZP7dtrzRBagogUYVp6mgEFbhjZfvHMVkd2bYWJfE";//request.GetVariable("chainAddress");
+
+            var chainName = request.GetVariable("chain");
+            var chains = (Chains)Context["chains"];
+            var chainAddress =
+                chains.ChainList.SingleOrDefault(a => a.Name.ToLowerInvariant() == chainName.ToLowerInvariant())?.Address;
+
             var symbol = request.GetVariable("token");
             var amount = request.GetVariable("amount");
 
             var result = AccountController.SendRawTx(addressTo, chainAddress, symbol, amount).Result;
-
+            if (string.IsNullOrEmpty(result))
+            {
+                UpdateContext("error", new ErrorContext { ErrorCode = "", ErrorDescription = "Error sending tx." });
+                return HTTPResponse.Redirect("/error");
+            }
             return HTTPResponse.Redirect("/portfolio");
         }
         #endregion
@@ -300,6 +331,15 @@ namespace Phantasma.Wallet
             new MenuEntry(){ Id = "offline", Icon = "fa-file-export", Caption = "Offline Operation", Enabled = false, IsSelected = false},
             new MenuEntry(){ Id = "settings", Icon = "fa-cog", Caption = "Settings", Enabled = true, IsSelected = false},
             new MenuEntry(){ Id = "logout", Icon = "fa-sign-out-alt", Caption = "Log Out", Enabled = true, IsSelected = false},
+        };
+
+        private static Chains Chains { get; set; }
+
+        private static readonly Net[] Networks = new Net[]
+        {
+            new Net{Name = "simnet", IsEnabled = true, Value = 1},
+            new Net{Name = "testnet", IsEnabled = false, Value = 2},
+            new Net{Name = "mainnet", IsEnabled = false, Value = 3},
         };
 
         private void UpdateMenus(string id)

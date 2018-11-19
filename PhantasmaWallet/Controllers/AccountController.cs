@@ -183,22 +183,29 @@ namespace Phantasma.Wallet.Controllers
 
         public async Task<string> SendRawTx(string addressTo, string chainAddress, string symbol, string amount)
         {
-            var chain = Address.FromText(chainAddress);
-            var dest = Address.FromText(addressTo);
-            var bigIntAmount = TokenUtils.ToBigInteger(decimal.Parse(amount), 8);
+            try
+            {
+                var chain = Address.FromText(chainAddress);
+                var dest = Address.FromText(addressTo);
+                var bigIntAmount = TokenUtils.ToBigInteger(decimal.Parse(amount), 8);
 
-            var script = ScriptUtils.CallContractScript(chain, "TransferTokens", SessionKeyPair.Address, dest, symbol, bigIntAmount);//todo this should be TokenTransferScript
+                var script = ScriptUtils.CallContractScript(chain, "TransferTokens", SessionKeyPair.Address, dest, symbol, bigIntAmount);//todo this should be TokenTransferScript
 
-            // TODO this should be a dropdown in the wallet settings!!
-            var nexusName = "simnet";
+                // TODO this should be a dropdown in the wallet settings!!
+                var nexusName = "simnet";
 
-            var tx = new Blockchain.Transaction(nexusName, script, 0, 0, DateTime.UtcNow, 0);
-            tx.Sign(SessionKeyPair);
+                var tx = new Blockchain.Transaction(nexusName, script, 0, 0, DateTime.UtcNow, 0);
+                tx.Sign(SessionKeyPair);
 
-            //todo main
-            var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync("main", tx.ToByteArray(true).Encode());
-            var txHash = txResult?.GetValue("hash");
-            return txHash?.ToString();
+                //todo main
+                var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync("main", tx.ToByteArray(true).Encode());
+                var txHash = txResult?.GetValue("hash");
+                return txHash?.ToString();
+            }
+            catch (Exception ex)
+            {
+                return "";
+            }
         }
     }
 }

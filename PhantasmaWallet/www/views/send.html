@@ -1,9 +1,9 @@
 {{#if holdings}}
 
-<!--<h4 id="title">Pick a chain:</h4>
 <div class="form-group">
+    <h4 class="tab-title">Pick a chain:</h4>
     <div class="btn-group">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <button type="button" class="btn btn-default dropdown-toggle btn-asset-no-border" data-toggle="dropdown">
             Chain <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu">
@@ -14,11 +14,12 @@
             {{/each}}
         </ul>
     </div>
-    <span class="input-group-addon" id="">???</span>
-</div>-->
+    <span id="selectedChain"></span>
+</div>
 
-<h3 class="tab-title" id="title">Pick an asset:</h3>
+
 <div class="form-group" id="asset_form">
+    <h4 class="tab-title" id="title">Pick an asset:</h4>
     <div class="btn-group">
         <button type="button" class="btn btn-default dropdown-toggle btn-asset-no-border" data-toggle="dropdown">
             Asset <span class="caret"></span>
@@ -33,6 +34,8 @@
     </div>
 </div>
 <br />
+<h2 class="tab-title" id="token-description"></h2>
+<h2 class="tab-title" id="chain-description"></h2>
 
 <div id="send_form">
     <div class="form-group input-group borderless-input">
@@ -89,14 +92,14 @@
 
 <script>
     var form_visible = false;
-    var asset_visible = true;
+    var asset_visible = false;
     var selected_chain = null;
     var selected_name = null;
     var selected_symbol = null;
     var max_amount = 0;
 
     $("#send_form").hide();
-    //$("#asset_form").hide();
+    $("#asset_form").hide();
 
 
     $('#scanModal').on('shown.bs.modal',
@@ -145,6 +148,9 @@
             asset_visible = true;
             $("#asset_form").fadeIn();
         }
+
+        $("#chain-description").html(selected_chain + " chain");
+
     }
 
     function pickToken(name, symbol, icon, amount) {
@@ -152,7 +158,7 @@
         selected_symbol = symbol;
         max_amount = amount;
 
-        $("#title").html("<img src='img/" + icon + ".png' class='token-icon'/>" + name + " transfer");
+        $("#token-description").html("<img src='img/" + icon + ".png' class='token-icon'/>" + name + " transfer");
         $("#token-symbol").html(symbol);
 
         if (!form_visible) {
@@ -222,7 +228,8 @@
                         "&amount=" +
                         amount.value +
                         "&dest=" +
-                        addressTo.value);
+                        addressTo.value +
+                        "&chain=" + selected_chain);
                 }
             }
         });
