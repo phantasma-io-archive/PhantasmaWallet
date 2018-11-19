@@ -9,6 +9,7 @@ using Phantasma.Cryptography;
 using Phantasma.Wallet.DTOs;
 using Phantasma.Wallet.Interfaces;
 using Phantasma.Numerics;
+using LunarLabs.WebServer.Core;
 using Event = Phantasma.Wallet.DTOs.Event;
 
 namespace Phantasma.Wallet.Controllers
@@ -18,8 +19,6 @@ namespace Phantasma.Wallet.Controllers
         private readonly IPhantasmaRestService _phantasmaApi;
         private readonly IPhantasmaRpcService _phantasmaRpcService;
 
-        //todo move this
-        public KeyPair SessionKeyPair;
         public AccountController()
         {
             _phantasmaApi = (IPhantasmaRestService)Backend.AppServices.GetService(typeof(IPhantasmaRestService));
@@ -37,11 +36,15 @@ namespace Phantasma.Wallet.Controllers
                 return new Chains();
             }
         }
+        
+        public async Task<Holding[]> GetAccountHoldings(KeyPair keyPair)
+        {
+            return await GetAccountHoldings(keyPair.Address.Text);
+        }
 
-        public async Task<Holding[]> GetAccountHoldings(string address = null)
+        public async Task<Holding[]> GetAccountHoldings(string address)
         {
             var holdings = new List<Holding>();
-            if (address == null) address = SessionKeyPair.Address.Text;
             var account = await _phantasmaApi.GetAccount(address);
 
             foreach (var token in account.Tokens)
@@ -69,17 +72,25 @@ namespace Phantasma.Wallet.Controllers
             return holdings.ToArray();
         }
 
-        public async Task<List<Token>> GetAccountTokens(string address = null)
+        public async Task<List<Token>> GetAccountTokens(KeyPair keyPair)
         {
-            if (address == null) address = SessionKeyPair.Address.Text;
+            return await GetAccountTokens(keyPair.Address.Text);
+        }
+
+        public async Task<List<Token>> GetAccountTokens(string address)
+        {
             var account = await _phantasmaApi.GetAccount(address);
             return account.Tokens;
         }
 
-        public async Task<Transaction[]> GetAccountTransactions(string address = null, int amount = 20)
+        public async Task<Transaction[]> GetAccountTransactions(KeyPair keyPair, int amount = 20)
+        {
+            return await GetAccountTransactions(keyPair.Address.Text, amount);
+        }
+
+        public async Task<Transaction[]> GetAccountTransactions(string address, int amount = 20)
         {
             var txs = new List<Transaction>();
-            if (address == null) address = SessionKeyPair.Address.Text;
             var accountTxs = await _phantasmaApi.GetAccountTxs(address, amount);
             foreach (var tx in accountTxs.Txs)
             {
@@ -181,7 +192,7 @@ namespace Phantasma.Wallet.Controllers
         }
 
 
-        public async Task<string> SendRawTx(string addressTo, string chainName, string chainAddress, string symbol, string amount)
+        public async Task<string> SendRawTx(KeyPair keyPair, string addressTo, string chainAddress, string symbol, string amount)
         {
             try
             {
@@ -189,13 +200,13 @@ namespace Phantasma.Wallet.Controllers
                 var dest = Address.FromText(addressTo);
                 var bigIntAmount = TokenUtils.ToBigInteger(decimal.Parse(amount), 8);
 
-                var script = ScriptUtils.CallContractScript(chain, "TransferTokens", SessionKeyPair.Address, dest, symbol, bigIntAmount);//todo this should be TokenTransferScript
+                var script = ScriptUtils.CallContractScript(chain, "TransferTokens", keyPair.Address, dest, symbol, bigIntAmount);//todo this should be TokenTransferScript
 
                 // TODO this should be a dropdown in the wallet settings!!
                 var nexusName = "simnet";
 
                 var tx = new Blockchain.Transaction(nexusName, script, 0, 0, DateTime.UtcNow, 0);
-                tx.Sign(SessionKeyPair);
+                tx.Sign(keyPair);
 
                 //todo main
                 var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(chainName.ToLowerInvariant(), tx.ToByteArray(true).Encode());
