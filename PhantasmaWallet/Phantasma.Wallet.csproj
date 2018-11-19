@@ -3,8 +3,9 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <AssemblyName>soulwall</AssemblyName>
+    <AssemblyName>Phantasma.Wallet</AssemblyName>
     <RootNamespace>Phantasma.Wallet</RootNamespace>
+    <PackageId>Phantasma.Wallet</PackageId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
