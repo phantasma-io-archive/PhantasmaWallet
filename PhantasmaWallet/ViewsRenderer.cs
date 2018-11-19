@@ -318,7 +318,7 @@ namespace Phantasma.Wallet
 
             var keyPair = GetLoginKey(request);
 
-            var result = AccountController.SendRawTx(keyPair, addressTo, chainAddress, symbol, amount).Result;
+            var result = AccountController.SendRawTx(keyPair, addressTo, chainName, chainAddress, symbol, amount).Result;
             if (string.IsNullOrEmpty(result))
             {
                 UpdateContext("error", new ErrorContext { ErrorCode = "", ErrorDescription = "Error sending tx." });

@@ -36,7 +36,7 @@ namespace Phantasma.Wallet.Controllers
                 return new Chains();
             }
         }
-        
+
         public async Task<Holding[]> GetAccountHoldings(KeyPair keyPair)
         {
             return await GetAccountHoldings(keyPair.Address.Text);
@@ -192,7 +192,7 @@ namespace Phantasma.Wallet.Controllers
         }
 
 
-        public async Task<string> SendRawTx(KeyPair keyPair, string addressTo, string chainAddress, string symbol, string amount)
+        public async Task<string> SendRawTx(KeyPair keyPair, string addressTo, string chainName, string chainAddress, string symbol, string amount)
         {
             try
             {
