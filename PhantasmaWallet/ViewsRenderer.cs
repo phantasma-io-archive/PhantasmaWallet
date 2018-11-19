@@ -224,8 +224,12 @@ namespace Phantasma.Wallet
             return HTTPResponse.Redirect(HasLogin(request) ? "/portfolio" : "/login");
         }
 
-        private string RouteError(HTTPRequest request)
+        private object RouteError(HTTPRequest request)
         {
+            if (!HasLogin(request))
+            {
+                return HTTPResponse.Redirect("/login");
+            }
             return RendererView("layout", "error");
         }
 
