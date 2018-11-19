@@ -1,5 +1,6 @@
 .vs/
 packages/
+PhantasmaWallet/publish
 PhantasmaWallet/bin
 PhantasmaWallet/obj
 PhantasmaWallet/www/bin
