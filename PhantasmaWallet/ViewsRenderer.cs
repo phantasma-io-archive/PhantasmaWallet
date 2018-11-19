@@ -312,7 +312,7 @@ namespace Phantasma.Wallet
 
             var addressTo = request.GetVariable("dest");
 
-            var chainName = request.GetVariable("chain");
+            var chainName = "main";//request.GetVariable("chain");
             var chains = (Chains)Context["chains"];
             var chainAddress =
                 chains.ChainList.SingleOrDefault(a => a.Name.ToLowerInvariant() == chainName.ToLowerInvariant())?.Address;
