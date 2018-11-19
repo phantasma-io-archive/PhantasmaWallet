@@ -86,6 +86,11 @@ namespace Phantasma.Wallet
             Context[key] = value;
         }
 
+        static KeyPair GetLoginKey(HTTPRequest request)
+        {
+            return request.session.Get<KeyPair>("login");
+        }
+
         static bool HasLogin(HTTPRequest request)
         {
             return request.session.Contains("login");
@@ -96,9 +101,9 @@ namespace Phantasma.Wallet
             request.session.Set("error", msg);
         }
 
-        void UpdateHistoryContext(HTTPRequest request)
+        void UpdateHistoryContext(KeyPair keyPair, HTTPRequest request)
         {
-            var txs = AccountController.GetAccountTransactions().Result; //todo remove .Result
+            var txs = AccountController.GetAccountTransactions(keyPair).Result; //todo remove .Result
             var entry = MenuEntries.FirstOrDefault(e => e.Id == "history");
             entry.Count = txs.Length;
 
@@ -113,9 +118,9 @@ namespace Phantasma.Wallet
             }
         }
 
-        void UpdatePortfolioContext(HTTPRequest request)
+        void UpdatePortfolioContext(KeyPair keyPair, HTTPRequest request)
         {
-            UpdateContext("holdings", AccountController.GetAccountHoldings().Result);//todo remove .Result
+            UpdateContext("holdings", AccountController.GetAccountHoldings(keyPair).Result);//todo remove .Result
             UpdateContext("active", request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio");
 
             if (request.session.Contains("error"))
@@ -126,9 +131,9 @@ namespace Phantasma.Wallet
             }
         }
 
-        void UpdateSendContext(HTTPRequest request)
+        void UpdateSendContext(KeyPair keyPair, HTTPRequest request)
         {
-            var tokens = AccountController.GetAccountTokens().Result.ToArray();
+            var tokens = AccountController.GetAccountTokens(keyPair).Result.ToArray();
             var availableChains = new List<string>();
             foreach (var token in tokens)
             {
@@ -157,20 +162,21 @@ namespace Phantasma.Wallet
             UpdateContext("networks", Networks);
             if (HasLogin(request))
             {
+                var keyPair = GetLoginKey(request);
+
                 UpdateContext("login", true);
 
-                var keyPair = request.session.Get<KeyPair>("login");
                 UpdateContext("name", "Anonymous");
                 UpdateContext("address", keyPair.Address);
 
-                var txs = AccountController.GetAccountTransactions().Result; //todo remove .Result
+                var txs = AccountController.GetAccountTransactions(keyPair).Result; //todo remove .Result
                 var entry = MenuEntries.FirstOrDefault(e => e.Id == "history");
                 entry.Count = txs.Length;
 
                 UpdateContext("chains", AccountController.GetChains().Result);
 
                 UpdateContext("transactions", txs);
-                UpdateContext("holdings", AccountController.GetAccountHoldings().Result);
+                UpdateContext("holdings", AccountController.GetAccountHoldings(keyPair).Result);
             }
 
             UpdateContext("active", request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio");
@@ -231,7 +237,7 @@ namespace Phantasma.Wallet
             try
             {
                 keyPair = KeyPair.FromWIF(key);
-                AccountController.SessionKeyPair = keyPair;//todo move
+                request.session.Set("login", keyPair);
             }
             catch (Exception e)
             {
@@ -240,7 +246,6 @@ namespace Phantasma.Wallet
                 return HTTPResponse.Redirect("/login");
             }
 
-            request.session.Set("login", keyPair);
             InitContext(request);
             return HTTPResponse.Redirect("/portfolio");
         }
@@ -271,18 +276,21 @@ namespace Phantasma.Wallet
             {
                 return HTTPResponse.Redirect("/login");
             }
+
+            var keyPair = GetLoginKey(request);
+
             request.session.Set("active", url);
             UpdateMenus(entry);
             switch (entry)
             {
                 case "portfolio":
-                    UpdatePortfolioContext(request);
+                    UpdatePortfolioContext(keyPair, request);
                     break;
                 case "history":
-                    UpdateHistoryContext(request);
+                    UpdateHistoryContext(keyPair, request);
                     break;
                 case "send":
-                    UpdateSendContext(request);
+                    UpdateSendContext(keyPair, request);
                     break;
 
                 default: break;
@@ -308,7 +316,9 @@ namespace Phantasma.Wallet
             var symbol = request.GetVariable("token");
             var amount = request.GetVariable("amount");
 
-            var result = AccountController.SendRawTx(addressTo, chainAddress, symbol, amount).Result;
+            var keyPair = GetLoginKey(request);
+
+            var result = AccountController.SendRawTx(keyPair, addressTo, chainAddress, symbol, amount).Result;
             if (string.IsNullOrEmpty(result))
             {
                 UpdateContext("error", new ErrorContext { ErrorCode = "", ErrorDescription = "Error sending tx." });
