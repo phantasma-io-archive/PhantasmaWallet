@@ -59,8 +59,9 @@ namespace Phantasma.Wallet.Controllers
                 decimal amount = 0;
                 foreach (var tokenChain in token.Chains)
                 {
-                    if (decimal.TryParse(tokenChain.Balance, out var chainAmount))
+                    if (BigInteger.TryParse(tokenChain.Balance, out var balance))
                     {
+                        decimal chainAmount = TokenUtils.ToDecimal(balance, 8); // TODO fix this later, should use token.Decimals
                         amount += chainAmount;
                     }
                 }
