@@ -23,13 +23,13 @@
                 <div class="col-md-12">
                     <div class="form-group">
                         <label class="control-label tab-title">Select chain</label>
-                        <select class="form-control btn-asset-no-border" id="selectChain" onchange="SelectTokens('{{chainTokensV2}}')">
+                        <select class="form-control btn-asset-no-border" id="selectChain">
                             {{#each availableChains}}
                             <option>{{this}}</option>
                             {{/each}}
                         </select>
                     </div>
-                    <button class="btn btn-primary nextBtn btn-lg pull-right" type="button">Next</button>
+                    <button class="btn btn-primary nextBtn btn-lg pull-right" type="button" onclick="selectTokens()">Next</button>
                 </div>
             </div>
         </div>
@@ -335,23 +335,26 @@
         $('div.setup-panel div a.btn-primary').trigger('click');
     });
 
-    function SelectTokens(tokenArray) {
-        selected_chain = this.value;
-        console.log(this.value);
+    function selectTokens() {
+	
+        selected_chain = $( "#selectChain" ).val();
+        console.log(selected_chain);
+		
+		let tokenBox = $('#select-token-form');	
+		tokenBox.find('option').remove();
+    
+		{{#each chainTokensV2}}
+		if ('{{ChainName}}' === selected_chain) {
+			tokenBox.append($('<option>', {value:'{{Symbol}}', text:'{{Name}} ({{Symbol}})'}));
+		}
+		{{/each}}
+		
+		$('.chain_token').hide();
+		$('.chain_'+selected_chain).show();		
 
-        var form = document.getElementById("select-token-form");
-        $('#select-token-form')
-            .find('option')
-            .remove()
-            .end();
-
-        for (var token in tokenArray) {
-            if (tokenArray.hasOwnProperty(token)) {
-                if (token.ChainName == selected_chain) {
-                    form.append($('<option>', { text: token.Name }));
-                }
-            }
-        }
+		$('#selectChain option:first').prop('selected',true);
+	
+     //.filter('[value=val1]').attr('selected', true)	 
     }
 
     $("#select-token-form").on("change",
