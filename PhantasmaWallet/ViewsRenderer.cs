@@ -103,7 +103,7 @@ namespace Phantasma.Wallet
 
         void UpdateHistoryContext(KeyPair keyPair, HTTPRequest request)
         {
-            var txs = AccountController.GetAccountTransactions(keyPair).Result; //todo remove .Result
+            var txs = AccountController.GetAccountTransactions(keyPair.Address.Text).Result; //todo remove .Result
             var entry = MenuEntries.FirstOrDefault(e => e.Id == "history");
             entry.Count = txs.Length;
 
@@ -120,7 +120,7 @@ namespace Phantasma.Wallet
 
         void UpdatePortfolioContext(KeyPair keyPair, HTTPRequest request)
         {
-            UpdateContext("holdings", AccountController.GetAccountHoldings(keyPair).Result);//todo remove .Result
+            UpdateContext("holdings", AccountController.GetAccountHoldings(keyPair.Address.Text).Result);//todo remove .Result
             UpdateContext("active", request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio");
 
             if (request.session.Contains("error"))
@@ -169,14 +169,14 @@ namespace Phantasma.Wallet
                 UpdateContext("name", "Anonymous");
                 UpdateContext("address", keyPair.Address);
 
-                var txs = AccountController.GetAccountTransactions(keyPair).Result; //todo remove .Result
+                var txs = AccountController.GetAccountTransactions(keyPair.Address.Text).Result; //todo remove .Result
                 var entry = MenuEntries.FirstOrDefault(e => e.Id == "history");
                 entry.Count = txs.Length;
 
                 UpdateContext("chains", AccountController.GetChains().Result);
 
                 UpdateContext("transactions", txs);
-                UpdateContext("holdings", AccountController.GetAccountHoldings(keyPair).Result);
+                UpdateContext("holdings", AccountController.GetAccountHoldings(keyPair.Address.Text).Result);
             }
 
             UpdateContext("active", request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio");

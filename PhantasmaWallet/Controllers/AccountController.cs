@@ -19,6 +19,8 @@ namespace Phantasma.Wallet.Controllers
         private readonly IPhantasmaRestService _phantasmaApi;
         private readonly IPhantasmaRpcService _phantasmaRpcService;
 
+        public List<Token> AccountHoldings { get; set; }
+
         public AccountController()
         {
             _phantasmaApi = (IPhantasmaRestService)Backend.AppServices.GetService(typeof(IPhantasmaRestService));
@@ -37,9 +39,29 @@ namespace Phantasma.Wallet.Controllers
             }
         }
 
-        public async Task<Holding[]> GetAccountHoldings(KeyPair keyPair)
+        public List<SendHolding> GetSendHoldings(string chain) => PrepareSendHoldings(chain);
+
+        private List<SendHolding> PrepareSendHoldings(string chain)
         {
-            return await GetAccountHoldings(keyPair.Address.Text);
+            var holdingList = new List<SendHolding>();
+            if (string.IsNullOrEmpty(chain) || AccountHoldings.Count == 0) return holdingList;
+
+            foreach (var holding in AccountHoldings)
+            {
+                foreach (var balanceChain in holding.Chains)
+                {
+
+                    holdingList.Add(new SendHolding
+                    {
+                        Amount = Decimal.Parse(balanceChain.Balance),
+                        ChainName = balanceChain.ChainName,
+                        Name = holding.Name,
+                        Symbol = holding.Symbol
+                    });
+                }
+            }
+
+            return holdingList;
         }
 
         public async Task<Holding[]> GetAccountHoldings(string address)
@@ -69,6 +91,7 @@ namespace Phantasma.Wallet.Controllers
                 holdings.Add(holding);
             }
 
+            AccountHoldings = account.Tokens;
             return holdings.ToArray();
         }
 
@@ -81,11 +104,6 @@ namespace Phantasma.Wallet.Controllers
         {
             var account = await _phantasmaApi.GetAccount(address);
             return account.Tokens;
-        }
-
-        public async Task<Transaction[]> GetAccountTransactions(KeyPair keyPair, int amount = 20)
-        {
-            return await GetAccountTransactions(keyPair.Address.Text, amount);
         }
 
         public async Task<Transaction[]> GetAccountTransactions(string address, int amount = 20)
