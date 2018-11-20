@@ -59,10 +59,10 @@ namespace Phantasma.Wallet
 
         public void Init()
         {
-            foreach (var menuEntry in MenuEntries)
-            {
-                UpdateContext(menuEntry.Id, menuEntry);
-            }
+            //foreach (var menuEntry in MenuEntries)
+            //{
+            //    UpdateContext(menuEntry.Id, menuEntry);
+            //}
         }
 
         public void SetupControllers()
@@ -76,19 +76,21 @@ namespace Phantasma.Wallet
 
         public Dictionary<string, object> Context { get; set; } = new Dictionary<string, object>();
 
-        public string RendererView(params string[] templateList)
+        public string RendererView(HTTPRequest request, params string[] templateList)
         {
-            return TemplateEngine.Render(Context, templateList);
+            var context = request.session.data.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            return TemplateEngine.Render(context, templateList);
         }
 
-        public void UpdateContext(string key, object value)
+        public void UpdateContext(HTTPRequest request, string key, object value)
         {
-            Context[key] = value;
+            request.session.Set(key, value);
+            Context = request.session.data.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
         static KeyPair GetLoginKey(HTTPRequest request)
         {
-            return request.session.Get<KeyPair>("login");
+            return request.session.Get<KeyPair>("keypair");
         }
 
         static bool HasLogin(HTTPRequest request)
@@ -107,26 +109,26 @@ namespace Phantasma.Wallet
             var entry = MenuEntries.FirstOrDefault(e => e.Id == "history");
             entry.Count = txs.Length;
 
-            UpdateContext("transactions", txs);
-            UpdateContext("active", request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio");
+            UpdateContext(request, "transactions", txs);
+            UpdateContext(request, "active", request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio");
 
             if (request.session.Contains("error"))
             {
                 var error = request.session.Get<string>("error");
-                UpdateContext("error", error);
+                UpdateContext(request, "error", error);
                 request.session.Remove("error");
             }
         }
 
         void UpdatePortfolioContext(KeyPair keyPair, HTTPRequest request)
         {
-            UpdateContext("holdings", AccountController.GetAccountHoldings(keyPair).Result);//todo remove .Result
-            UpdateContext("active", request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio");
+            UpdateContext(request, "holdings", AccountController.GetAccountHoldings(keyPair).Result);//todo remove .Result
+            UpdateContext(request, "active", request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio");
 
             if (request.session.Contains("error"))
             {
                 var error = request.session.Get<string>("error");
-                UpdateContext("error", error);
+                UpdateContext(request, "error", error);
                 request.session.Remove("error");
             }
         }
@@ -146,45 +148,46 @@ namespace Phantasma.Wallet
                 }
             }
 
-            UpdateContext("chainTokens", tokens);
-            UpdateContext("availableChains", availableChains);
+            UpdateContext(request, "chainTokens", tokens);
+            UpdateContext(request, "availableChains", availableChains);
             if (request.session.Contains("error"))
             {
                 var error = request.session.Get<string>("error");
-                UpdateContext("error", error);
+                UpdateContext(request, "error", error);
                 request.session.Remove("error");
             }
         }
 
         void InitContext(HTTPRequest request)
         {
-            UpdateContext("menu", MenuEntries);
-            UpdateContext("networks", Networks);
+            UpdateContext(request, "menu", MenuEntries);
+            UpdateContext(request, "networks", Networks);
+
             if (HasLogin(request))
             {
                 var keyPair = GetLoginKey(request);
 
-                UpdateContext("login", true);
+                UpdateContext(request, "login", true);
 
-                UpdateContext("name", "Anonymous");
-                UpdateContext("address", keyPair.Address);
+                UpdateContext(request, "name", "Anonymous");
+                UpdateContext(request, "address", keyPair.Address);
 
                 var txs = AccountController.GetAccountTransactions(keyPair).Result; //todo remove .Result
                 var entry = MenuEntries.FirstOrDefault(e => e.Id == "history");
                 entry.Count = txs.Length;
 
-                UpdateContext("chains", AccountController.GetChains().Result);
+                UpdateContext(request, "chains", AccountController.GetChains().Result);
 
-                UpdateContext("transactions", txs);
-                UpdateContext("holdings", AccountController.GetAccountHoldings(keyPair).Result);
+                UpdateContext(request, "transactions", txs);
+                UpdateContext(request, "holdings", AccountController.GetAccountHoldings(keyPair).Result);
             }
 
-            UpdateContext("active", request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio");
+            UpdateContext(request, "active", request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio");
 
             if (request.session.Contains("error"))
             {
                 var error = request.session.Get<string>("error");
-                UpdateContext("error", error);
+                UpdateContext(request, "error", error);
                 request.session.Remove("error");
             }
         }
@@ -230,7 +233,7 @@ namespace Phantasma.Wallet
             {
                 return HTTPResponse.Redirect("/login");
             }
-            return RendererView("layout", "error");
+            return RendererView(request, "layout", "error");
         }
 
         private HTTPResponse RouteLoginWithParams(HTTPRequest request)
@@ -241,7 +244,8 @@ namespace Phantasma.Wallet
             try
             {
                 keyPair = KeyPair.FromWIF(key);
-                request.session.Set("login", keyPair);
+                request.session.Set("keypair", keyPair);
+                request.session.Set("login", true);
             }
             catch (Exception e)
             {
@@ -256,16 +260,16 @@ namespace Phantasma.Wallet
 
         private string RouteLogin(HTTPRequest request)
         {
-            return RendererView("login");
+            return RendererView(request, "login");
         }
 
         private string RouteCreateAccount(HTTPRequest request)
         {
             var keyPair = KeyPair.Generate();
-            UpdateContext("WIF", keyPair.ToWIF());
-            UpdateContext("address", keyPair.Address);
+            UpdateContext(request, "WIF", keyPair.ToWIF());
+            UpdateContext(request, "address", keyPair.Address);
 
-            return RendererView("login");
+            return RendererView(request, "login");
         }
 
         private HTTPResponse RouteLogout(HTTPRequest request)
@@ -300,7 +304,7 @@ namespace Phantasma.Wallet
                 default: break;
             }
 
-            return RendererView("layout", entry);
+            return RendererView(request, "layout", entry);
         }
 
         private object RouteSendRawTx(HTTPRequest request)
@@ -325,7 +329,7 @@ namespace Phantasma.Wallet
             var result = AccountController.SendRawTx(keyPair, addressTo, chainName, chainAddress, symbol, amount).Result;
             if (string.IsNullOrEmpty(result))
             {
-                UpdateContext("error", new ErrorContext { ErrorCode = "", ErrorDescription = "Error sending tx." });
+                UpdateContext(request, "error", new ErrorContext { ErrorCode = "", ErrorDescription = "Error sending tx." });
                 return HTTPResponse.Redirect("/error");
             }
             return HTTPResponse.Redirect("/portfolio");
