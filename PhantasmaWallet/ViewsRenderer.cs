@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using LunarLabs.WebServer.HTTP;
 using LunarLabs.WebServer.Templates;
 using Phantasma.Cryptography;
@@ -207,6 +209,8 @@ namespace Phantasma.Wallet
 
             TemplateEngine.Site.Get("/error", RouteError);
 
+            TemplateEngine.Site.Get("/wait/{txhash}", RouteWaitingTx);
+
             foreach (var entry in MenuEntries)
             {
                 var url = $"/{entry.Id}";
@@ -333,7 +337,23 @@ namespace Phantasma.Wallet
                 UpdateContext(request, "error", new ErrorContext { ErrorCode = "", ErrorDescription = "Error sending tx." });
                 return HTTPResponse.Redirect("/error");
             }
-            return HTTPResponse.Redirect("/portfolio");
+            return HTTPResponse.Redirect($"/wait/{result}");
+        }
+
+        private object RouteWaitingTx(HTTPRequest request)
+        {
+            if (!HasLogin(request))
+            {
+                return HTTPResponse.Redirect("/login");
+            }
+            var txHash = request.GetVariable("txhash");
+            RendererView(request, "layout", "waiting");
+
+            while (!AccountController.GetTxConfirmations(txHash).Result.IsConfirmed)
+            {
+                Thread.Sleep(2000);
+            }
+            return RendererView(request, "layout", "history");
         }
         #endregion
 

@@ -38,11 +38,11 @@
                 <div class="col-md-12">
                     <div class="form-group">
                         <label class="control-label tab-title">Select token</label>
-                        <select class="form-control btn-asset-no-border" id="select-token-form"></select>
+                        <select class="form-control btn-asset-no-border" id="select-token-form" onchange="saveToken()"></select>
                     </div>
                     <div class="form-group">
                         <label class="control-label tab-title">Amount</label>
-                        <input maxlength="100" type="number" required="required" class="form-control borderless-input shadow-box" placeholder="Enter amount" />
+                        <input maxlength="100" type="number" required="required" class="form-control borderless-input shadow-box" placeholder="Enter amount" id="amount" />
                     </div>
                     <button class="btn btn-primary nextBtn btn-lg pull-right" type="button">Next</button>
                 </div>
@@ -53,7 +53,7 @@
                 <div class="col-md-12">
                     <div class="form-group">
                         <label class="control-label tab-title">Select destination address</label>
-                        <input maxlength="100" type="text"  required="required" class="form-control borderless-input shadow-box" id="destination" placeholder="Enter destination address" />
+                        <input maxlength="100" type="text" required="required" class="form-control borderless-input shadow-box" id="destination" placeholder="Enter destination address" />
                     </div>
                     <div class="form-group">
                         <button type="button" class="btn btn-primary pull-right btn-normal" data-toggle="modal" data-target="#scanModal">Scan</button>
@@ -68,7 +68,7 @@
                         </select>
                     </div>
 
-                    <button class="btn btn-success btn-lg pull-right" type="submit">Finish!</button>
+                    <button class="btn btn-success btn-lg pull-right" type="submit" onclick="confirmSend()">Send</button>
                 </div>
             </div>
         </div>
@@ -273,10 +273,9 @@
                 if (result) {
                     console.log('This was logged in the callback: ' + result);
 
-                    var symbol = document.getElementById("token-symbol").innerText;
+                    var symbol = selected_symbol;
                     var amount = document.getElementById("amount");
                     var addressTo = document.getElementById("destination");
-
 
                     window.location.replace("/sendrawtx?" +
                         "token=" +
@@ -336,33 +335,30 @@
     });
 
     function selectTokens() {
-	
+
         selected_chain = $( "#selectChain" ).val();
         console.log(selected_chain);
-		
-		let tokenBox = $('#select-token-form');	
+
+		let tokenBox = $('#select-token-form');
 		tokenBox.find('option').remove();
-    
+
 		{{#each chainTokensV2}}
 		if ('{{ChainName}}' === selected_chain) {
 			tokenBox.append($('<option>', {value:'{{Symbol}}', text:'{{Name}} ({{Symbol}})'}));
 		}
 		{{/each}}
-		
+
 		$('.chain_token').hide();
-		$('.chain_'+selected_chain).show();		
+		$('.chain_'+selected_chain).show();
 
 		$('#selectChain option:first').prop('selected',true);
-	
-     //.filter('[value=val1]').attr('selected', true)	 
+
+     //.filter('[value=val1]').attr('selected', true)
     }
 
-    $("#select-token-form").on("change",
-        function (e, clickedIndex, newValue, oldValue) {
-            selected_symbol = this.value;
-            console.log(this.value);
-        });
-
+		function saveToken() {
+            selected_symbol = $( "#select-token-form" ).val();
+        }
 
 </script>
 {{#else}}

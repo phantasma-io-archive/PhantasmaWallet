@@ -234,6 +234,19 @@ namespace Phantasma.Wallet.Controllers
             }
         }
 
+        public async Task<TxConfirmation> GetTxConfirmations(string txHash)
+        {
+            try
+            {
+                var txConfirmation = await _phantasmaRpcService.GetTxConfirmations.SendRequestAsync(txHash);
+                return txConfirmation;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
 
         public static decimal GetCoinRate(uint ticker, string symbol = "USD")
         {

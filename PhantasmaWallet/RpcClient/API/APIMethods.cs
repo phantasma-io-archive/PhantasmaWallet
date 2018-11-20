@@ -5,6 +5,7 @@
         getaccount,
         getaddresstransactions,
         getchains,
+        getconfirmations,
         sendrawtransaction
     }
 }

@@ -12,12 +12,14 @@ namespace Phantasma.Wallet.Services
             GetAccount = new PhantasmaGetAccount(client);
             GetAccountTransactions = new PhantasmaGetAccountTransactions(client);
             GetChains = new PhantasmaGetChains(client);
+            GetTxConfirmations = new PhantasmaGetTxConfirmations(client);
             SendRawTx = new PhantasmaSendRawTx(client);
         }
 
         public PhantasmaGetAccount GetAccount { get; }
         public PhantasmaGetAccountTransactions GetAccountTransactions { get; }
         public PhantasmaGetChains GetChains { get; }
+        public PhantasmaGetTxConfirmations GetTxConfirmations { get; set; }
         public PhantasmaSendRawTx SendRawTx { get; }
     }
 }
