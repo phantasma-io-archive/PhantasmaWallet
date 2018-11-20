@@ -122,7 +122,7 @@ namespace Phantasma.Wallet
 
         void UpdatePortfolioContext(KeyPair keyPair, HTTPRequest request)
         {
-            UpdateContext(request, "holdings", AccountController.GetAccountHoldings(keyPair).Result);//todo remove .Result
+            UpdateContext(request, "holdings", AccountController.GetAccountHoldings(keyPair.Address.Text).Result);//todo remove .Result
             UpdateContext(request, "active", request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio");
 
             if (request.session.Contains("error"))
@@ -135,7 +135,7 @@ namespace Phantasma.Wallet
 
         void UpdateSendContext(KeyPair keyPair, HTTPRequest request)
         {
-            var tokens = AccountController.GetAccountTokens(keyPair).Result.ToArray();
+            var tokens = AccountController.GetAccountTokens(keyPair.Address.Text).Result.ToArray();
             var availableChains = new List<string>();
             foreach (var token in tokens)
             {
@@ -148,6 +148,7 @@ namespace Phantasma.Wallet
                 }
             }
 
+            UpdateContext(request, "chainTokensV2", AccountController.PrepareSendHoldings());
             UpdateContext(request, "chainTokens", tokens);
             UpdateContext(request, "availableChains", availableChains);
             if (request.session.Contains("error"))
@@ -179,7 +180,7 @@ namespace Phantasma.Wallet
                 UpdateContext(request, "chains", AccountController.GetChains().Result);
 
                 UpdateContext(request, "transactions", txs);
-                UpdateContext(request, "holdings", AccountController.GetAccountHoldings(keyPair).Result);
+                UpdateContext(request, "holdings", AccountController.GetAccountHoldings(keyPair.Address.Text).Result);
             }
 
             UpdateContext(request, "active", request.session.Contains("active") ? request.session.Get<string>("active") : "portfolio");

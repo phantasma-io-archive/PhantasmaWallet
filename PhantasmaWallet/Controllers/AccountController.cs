@@ -11,7 +11,6 @@ using Phantasma.Cryptography;
 using Phantasma.Wallet.DTOs;
 using Phantasma.Wallet.Interfaces;
 using Phantasma.Numerics;
-using LunarLabs.WebServer.Core;
 using Event = Phantasma.Wallet.DTOs.Event;
 
 namespace Phantasma.Wallet.Controllers
@@ -41,28 +40,28 @@ namespace Phantasma.Wallet.Controllers
             }
         }
 
-        public List<SendHolding> GetSendHoldings(string chain) => PrepareSendHoldings(chain);
-
-        private List<SendHolding> PrepareSendHoldings(string chain)
+        public List<SendHolding> PrepareSendHoldings()
         {
             var holdingList = new List<SendHolding>();
-            if (string.IsNullOrEmpty(chain) || AccountHoldings.Count == 0) return holdingList;
+            if (AccountHoldings.Count == 0) return holdingList;
 
             foreach (var holding in AccountHoldings)
             {
                 foreach (var balanceChain in holding.Chains)
                 {
-
-                    holdingList.Add(new SendHolding
+                    if (decimal.Parse(balanceChain.Balance) > 0)
                     {
-                        Amount = Decimal.Parse(balanceChain.Balance),
-                        ChainName = balanceChain.ChainName,
-                        Name = holding.Name,
-                        Symbol = holding.Symbol
-                    });
+                        holdingList.Add(new SendHolding
+                        {
+                            Amount = decimal.Parse(balanceChain.Balance),
+                            ChainName = balanceChain.ChainName,
+                            Name = holding.Name,
+                            Symbol = holding.Symbol,
+                            Icon = "phantasma_logo",
+                        });
+                    }
                 }
             }
-
             return holdingList;
         }
 
@@ -96,11 +95,6 @@ namespace Phantasma.Wallet.Controllers
 
             AccountHoldings = account.Tokens;
             return holdings.ToArray();
-        }
-
-        public async Task<List<Token>> GetAccountTokens(KeyPair keyPair)
-        {
-            return await GetAccountTokens(keyPair.Address.Text);
         }
 
         public async Task<List<Token>> GetAccountTokens(string address)

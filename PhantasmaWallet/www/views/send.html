@@ -1,22 +1,5 @@
 {{#if holdings}}
 
-<!--<div class="form-group">
-    <h4 class="tab-title">Pick a chain:</h4>
-    <div class="btn-group">
-        <button type="button" class="btn btn-default dropdown-toggle btn-asset-no-border" data-toggle="dropdown">
-            Chain <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu" role="menu">
-            {{#each availableChains}}
-            <li>
-                <a class="dropdown-item" href="#" onclick="pickChain('{{this}}')">{{this}}</a>
-            </li>
-            {{/each}}
-        </ul>
-    </div>
-    <span id="selectedChain"></span>
-</div>-->
-
 <div class="container">
     <div class="stepwizard">
         <div class="stepwizard-row setup-panel">
@@ -38,9 +21,9 @@
         <div class="row setup-content" id="step-1">
             <div class="col-xs-12">
                 <div class="col-md-12">
-                    <h3>Select chain</h3>
                     <div class="form-group">
-                        <select class="form-control" id="selectChain">
+                        <label class="control-label tab-title">Select chain</label>
+                        <select class="form-control btn-asset-no-border" id="selectChain" onchange="SelectTokens('{{chainTokensV2}}')">
                             {{#each availableChains}}
                             <option>{{this}}</option>
                             {{/each}}
@@ -53,13 +36,13 @@
         <div class="row setup-content" id="step-2">
             <div class="col-xs-12">
                 <div class="col-md-12">
-                    <h3> Select Token</h3>
                     <div class="form-group">
-                        <select class="form-control" id="selectToken">
-                            {{#each holdings}}
-                            <option><a class="dropdown-item" href="#" onclick="pickToken('{{name}}', '{{symbol}}', '{{icon}}', '{{amount}}')"><img class="token-icon" src="img/{{icon}}.png" />{{name}}</a></option>
-                            {{/each}}
-                        </select>
+                        <label class="control-label tab-title">Select token</label>
+                        <select class="form-control btn-asset-no-border" id="select-token-form"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label tab-title">Amount</label>
+                        <input maxlength="100" type="number" required="required" class="form-control borderless-input shadow-box" placeholder="Enter amount" />
                     </div>
                     <button class="btn btn-primary nextBtn btn-lg pull-right" type="button">Next</button>
                 </div>
@@ -68,7 +51,23 @@
         <div class="row setup-content" id="step-3">
             <div class="col-xs-12">
                 <div class="col-md-12">
-                    <h3> Step 3</h3>
+                    <div class="form-group">
+                        <label class="control-label tab-title">Select destination address</label>
+                        <input maxlength="100" type="text"  required="required" class="form-control borderless-input shadow-box" id="destination" placeholder="Enter destination address" />
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary pull-right btn-normal" data-toggle="modal" data-target="#scanModal">Scan</button>
+                        <br>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label tab-title">Select destination chain</label>
+                        <select class="form-control btn-asset-no-border">
+                            {{#each availableChains}}
+                            <option>{{this}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+
                     <button class="btn btn-success btn-lg pull-right" type="submit">Finish!</button>
                 </div>
             </div>
@@ -76,7 +75,7 @@
     </form>
 </div>
 
-<div class="form-group" id="asset_form">
+<!--<div class="form-group" id="asset_form">
     <h4 class="tab-title" id="title">Pick an asset:</h4>
     <div class="btn-group">
         <button type="button" class="btn btn-default dropdown-toggle btn-asset-no-border" data-toggle="dropdown">
@@ -124,8 +123,7 @@
         <br>
     </div>
 
-</div>
-
+</div>-->
 <!-- Modal -->
 <div id="scanModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
@@ -337,9 +335,28 @@
         $('div.setup-panel div a.btn-primary').trigger('click');
     });
 
-    $("#selectChain").on("change",
+    function SelectTokens(tokenArray) {
+        selected_chain = this.value;
+        console.log(this.value);
+
+        var form = document.getElementById("select-token-form");
+        $('#select-token-form')
+            .find('option')
+            .remove()
+            .end();
+
+        for (var token in tokenArray) {
+            if (tokenArray.hasOwnProperty(token)) {
+                if (token.ChainName == selected_chain) {
+                    form.append($('<option>', { text: token.Name }));
+                }
+            }
+        }
+    }
+
+    $("#select-token-form").on("change",
         function (e, clickedIndex, newValue, oldValue) {
-            selected_chain = this.value;
+            selected_symbol = this.value;
             console.log(this.value);
         });
 
