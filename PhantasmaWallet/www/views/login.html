@@ -99,7 +99,15 @@
         } else {
             window.location.replace("/login/"+pk.value);
         }
-    }
+        }
+
+        var input = document.getElementById("private_key");
+        input.addEventListener("keyup", function(event) {
+        event.preventDefault();
+        if (event.keyCode === 13) {
+            document.getElementById("login-button").click();
+        }
+    });
 
     {{#if WIF}}
     $('#myTab li:nth-child(2) a').tab('show');
