@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
+using LunarLabs.Parser.JSON;
 using Phantasma.Blockchain;
 using Phantasma.Blockchain.Contracts;
 using Phantasma.Blockchain.Contracts.Native;
@@ -68,7 +70,7 @@ namespace Phantasma.Wallet.Controllers
         {
             var holdings = new List<Holding>();
             var account = await _phantasmaApi.GetAccount(address);
-
+            var rateUsd = GetCoinRate(2827);
             foreach (var token in account.Tokens)
             {
                 var holding = new Holding
@@ -76,13 +78,14 @@ namespace Phantasma.Wallet.Controllers
                     symbol = token.Symbol,
                     icon = "phantasma_logo",
                     name = token.Name,
-                    rate = 0.1m
+                    rate = rateUsd
                 };
                 decimal amount = 0;
                 foreach (var tokenChain in token.Chains)
                 {
-                    if (decimal.TryParse(tokenChain.Balance, out var chainAmount))
+                    if (BigInteger.TryParse(tokenChain.Balance, out var balance))
                     {
+                        decimal chainAmount = TokenUtils.ToDecimal(balance, 8); // TODO fix this later, should use token.Decimals
                         amount += chainAmount;
                     }
                 }
@@ -234,6 +237,35 @@ namespace Phantasma.Wallet.Controllers
             catch (Exception ex)
             {
                 return "";
+            }
+        }
+
+
+        public static decimal GetCoinRate(uint ticker, string symbol = "USD")
+        {
+            var url = $"https://api.coinmarketcap.com/v2/ticker/{ticker}/?convert={symbol}";
+
+            string json;
+
+            try
+            {
+                using (var wc = new WebClient())
+                {
+                    json = wc.DownloadString(url);
+                }
+
+                var root = JSONReader.ReadFromString(json);
+
+                root = root["data"];
+                var quotes = root["quotes"][symbol];
+
+                var price = quotes.GetDecimal("price");
+
+                return price;
+            }
+            catch
+            {
+                return 0;
             }
         }
     }
