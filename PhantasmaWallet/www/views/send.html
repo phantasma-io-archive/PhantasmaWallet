@@ -40,9 +40,13 @@
                         <label class="control-label tab-title">Select token</label>
                         <select class="form-control btn-asset-no-border" id="select-token-form" onchange="saveToken()"></select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="amountGroup">
                         <label class="control-label tab-title">Amount</label>
                         <input onfocusin="saveToken()" maxlength="100" type="number" required="required" class="form-control borderless-input shadow-box" placeholder="Enter amount" id="amount" />
+                    </div>
+                    <div class="form-group" id="nft-id-group" hidden>
+                        <label class="control-label tab-title">Select token ID</label>
+                        <select class="form-control btn-asset-no-border" id="select-id"></select>
                     </div>
                     <button class="btn btn-primary nextBtn btn-lg pull-right" type="button">Next</button>
                 </div>
@@ -101,9 +105,10 @@
     var form_visible = false;
     var asset_visible = true;
     var selected_chain = null;
-    var selected_destination_chain;
+    var selected_destination_chain = null;
     var selected_name = null;
     var selected_symbol = null;
+    var isFungible = true;
     var max_amount = 0;
 
     $(document).ready(function () {
@@ -255,15 +260,21 @@
                     console.log('This was logged in the callback: ' + result);
 
                     var symbol = selected_symbol;
+                    var selectedDestinationChain = $("#destinationChain").val();
                     var amount = document.getElementById("amount");
                     var addressTo = document.getElementById("destination");
+                    if (isFungible) {
+                        $.post('/sendrawtx?',
+                            { token: symbol, amount: amount.value, dest: addressTo.value, chain: selected_chain , destChain: selectedDestinationChain},
+                            function(returnedData) {
+                                console.log(returnedData);
+                            }).fail(function() {
+                            console.log("error");
+                        });
+                    } else {
 
-                    $.post('/sendrawtx?', { token: symbol, amount: amount.value, dest: addressTo.value, chain: selected_chain},
-                        function(returnedData){
-                            console.log(returnedData);
-                        }).fail(function(){
-                        console.log("error");
-                    });
+                    }
+                    
                 }
             }
         });
@@ -294,18 +305,29 @@
 		function saveToken() {
 		    selected_symbol = $('#select-token-form').val();
 		    {{#each chainTokens}}
-		    if ('{{Symbol}}' === selected_symbol) {
+            if ('{{Symbol}}' === selected_symbol) {
                 max_amount = '{{Amount}}';
-                if ('{{Fungible}}' === 'false') {
-                    replaceInputForDropdown();
+                if ('{{Fungible}}' === 'False') {
+                    isFungible = false;
+                    $('#amountGroup').hide();
+                    $('#nft-id-group').show();
+
+                    let nftIds = $('#select-id');
+
+                    nftIds.find('option').remove();
+                    {{#each Ids}}
+                    nftIds.append($('<option>', { value: '{{this}}', text: '{{this}}' }));
+                    {{/each}}
+                    return;
                 }
-		    }
+                else {
+                            $('#amountGroup').show();
+                            $('#nft-id-group').hide();
+                            isFungible = true;
+                }
+            }
 		    {{/each}}
 		}
-
-        function replaceInputForDropdown() {
-
-        }
 
 </script>
 {{#else}}
