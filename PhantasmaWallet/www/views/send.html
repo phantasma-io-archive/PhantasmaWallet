@@ -42,7 +42,7 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label tab-title">Amount</label>
-                        <input maxlength="100" type="number" required="required" class="form-control borderless-input shadow-box" placeholder="Enter amount" id="amount" />
+                        <input onfocusin="saveToken()" maxlength="100" type="number" required="required" class="form-control borderless-input shadow-box" placeholder="Enter amount" id="amount" />
                     </div>
                     <button class="btn btn-primary nextBtn btn-lg pull-right" type="button">Next</button>
                 </div>
@@ -68,62 +68,13 @@
                         </select>
                     </div>
 
-                    <button class="btn btn-success btn-lg pull-right" type="submit" onclick="confirmSend()">Send</button>
+                    <button class="btn btn-success btn-lg pull-right" onclick="confirmSend()">Send</button>
                 </div>
             </div>
         </div>
     </form>
 </div>
 
-<!--<div class="form-group" id="asset_form">
-    <h4 class="tab-title" id="title">Pick an asset:</h4>
-    <div class="btn-group">
-        <button type="button" class="btn btn-default dropdown-toggle btn-asset-no-border" data-toggle="dropdown">
-            Asset <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu" role="menu">
-            {{#each holdings}}
-            <li>
-                <a class="dropdown-item" href="#" onclick="pickToken('{{name}}', '{{symbol}}', '{{icon}}', '{{amount}}')"><img class="token-icon" src="img/{{icon}}.png" />{{name}}</a>
-            </li>
-            {{/each}}
-        </ul>
-    </div>
-</div>
-<br />
-<h2 class="tab-title" id="token-description"></h2>
-<h2 class="tab-title" id="chain-description"></h2>
-
-<div id="send_form">
-    <div class="form-group input-group borderless-input">
-        <span class="input-group-addon borderless-input" id="token-symbol" style="color: #7C95AB; font-size: 14px;"> ???</span>
-        <input type="number" class="form-control borderless-input token-shadow" placeholder="Amount" id="amount">
-    </div>
-    <div class="form-group">
-        <button type="button" class="btn btn-primary pull-right btn-normal" onclick="pickMax()">Max Amount</button>
-        <br>
-    </div>
-    <br />
-    <br />
-    <br />
-    <div class="form-group">
-        <input type="text" class="form-control borderless-input shadow-box" placeholder="Destination" id="destination">
-    </div>
-
-    <div class="form-group">
-        <button type="button" class="btn btn-primary pull-right btn-normal" data-toggle="modal" data-target="#scanModal">Scan</button>
-        <br>
-    </div>
-    <br />
-    <div class="form-group">
-        <br>
-        <div class="col-sm-12 text-center">
-            <button type="button" class="btn btn-primary btn-lg btn-normal" style="width: 200px" onclick="confirmSend()">Send</button>
-        </div>
-        <br>
-    </div>
-
-</div>-->
 <!-- Modal -->
 <div id="scanModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
@@ -153,142 +104,6 @@
     var selected_name = null;
     var selected_symbol = null;
     var max_amount = 0;
-
-    $("#send_form").hide();
-    //$("#asset_form").hide();
-
-
-    $('#scanModal').on('shown.bs.modal',
-        function(e) {
-            startScan();
-        })
-
-    function stopScan(scanner) {
-        scanner.stop();
-        $('#scanModal').modal('hide');
-    }
-
-    function startScan() {
-        let tag = "phantasma://";
-        let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
-
-        scanner.addListener('scan',
-            function(content) {
-                if (content.startsWith(tag)) {
-                    var address = content.substring(tag.length);
-                    $("#destination").val(address);
-                } else {
-                    bootbox.alert("A QR code was read but does not seem to be a valid Phantasma QR code.");
-                }
-
-                stopScan(scanner);
-            });
-
-        Instascan.Camera.getCameras().then(function(cameras) {
-            if (cameras.length > 0) {
-                scanner.start(cameras[0]);
-            } else {
-                bootbox.alert("Sorry, camera not found.");
-                $('#scanModal').modal('hide');
-
-                return;
-            }
-        }).catch(function(e) {
-            console.error(e);
-        });
-    }
-
-    function pickChain(name) {
-        selected_chain = name;
-        if (!asset_visible) {
-            asset_visible = true;
-            $("#asset_form").fadeIn();
-        }
-
-        $("#chain-description").html(selected_chain + " chain");
-
-    }
-
-    function pickToken(name, symbol, icon, amount) {
-        selected_name = name;
-        selected_symbol = symbol;
-        max_amount = amount;
-
-        $("#token-description").html("<img src='img/" + icon + ".png' class='token-icon'/>" + name + " transfer");
-        $("#token-symbol").html(symbol);
-
-        if (!form_visible) {
-            form_visible = true;
-            $("#send_form").fadeIn();
-        }
-    }
-
-    function pickMax() {
-        $("#amount").val(max_amount);
-    }
-
-    function confirmSend() {
-        let amount = $("#amount").val();
-        let target_address = $("#destination").val();
-
-        if (amount <= 0) {
-            bootbox.alert("Please insert a valid amount!");
-            return;
-        }
-
-        if (target_address.length == 0) {
-            bootbox.alert("Please insert an destination address!");
-            return;
-        }
-
-        if (target_address.length != 45) {
-            bootbox.alert("Please insert a valid destination address!");
-            return;
-        }
-
-        if (target_address == '{{address}}') {
-            bootbox.alert("The destination address cannot be the same as your own address!");
-            return;
-        }
-
-        bootbox.confirm({
-            title: "Transfer confirmation",
-            message: "Send <strong>" +
-                amount +
-                " " +
-                selected_symbol +
-                "</strong> to address <strong>" +
-                target_address +
-                "</strong>?",
-            buttons: {
-                cancel: {
-                    label: '<i class="fa fa-times"></i> Cancel'
-                },
-                confirm: {
-                    label: '<i class="fa fa-check"></i> Confirm'
-                }
-            },
-            callback: function(result) {
-
-                if (result) {
-                    console.log('This was logged in the callback: ' + result);
-
-                    var symbol = selected_symbol;
-                    var amount = document.getElementById("amount");
-                    var addressTo = document.getElementById("destination");
-
-                    window.location.replace("/sendrawtx?" +
-                        "token=" +
-                        symbol +
-                        "&amount=" +
-                        amount.value +
-                        "&dest=" +
-                        addressTo.value +
-                        "&chain=" + selected_chain);
-                }
-            }
-        });
-    }
 
     $(document).ready(function () {
 
@@ -334,6 +149,117 @@
         $('div.setup-panel div a.btn-primary').trigger('click');
     });
 
+
+    $('#scanModal').on('shown.bs.modal',
+        function(e) {
+            startScan();
+        })
+
+    function stopScan(scanner) {
+        scanner.stop();
+        $('#scanModal').modal('hide');
+    }
+
+    function startScan() {
+        let tag = "phantasma://";
+        let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+
+        scanner.addListener('scan',
+            function(content) {
+                if (content.startsWith(tag)) {
+                    var address = content.substring(tag.length);
+                    $("#destination").val(address);
+                } else {
+                    bootbox.alert("A QR code was read but does not seem to be a valid Phantasma QR code.");
+                }
+
+                stopScan(scanner);
+            });
+
+        Instascan.Camera.getCameras().then(function(cameras) {
+            if (cameras.length > 0) {
+                scanner.start(cameras[0]);
+            } else {
+                bootbox.alert("Sorry, camera not found.");
+                $('#scanModal').modal('hide');
+
+                return;
+            }
+        }).catch(function(e) {
+            console.error(e);
+        });
+    }
+
+    function pickMax() {
+        $("#amount").val(max_amount);
+    }
+
+    function confirmSend() {
+        let amount = $("#amount").val();
+        let target_address = $("#destination").val();
+
+        if (amount <= 0) {
+            bootbox.alert("Please insert a valid amount!");
+            return;
+        }
+
+        if (parseInt(amount, 10) > parseInt(max_amount, 10)) {
+            bootbox.alert("Insufficient funds");
+            return;
+        }
+
+        if (target_address.length == 0) {
+            bootbox.alert("Please insert an destination address!");
+            return;
+        }
+
+        if (target_address.length != 45) {
+            bootbox.alert("Please insert a valid destination address!");
+            return;
+        }
+
+        if (target_address == '{{address}}') {
+            bootbox.alert("The destination address cannot be the same as your own address!");
+            return;
+        }
+
+        bootbox.confirm({
+            title: "Transfer confirmation",
+            message: "Send <strong>" +
+                amount +
+                " " +
+                selected_symbol +
+                "</strong> to address <strong>" +
+                target_address +
+                "</strong>?",
+            buttons: {
+                cancel: {
+                    label: '<i class="fa fa-times"></i> Cancel'
+                },
+                confirm: {
+                    label: '<i class="fa fa-check"></i> Confirm'
+                }
+            },
+            callback: function(result) {
+
+                if (result) {
+                    console.log('This was logged in the callback: ' + result);
+
+                    var symbol = selected_symbol;
+                    var amount = document.getElementById("amount");
+                    var addressTo = document.getElementById("destination");
+
+                    $.post('/sendrawtx?', { token: symbol, amount: amount.value, dest: addressTo.value, chain: selected_chain},
+                        function(returnedData){
+                            console.log(returnedData);
+                        }).fail(function(){
+                        console.log("error");
+                    });
+                }
+            }
+        });
+    }
+
     function selectTokens() {
 
         selected_chain = $( "#selectChain" ).val();
@@ -354,11 +280,17 @@
 		$('#selectChain option:first').prop('selected',true);
 
      //.filter('[value=val1]').attr('selected', true)
-    }
+        }
 
 		function saveToken() {
-            selected_symbol = $( "#select-token-form" ).val();
-        }
+		    selected_symbol = $('#select-token-form').val();
+		    {{#each chainTokensV2}}
+		    if ('{{Symbol}}' === selected_symbol) {
+		        max_amount = '{{Amount}}';
+            }
+		    {{/each}}
+		}
+
 
 </script>
 {{#else}}
