@@ -61,7 +61,7 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label tab-title">Select destination chain</label>
-                        <select class="form-control btn-asset-no-border">
+                        <select class="form-control btn-asset-no-border" id="destinationChain">
                             {{#each availableChains}}
                             <option>{{this}}</option>
                             {{/each}}
@@ -101,6 +101,7 @@
     var form_visible = false;
     var asset_visible = true;
     var selected_chain = null;
+    var selected_destination_chain;
     var selected_name = null;
     var selected_symbol = null;
     var max_amount = 0;
@@ -294,11 +295,17 @@
 		    selected_symbol = $('#select-token-form').val();
 		    {{#each chainTokens}}
 		    if ('{{Symbol}}' === selected_symbol) {
-		        max_amount = '{{Amount}}';
-            }
+                max_amount = '{{Amount}}';
+                if ('{{Fungible}}' === 'false') {
+                    replaceInputForDropdown();
+                }
+		    }
 		    {{/each}}
 		}
 
+        function replaceInputForDropdown() {
+
+        }
 
 </script>
 {{#else}}

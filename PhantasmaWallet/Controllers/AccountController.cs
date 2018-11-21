@@ -58,6 +58,8 @@ namespace Phantasma.Wallet.Controllers
                             Name = holding.Name,
                             Symbol = holding.Symbol,
                             Icon = "phantasma_logo",
+                            Fungible = holding.Fungible,
+                            Ids = balanceChain.Ids
                         });
                     }
                 }
