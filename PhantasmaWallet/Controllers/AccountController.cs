@@ -208,11 +208,11 @@ namespace Phantasma.Wallet.Controllers
                 // TODO this should be a dropdown in the wallet settings!!
                 var nexusName = "simnet";
 
-                var tx = new Blockchain.Transaction(nexusName, script, 0, 0, DateTime.UtcNow, 0);
+                var tx = new Blockchain.Transaction(nexusName, chainName, script, 0, 0, DateTime.UtcNow, 0);
                 tx.Sign(keyPair);
 
                 //todo main
-                var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(chainName.ToLowerInvariant(), tx.ToByteArray(true).Encode());
+                var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(tx.ToByteArray(true).Encode());
                 var txHash = txResult?.GetValue("hash");
                 return txHash?.ToString();
             }

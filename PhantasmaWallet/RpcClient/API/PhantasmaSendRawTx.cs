@@ -10,11 +10,10 @@ namespace Phantasma.Wallet.RpcClient.API
     {
         public PhantasmaSendRawTx(IClient client) : base(client, APIMethods.sendrawtransaction.ToString()) { }
 
-        public Task<JObject> SendRequestAsync(string chain, string signedTx, object id = null)
+        public Task<JObject> SendRequestAsync(string signedTx, object id = null)
         {
-            if (chain == null) throw new ArgumentNullException(nameof(chain));
             if (signedTx == null) throw new ArgumentNullException(nameof(signedTx));
-            return SendRequestAsync(id, chain, signedTx);
+            return SendRequestAsync(id, signedTx);
         }
 
         public RpcRequest BuildRequest(string address, object id = null)
