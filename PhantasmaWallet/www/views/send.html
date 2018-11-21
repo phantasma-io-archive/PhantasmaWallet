@@ -134,6 +134,15 @@
                 curInputs = curStep.find("input[type='text'],input[type='url']"),
                 isValid = true;
 
+            if (curStepBtn === "step-2") {
+                saveToken();
+                let amount = $("#amount").val();
+                if (parseInt(amount, 10) > parseInt(max_amount, 10)) {
+                    bootbox.alert("Insufficient funds");
+                    return;
+                }
+            }
+
             $(".form-group").removeClass("has-error");
             for(var i=0; i<curInputs.length; i++){
                 if (!curInputs[i].validity.valid){
@@ -148,7 +157,6 @@
 
         $('div.setup-panel div a.btn-primary').trigger('click');
     });
-
 
     $('#scanModal').on('shown.bs.modal',
         function(e) {
