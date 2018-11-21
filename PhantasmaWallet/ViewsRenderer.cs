@@ -28,7 +28,9 @@ namespace Phantasma.Wallet
         public string icon;
         public decimal amount;
         public decimal rate;
-        public decimal usd => amount * rate;
+        public decimal usd => (amount * rate);
+        public string amountFormated => amount.ToString("0.####");
+        public string usdFormated => usd.ToString("0.####");
     }
 
     public struct Transaction
