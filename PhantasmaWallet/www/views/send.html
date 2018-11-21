@@ -268,7 +268,7 @@
 		let tokenBox = $('#select-token-form');
 		tokenBox.find('option').remove();
 
-		{{#each chainTokensV2}}
+		{{#each chainTokens}}
 		if ('{{ChainName}}' === selected_chain) {
 			tokenBox.append($('<option>', {value:'{{Symbol}}', text:'{{Name}} ({{Symbol}})'}));
 		}
@@ -284,7 +284,7 @@
 
 		function saveToken() {
 		    selected_symbol = $('#select-token-form').val();
-		    {{#each chainTokensV2}}
+		    {{#each chainTokens}}
 		    if ('{{Symbol}}' === selected_symbol) {
 		        max_amount = '{{Amount}}';
             }

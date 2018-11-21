@@ -150,8 +150,7 @@ namespace Phantasma.Wallet
                 }
             }
 
-            UpdateContext(request, "chainTokensV2", AccountController.PrepareSendHoldings());
-            UpdateContext(request, "chainTokens", tokens);
+            UpdateContext(request, "chainTokens", AccountController.PrepareSendHoldings());
             UpdateContext(request, "availableChains", availableChains);
             if (request.session.Contains("error"))
             {
