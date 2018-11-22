@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using LunarLabs.Parser.JSON;
@@ -21,6 +22,7 @@ namespace Phantasma.Wallet.Controllers
         private readonly IPhantasmaRpcService _phantasmaRpcService;
 
         public List<Token> AccountHoldings { get; set; }
+        public Chains PhantasmaChains { get; set; }
 
         public AccountController()
         {
@@ -32,7 +34,8 @@ namespace Phantasma.Wallet.Controllers
         {
             try
             {
-                return await _phantasmaRpcService.GetChains.SendRequestAsync();
+                PhantasmaChains = await _phantasmaRpcService.GetChains.SendRequestAsync();
+                return PhantasmaChains;
             }
             catch (Exception ex)
             {
@@ -197,8 +200,32 @@ namespace Phantasma.Wallet.Controllers
             {
                 if (amount > 0 && senderAddress != Address.Null && receiverAddress != Address.Null && senderToken != null && senderToken == receiverToken)
                 {
-                    var amountDecimal = TokenUtils.ToDecimal(amount, 8);
+                    decimal amountDecimal;
+                    //todo out hack
+                    if (senderToken == "NACHO")
+                    {
+                        amountDecimal = TokenUtils.ToDecimal(amount, 0);
+                    }
+                    else
+                    {
+                        amountDecimal = TokenUtils.ToDecimal(amount, 8);
+                    }
                     description = $"{amountDecimal} {senderToken} sent from {senderAddress.Text} to {receiverAddress.Text}";
+                }
+                else if (amount > 0 && senderAddress == Address.Null && receiverAddress != Address.Null &&
+                         senderToken == null && receiverToken != null)
+                {
+                    decimal amountDecimal;
+                    //todo out hack
+                    if (receiverToken == "NACHO")
+                    {
+                        amountDecimal = TokenUtils.ToDecimal(amount, 0);
+                    }
+                    else
+                    {
+                        amountDecimal = TokenUtils.ToDecimal(amount, 8);
+                    }
+                    description = $"{amountDecimal} {receiverToken} sent from {senderAddress.Text} to {receiverAddress.Text}";
                 }
                 else
                 {
@@ -208,24 +235,36 @@ namespace Phantasma.Wallet.Controllers
             return description;
         }
 
-
-        public async Task<string> SendRawTx(KeyPair keyPair, string addressTo, string chainName, string chainAddress, string symbol, string amount)
+        public async Task<string> TransferTokens(bool isFungible, KeyPair keyPair, string addressTo, string chainName, string chainAddress, string destinationChainAddress, string symbol, string amountId)
         {
             try
             {
                 var chain = Address.FromText(chainAddress);
-                var dest = Address.FromText(addressTo);
-                var bigIntAmount = TokenUtils.ToBigInteger(decimal.Parse(amount), 8);
+                var destinationChain = Address.FromText(destinationChainAddress);
+                var destinationAddress = Address.FromText(addressTo);
+                byte[] script;
+                int decimals = AccountHoldings.SingleOrDefault(t => t.Symbol == symbol).Decimals;
+                var bigIntAmount = TokenUtils.ToBigInteger(decimal.Parse(amountId), decimals);
 
-                var script = ScriptUtils.CallContractScript(chain, "TransferTokens", keyPair.Address, dest, symbol, bigIntAmount);//todo this should be TokenTransferScript
+                if (chain.Equals(destinationChain)) //same chain transfer
+                {
+                    script = isFungible ? ScriptUtils.TokenTransferScript(chain, symbol, keyPair.Address, destinationAddress, bigIntAmount) : ScriptUtils.NfTokenTransferScript(chain, symbol, keyPair.Address, destinationAddress, bigIntAmount);
+                }
+                else // cross-chain transfer
+                {
+                    script = isFungible
+                        ? ScriptUtils.CrossTokenTransferScript(chain, destinationChain, symbol, keyPair.Address,
+                            destinationAddress, bigIntAmount)
+                        : ScriptUtils.CrossNfTokenTransferScript(chain, destinationChain, symbol, keyPair.Address,
+                            destinationAddress, bigIntAmount);
+                }
 
                 // TODO this should be a dropdown in the wallet settings!!
                 var nexusName = "simnet";
 
-                var tx = new Blockchain.Transaction(nexusName, chainName, script, 0, 0, DateTime.UtcNow, 0);
+                var tx = new Blockchain.Transaction(nexusName, chainName, script, 0, 0, DateTime.UtcNow + TimeSpan.FromHours(1), 0);
                 tx.Sign(keyPair);
 
-                //todo main
                 var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(tx.ToByteArray(true).Encode());
                 var txHash = txResult?.GetValue("hash");
                 return txHash?.ToString();

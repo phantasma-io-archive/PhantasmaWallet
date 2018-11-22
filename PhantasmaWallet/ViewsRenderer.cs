@@ -118,7 +118,7 @@ namespace Phantasma.Wallet
 
             if (request.session.Contains("error"))
             {
-                var error = request.session.Get<string>("error");
+                var error = request.session.Get<ErrorContext>("error");
                 UpdateContext(request, "error", error);
                 request.session.Remove("error");
             }
@@ -131,7 +131,7 @@ namespace Phantasma.Wallet
 
             if (request.session.Contains("error"))
             {
-                var error = request.session.Get<string>("error");
+                var error = request.session.Get<ErrorContext>("error");
                 UpdateContext(request, "error", error);
                 request.session.Remove("error");
             }
@@ -156,7 +156,7 @@ namespace Phantasma.Wallet
             UpdateContext(request, "availableChains", availableChains);
             if (request.session.Contains("error"))
             {
-                var error = request.session.Get<string>("error");
+                var error = request.session.Get<ErrorContext>("error");
                 UpdateContext(request, "error", error);
                 request.session.Remove("error");
             }
@@ -206,7 +206,7 @@ namespace Phantasma.Wallet
 
             TemplateEngine.Site.Get("/create", RouteCreateAccount);
 
-            TemplateEngine.Site.Get("/sendrawtx", RouteSendRawTx);
+            TemplateEngine.Site.Post("/sendrawtx", RouteSendRawTx);
 
             TemplateEngine.Site.Get("/error", RouteError);
 
@@ -320,25 +320,32 @@ namespace Phantasma.Wallet
                 return HTTPResponse.Redirect("/login");
             }
 
+            var isFungible = bool.Parse(request.GetVariable("fungible"));
+            string amountOrId = null;
             var addressTo = request.GetVariable("dest");
 
-            var chainName = "main";//request.GetVariable("chain");
+            var chainName = request.GetVariable("chain");
+            var destinationChain = request.GetVariable("destChain");
+
+            // get chain addresses
             var chains = (Chains)Context["chains"];
             var chainAddress =
                 chains.ChainList.SingleOrDefault(a => a.Name.ToLowerInvariant() == chainName.ToLowerInvariant())?.Address;
+            var destinationChainAddress = chains.ChainList.SingleOrDefault(a => a.Name.ToLowerInvariant() == destinationChain.ToLowerInvariant())?.Address;
 
             var symbol = request.GetVariable("token");
-            var amount = request.GetVariable("amount");
+            amountOrId = request.GetVariable(isFungible ? "amount" : "id");
 
             var keyPair = GetLoginKey(request);
+            var result = AccountController.TransferTokens(isFungible, keyPair, addressTo, chainName, chainAddress, destinationChainAddress, symbol, amountOrId).Result;
 
-            var result = AccountController.SendRawTx(keyPair, addressTo, chainName, chainAddress, symbol, amount).Result;
             if (string.IsNullOrEmpty(result))
             {
                 UpdateContext(request, "error", new ErrorContext { ErrorCode = "", ErrorDescription = "Error sending tx." });
                 return HTTPResponse.Redirect("/error");
             }
-            return HTTPResponse.Redirect($"/wait/{result}");
+            //return HTTPResponse.Redirect($"/wait/{result}");
+            return HTTPResponse.Redirect($"/history");
         }
 
         private object RouteWaitingTx(HTTPRequest request)

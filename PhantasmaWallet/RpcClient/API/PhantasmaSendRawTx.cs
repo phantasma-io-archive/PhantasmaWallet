@@ -16,10 +16,10 @@ namespace Phantasma.Wallet.RpcClient.API
             return SendRequestAsync(id, signedTx);
         }
 
-        public RpcRequest BuildRequest(string address, object id = null)
+        public RpcRequest BuildRequest(string signedTx, object id = null)
         {
-            if (address == null) throw new ArgumentNullException(nameof(address));
-            return BuildRequest(id, address);
+            if (signedTx == null) throw new ArgumentNullException(nameof(signedTx));
+            return BuildRequest(id, signedTx);
         }
     }
 }

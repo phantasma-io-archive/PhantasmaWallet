@@ -17,7 +17,7 @@
             </div>
         </div>
     </div>
-    <form role="form">
+    <form role="form" onsubmit="validateForm()">
         <div class="row setup-content" id="step-1">
             <div class="col-xs-12">
                 <div class="col-md-12">
@@ -66,13 +66,13 @@
                     <div class="form-group">
                         <label class="control-label tab-title">Select destination chain</label>
                         <select class="form-control btn-asset-no-border" id="destinationChain">
-                            {{#each availableChains}}
-                            <option>{{this}}</option>
+                            {{#each chains.ChainList}}
+                            <option>{{Name}}</option>
                             {{/each}}
                         </select>
                     </div>
 
-                    <button class="btn btn-success btn-lg pull-right" onclick="confirmSend()">Send</button>
+                    <button class="btn btn-success btn-lg pull-right" type="button" onclick="confirmSend()">Send</button>
                 </div>
             </div>
         </div>
@@ -102,14 +102,16 @@
 </div>
 
 <script>
-    var form_visible = false;
-    var asset_visible = true;
     var selected_chain = null;
-    var selected_destination_chain = null;
-    var selected_name = null;
     var selected_symbol = null;
     var isFungible = true;
     var max_amount = 0;
+
+
+    function validateForm(e)
+    {
+        e.preventDefault();
+    }
 
     $(document).ready(function () {
 
@@ -264,17 +266,28 @@
                     var amount = document.getElementById("amount");
                     var addressTo = document.getElementById("destination");
                     if (isFungible) {
-                        $.post('/sendrawtx?',
-                            { token: symbol, amount: amount.value, dest: addressTo.value, chain: selected_chain , destChain: selectedDestinationChain},
+                        $.post('/sendrawtx',
+                            {
+                                fungible: true, token: symbol, amount: amount.value, dest: addressTo.value, chain: selected_chain , destChain: selectedDestinationChain
+                            },
                             function(returnedData) {
                                 console.log(returnedData);
                             }).fail(function() {
                             console.log("error");
-                        });
+                            });
                     } else {
-
+                        var nftId = $("#select-id").val();
+                        $.post('/sendrawtx',
+                            {
+                                fungible: false, token: symbol, id: nftId, dest: addressTo.value, chain: selected_chain , destChain: selectedDestinationChain
+                            },
+                            function(returnedData) {
+                                console.log(returnedData);
+                            }).fail(function() {
+                            console.log("error nft");
+                        });
                     }
-                    
+
                 }
             }
         });
@@ -299,7 +312,6 @@
 
 		$('#selectChain option:first').prop('selected',true);
 
-     //.filter('[value=val1]').attr('selected', true)
         }
 
 		function saveToken() {
