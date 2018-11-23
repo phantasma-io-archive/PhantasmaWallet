@@ -20,7 +20,6 @@ namespace Phantasma.Wallet
             var site = HostBuilder.CreateSite(args, "public");
             var viewsRenderer = new ViewsRenderer(site, "views");
 
-            viewsRenderer.Init();
             viewsRenderer.SetupHandlers();
             viewsRenderer.SetupControllers();
 

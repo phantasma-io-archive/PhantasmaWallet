@@ -21,13 +21,28 @@ namespace Phantasma.Wallet.Controllers
         private readonly IPhantasmaRestService _phantasmaApi;
         private readonly IPhantasmaRpcService _phantasmaRpcService;
 
-        public List<Token> AccountHoldings { get; set; }
+        private List<Token> AccountHoldings { get; set; }
+
         public Chains PhantasmaChains { get; set; }
+        public List<Token> PhantasmaTokens { get; set; }
 
         public AccountController()
         {
             _phantasmaApi = (IPhantasmaRestService)Backend.AppServices.GetService(typeof(IPhantasmaRestService));
             _phantasmaRpcService = (IPhantasmaRpcService)Backend.AppServices.GetService(typeof(IPhantasmaRpcService));
+        }
+
+        public void InitController()
+        {
+            try
+            {
+                PhantasmaChains = _phantasmaRpcService.GetChains.SendRequestAsync().Result;
+                PhantasmaTokens = _phantasmaRpcService.GetTokens.SendRequestAsync().Result.Tokens;
+            }
+            catch (Exception ex)
+            {
+                //todo
+            }
         }
 
         public async Task<Chains> GetChains()
@@ -200,31 +215,12 @@ namespace Phantasma.Wallet.Controllers
             {
                 if (amount > 0 && senderAddress != Address.Null && receiverAddress != Address.Null && senderToken != null && senderToken == receiverToken)
                 {
-                    decimal amountDecimal;
-                    //todo out hack
-                    if (senderToken == "NACHO")
-                    {
-                        amountDecimal = TokenUtils.ToDecimal(amount, 0);
-                    }
-                    else
-                    {
-                        amountDecimal = TokenUtils.ToDecimal(amount, 8);
-                    }
+                    var amountDecimal = TokenUtils.ToDecimal(amount, PhantasmaTokens.SingleOrDefault(p => p.Symbol == senderToken).Decimals);
                     description = $"{amountDecimal} {senderToken} sent from {senderAddress.Text} to {receiverAddress.Text}";
                 }
-                else if (amount > 0 && senderAddress == Address.Null && receiverAddress != Address.Null &&
-                         senderToken == null && receiverToken != null)
+                else if (amount > 0 && senderAddress == Address.Null && receiverAddress != Address.Null && senderToken == null && receiverToken != null)
                 {
-                    decimal amountDecimal;
-                    //todo out hack
-                    if (receiverToken == "NACHO")
-                    {
-                        amountDecimal = TokenUtils.ToDecimal(amount, 0);
-                    }
-                    else
-                    {
-                        amountDecimal = TokenUtils.ToDecimal(amount, 8);
-                    }
+                    var amountDecimal = TokenUtils.ToDecimal(amount, PhantasmaTokens.SingleOrDefault(p => p.Symbol == receiverToken).Decimals);
                     description = $"{amountDecimal} {receiverToken} sent from {senderAddress.Text} to {receiverAddress.Text}";
                 }
                 else

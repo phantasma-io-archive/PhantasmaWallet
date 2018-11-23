@@ -61,14 +61,6 @@ namespace Phantasma.Wallet
             TemplateEngine = new TemplateEngine(site, viewsPath);
         }
 
-        public void Init()
-        {
-            //foreach (var menuEntry in MenuEntries)
-            //{
-            //    UpdateContext(menuEntry.Id, menuEntry);
-            //}
-        }
-
         public void SetupControllers()
         {
             AccountController = new AccountController();
@@ -176,11 +168,14 @@ namespace Phantasma.Wallet
                 UpdateContext(request, "name", "Anonymous");
                 UpdateContext(request, "address", keyPair.Address);
 
+                // just need one time request
+                AccountController.InitController();
+                UpdateContext(request, "chains", AccountController.PhantasmaChains);
+                UpdateContext(request, "tokens", AccountController.PhantasmaTokens);
+
                 var txs = AccountController.GetAccountTransactions(keyPair.Address.Text).Result; //todo remove .Result
                 var entry = MenuEntries.FirstOrDefault(e => e.Id == "history");
                 entry.Count = txs.Length;
-
-                UpdateContext(request, "chains", AccountController.GetChains().Result);
 
                 UpdateContext(request, "transactions", txs);
                 UpdateContext(request, "holdings", AccountController.GetAccountHoldings(keyPair.Address.Text).Result);
@@ -190,7 +185,7 @@ namespace Phantasma.Wallet
 
             if (request.session.Contains("error"))
             {
-                var error = request.session.Get<string>("error");
+                var error = request.session.Get<ErrorContext>("error");
                 UpdateContext(request, "error", error);
                 request.session.Remove("error");
             }
