@@ -104,7 +104,7 @@ namespace Phantasma.Wallet.Controllers
                 {
                     if (BigInteger.TryParse(tokenChain.Balance, out var balance))
                     {
-                        decimal chainAmount = TokenUtils.ToDecimal(balance, token.Decimals); // TODO fix this later, should use token.Decimals
+                        decimal chainAmount = TokenUtils.ToDecimal(balance, token.Decimals);
                         amount += chainAmount;
                     }
                 }
@@ -133,19 +133,19 @@ namespace Phantasma.Wallet.Controllers
                 {
                     date = new Timestamp(tx.Timestamp),
                     hash = tx.Txid,
-                    description = GetTxDescription(tx.Events)
+                    description = GetTxDescription(tx)
                 });
             }
 
             return txs.ToArray();
         }
 
-        private string GetTxDescription(List<Event> events)
+        private string GetTxDescription(AccountTx tx)
         {
             string description = null;
 
             string senderToken = null;
-            Address senderChain = Address.Null;
+            Address senderChain = Address.FromText(tx.ChainAddress);
             Address senderAddress = Address.Null;
 
             string receiverToken = null;
@@ -154,12 +154,12 @@ namespace Phantasma.Wallet.Controllers
 
             BigInteger amount = 0;
 
-            foreach (var evt in events)//todo move this
+            foreach (var evt in tx.Events)//todo move this
             {
                 Blockchain.Contracts.Event nativeEvent = null;
                 if (evt.Data != null)
                 {
-                    nativeEvent = new Blockchain.Contracts.Event((EventKind)evt.EvtKind, Address.FromText(evt.EventAddress), Base16.Decode(evt.Data));
+                    nativeEvent = new Blockchain.Contracts.Event((EventKind)evt.EvtKind, Address.FromText(evt.EventAddress), evt.Data.Decode());
                 }
                 else
                 {
@@ -173,7 +173,6 @@ namespace Phantasma.Wallet.Controllers
                             var data = nativeEvent.GetContent<TokenEventData>();
                             amount = data.value;
                             senderAddress = nativeEvent.Address;
-                            senderChain = data.chainAddress;
                             senderToken = (data.symbol);
                         }
                         break;
@@ -218,7 +217,7 @@ namespace Phantasma.Wallet.Controllers
                     var amountDecimal = TokenUtils.ToDecimal(amount, PhantasmaTokens.SingleOrDefault(p => p.Symbol == senderToken).Decimals);
                     description = $"{amountDecimal} {senderToken} sent from {senderAddress.Text} to {receiverAddress.Text}";
                 }
-                else if (amount > 0 && senderAddress == Address.Null && receiverAddress != Address.Null && senderToken == null && receiverToken != null)
+                else if (amount > 0 && senderAddress != Address.Null && receiverAddress != Address.Null && senderToken != null && receiverToken != null)
                 {
                     var amountDecimal = TokenUtils.ToDecimal(amount, PhantasmaTokens.SingleOrDefault(p => p.Symbol == receiverToken).Decimals);
                     description = $"{amountDecimal} {receiverToken} sent from {senderAddress.Text} to {receiverAddress.Text}";
@@ -226,6 +225,11 @@ namespace Phantasma.Wallet.Controllers
                 else
                 {
                     description = "Custom transaction";
+                }
+
+                if (receiverChain != Address.Null && senderChain != Address.Null && receiverChain != senderChain)
+                {
+                    description += $" from {GetChainName(senderChain.Text)} chain to {GetChainName(receiverChain.Text)} chain";
                 }
             }
             return description;
@@ -284,6 +288,14 @@ namespace Phantasma.Wallet.Controllers
             }
         }
 
+        private string GetChainName(string address)
+        {
+            foreach (var element in PhantasmaChains.ChainList)
+            {
+                if (element.Address == address) return element.Name;
+            }
+            return string.Empty;
+        }
 
         public static decimal GetCoinRate(uint ticker, string symbol = "USD")
         {
