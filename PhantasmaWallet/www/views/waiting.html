@@ -19,7 +19,7 @@
         $.get('/confirmations/{{ConfirmingTxHash}}',
             function(returnedData) {
 				console.log('confirmations: ', returnedData);
-                if (returnedData === true) {
+                if (returnedData === 'True') {
                     window.location.replace("/history");
                 }
 				else {
