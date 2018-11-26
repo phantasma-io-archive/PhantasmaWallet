@@ -18,18 +18,20 @@
     function getConfirmations() {
         $.get('/confirmations/{{ConfirmingTxHash}}',
             function(returnedData) {
+				console.log('confirmations: ', returnedData);
                 if (returnedData === true) {
                     window.location.replace("/history");
                 }
-                counter++;
-                console.log(returnedData);
-                checkCounter();
-                setTimeout(getConfirmations(), 2000);
+				else {
+					counter++;
+					if (counter >= 10){
+						window.location.replace("/error");
+					}
+					else {
+						setTimeout(getConfirmations, 2000);
+					}
+				}
+				
             });
     }
-
-    function checkCounter() {
-        if (counter >= 10) window.location.replace("/error");
-    }
-
 </script>
