@@ -350,6 +350,16 @@ namespace Phantasma.Wallet
                 return HTTPResponse.Redirect("/login");
             }
             var txHash = request.GetVariable("txhash");
+            new Thread(() =>
+            {
+                Thread.CurrentThread.IsBackground = true;
+                while (!AccountController.GetTxConfirmations(txHash).Result.IsConfirmed)
+                {
+                    Thread.Sleep(5000);
+                }
+
+                HTTPResponse.Redirect("/history");
+            }).Start();
             return RendererView(request, "layout", "waiting");
 
             //Task.Run()
