@@ -206,7 +206,7 @@ namespace Phantasma.Wallet
 
             TemplateEngine.Site.Get("/waiting/{txhash}", RouteWaitingTx);
 
-            TemplateEngine.Site.Get("confirmations/{txhash}", RouteConfirmations);
+            TemplateEngine.Site.Get("/confirmations/{txhash}", RouteConfirmations);
 
             foreach (var entry in MenuEntries)
             {
@@ -359,7 +359,7 @@ namespace Phantasma.Wallet
         {
             var txHash = request.GetVariable("txhash");
             var confirmations = AccountController.GetTxConfirmations(txHash).Result.IsConfirmed;
-            return confirmations;
+            return confirmations.ToString();
         }
 
         #endregion
