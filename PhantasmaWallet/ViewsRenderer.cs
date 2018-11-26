@@ -167,6 +167,7 @@ namespace Phantasma.Wallet
 
                 UpdateContext(request, "name", "Anonymous");
                 UpdateContext(request, "address", keyPair.Address);
+
                 AccountController.InitController();
                 UpdateContext(request, "chains", AccountController.PhantasmaChains);
                 UpdateContext(request, "tokens", AccountController.PhantasmaTokens);
@@ -357,6 +358,7 @@ namespace Phantasma.Wallet
         private object RouteConfirmations(HTTPRequest request)
         {
             var txHash = request.GetVariable("txhash");
+            UpdateContext(request, "error", new ErrorContext { ErrorCode = "", ErrorDescription = $"{txHash} is still not confirmed"});
             var confirmations = AccountController.GetTxConfirmations(txHash).Result.IsConfirmed;
             return confirmations.ToString();
         }

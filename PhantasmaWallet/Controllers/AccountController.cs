@@ -210,7 +210,7 @@ namespace Phantasma.Wallet.Controllers
                         break;
                 }
             }
-            if (PhantasmaTokens == null) InitController();
+            
             if (description == null)
             {
                 if (amount > 0 && senderAddress != Address.Null && receiverAddress != Address.Null && senderToken != null && senderToken == receiverToken)
