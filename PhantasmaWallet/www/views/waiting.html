@@ -13,19 +13,23 @@
 <script>
     var counter = 0;
 
-    $(document).ready(setTimeout(function() {
-        getConfirmations();
-        if (counter >= 10) window.location.replace("/error");
-    }, 1000));
+    $(document).ready(getConfirmations());
 
     function getConfirmations() {
         $.get('/confirmations/{{ConfirmingTxHash}}',
             function(returnedData) {
-                if (returnedData === 'true') {
+                if (returnedData === true) {
                     window.location.replace("/history");
                 }
                 counter++;
                 console.log(returnedData);
+                checkCounter();
+                setTimeout(getConfirmations(), 2000);
             });
     }
+
+    function checkCounter() {
+        if (counter >= 10) window.location.replace("/error");
+    }
+
 </script>
