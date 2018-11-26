@@ -114,7 +114,7 @@ namespace Phantasma.Wallet
 
             if (request.session.Contains("error"))
             {
-                var error = request.session.Get<string>("error");
+                var error = request.session.Get<ErrorContext>("error");
                 UpdateContext(request, "error", error);
                 request.session.Remove("error");
             }
@@ -127,7 +127,7 @@ namespace Phantasma.Wallet
 
             if (request.session.Contains("error"))
             {
-                var error = request.session.Get<string>("error");
+                var error = request.session.Get<ErrorContext>("error");
                 UpdateContext(request, "error", error);
                 request.session.Remove("error");
             }
@@ -152,7 +152,7 @@ namespace Phantasma.Wallet
             UpdateContext(request, "availableChains", availableChains);
             if (request.session.Contains("error"))
             {
-                var error = request.session.Get<string>("error");
+                var error = request.session.Get<ErrorContext>("error");
                 UpdateContext(request, "error", error);
                 request.session.Remove("error");
             }
@@ -186,7 +186,7 @@ namespace Phantasma.Wallet
 
             if (request.session.Contains("error"))
             {
-                var error = request.session.Get<string>("error");
+                var error = request.session.Get<ErrorContext>("error");
                 UpdateContext(request, "error", error);
                 request.session.Remove("error");
             }
