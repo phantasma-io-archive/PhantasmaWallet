@@ -208,7 +208,7 @@ namespace Phantasma.Wallet.Controllers
                 // TODO this should be a dropdown in the wallet settings!!
                 var nexusName = "simnet";
 
-                var tx = new Blockchain.Transaction(nexusName, chainName, script, 0, 0, DateTime.UtcNow, 0);
+                var tx = new Blockchain.Transaction(nexusName, chainName, script, 0, 0, DateTime.UtcNow + TimeSpan.FromHours(1), 0);
                 tx.Sign(keyPair);
 
                 //todo main
