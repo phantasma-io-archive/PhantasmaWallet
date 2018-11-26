@@ -310,11 +310,10 @@ body {
 	top: 200%;
 	left: 0;
 	right: 0;
-	width: 4rem;
+	width: 300px;
 	margin: auto;
 }
 .loader--text:after {
-	content: "Loading";
 	font-weight: bold;
 	animation-name: loading-text;
 	animation-duration: 3s;
