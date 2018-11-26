@@ -64,7 +64,6 @@ namespace Phantasma.Wallet
         public void SetupControllers()
         {
             AccountController = new AccountController();
-            AccountController.InitController();
         }
 
         private AccountController AccountController { get; set; }
@@ -168,7 +167,7 @@ namespace Phantasma.Wallet
 
                 UpdateContext(request, "name", "Anonymous");
                 UpdateContext(request, "address", keyPair.Address);
-
+                AccountController.InitController();
                 UpdateContext(request, "chains", AccountController.PhantasmaChains);
                 UpdateContext(request, "tokens", AccountController.PhantasmaTokens);
 
@@ -206,7 +205,7 @@ namespace Phantasma.Wallet
 
             TemplateEngine.Site.Get("/waiting/{txhash}", RouteWaitingTx);
 
-            TemplateEngine.Site.Get("confirmations/{txhash}", RouteConfirmations);
+            TemplateEngine.Site.Get("/confirmations/{txhash}", RouteConfirmations);
 
             foreach (var entry in MenuEntries)
             {
