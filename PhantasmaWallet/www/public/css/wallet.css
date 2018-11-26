@@ -299,21 +299,20 @@ body {
     }
 
 .loader--text {
-    position: absolute;
-    top: 200%;
-    left: 0;
-    right: 0;
-    width: 4rem;
-    margin: auto;
+	position: absolute;
+	top: 200%;
+	left: 0;
+	right: 0;
+	width: 300px;
+	margin: auto;
 }
-
-    .loader--text:after {
-        content: "Loading";
-        font-weight: bold;
-        animation-name: loading-text;
-        animation-duration: 3s;
-        animation-iteration-count: infinite;
-    }
+.loader--text:after {
+	content: "Loading";
+	font-weight: bold;
+	animation-name: loading-text;
+	animation-duration: 3s;
+	animation-iteration-count: infinite;
+}
 
 @keyframes loader {
     15% {
