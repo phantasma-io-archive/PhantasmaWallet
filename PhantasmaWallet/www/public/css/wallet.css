@@ -299,20 +299,21 @@ body {
     }
 
 .loader--text {
-	position: absolute;
-	top: 200%;
-	left: 0;
-	right: 0;
-	width: 300px;
-	margin: auto;
+    position: absolute;
+    top: 200%;
+    left: 0;
+    right: 0;
+    width: 300px;
+    margin: auto;
 }
-.loader--text:after {
-	content: "Loading";
-	font-weight: bold;
-	animation-name: loading-text;
-	animation-duration: 3s;
-	animation-iteration-count: infinite;
-}
+
+    .loader--text:after {
+        content: "Waiting for transaction confirmations";
+        font-weight: bold;
+        animation-name: loading-text;
+        animation-duration: 3s;
+        animation-iteration-count: infinite;
+    }
 
 @keyframes loader {
     15% {
@@ -334,19 +335,19 @@ body {
 
 @keyframes loading-text {
     0% {
-        content: "Loading";
+        content: "Waiting for transaction confirmations";
     }
 
     25% {
-        content: "Loading.";
+        content: "Waiting for transaction confirmations..";
     }
 
     50% {
-        content: "Loading..";
+        content: "Waiting for transaction confirmations...";
     }
 
     75% {
-        content: "Loading...";
+        content: "Waiting for transaction confirmations....";
     }
 }
 
