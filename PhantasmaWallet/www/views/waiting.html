@@ -11,17 +11,20 @@
 </div>
 
 <script>
+    var counter = 0;
 
-    $(document).ready(getConfirmations);
+    $(document).ready(setTimeout(function() {
+        getConfirmations();
+        if (counter >= 10) window.location.replace("/error");
+    }, 1000));
 
     function getConfirmations() {
         $.get('/confirmations/{{ConfirmingTxHash}}',
             function(returnedData) {
                 if (returnedData === 'true') {
                     window.location.replace("/history");
-                } else {
-                    window.location.replace("/error");
                 }
+                counter++;
                 console.log(returnedData);
             });
     }
