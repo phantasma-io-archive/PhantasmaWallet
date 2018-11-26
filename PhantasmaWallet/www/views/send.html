@@ -270,7 +270,12 @@
                             {
                                 fungible: true, token: symbol, amount: amount.value, dest: addressTo.value, chain: selected_chain , destChain: selectedDestinationChain
                             },
-                            function(returnedData) {
+                            function (returnedData) {
+                                if (returnedData != "") {
+                                    window.location.replace("/waiting/" + returnedData);
+                                } else {
+                                    window.location.replace("/error");
+                                }
                                 console.log(returnedData);
                             }).fail(function() {
                             console.log("error");
@@ -281,7 +286,12 @@
                             {
                                 fungible: false, token: symbol, id: nftId, dest: addressTo.value, chain: selected_chain , destChain: selectedDestinationChain
                             },
-                            function(returnedData) {
+                            function (returnedData) {
+                                if (returnedData != "") {
+                                    window.location.replace("/waiting/" + returnedData);
+                                } else {
+                                    window.location.replace("/error");
+                                }
                                 console.log(returnedData);
                             }).fail(function() {
                             console.log("error nft");

@@ -233,6 +233,7 @@ namespace Phantasma.Wallet
             {
                 return HTTPResponse.Redirect("/login");
             }
+
             return RendererView(request, "layout", "error");
         }
 
@@ -336,10 +337,10 @@ namespace Phantasma.Wallet
             if (string.IsNullOrEmpty(result))
             {
                 UpdateContext(request, "error", new ErrorContext { ErrorCode = "", ErrorDescription = "Error sending tx." });
-                return HTTPResponse.Redirect("/error");
+                return "";
             }
-            return HTTPResponse.Redirect($"/waiting/{result}");
-            //return HTTPResponse.Redirect("/history");
+            //return HTTPResponse.Redirect($"/waiting/{result}");
+            return result;
         }
 
         private object RouteWaitingTx(HTTPRequest request)
