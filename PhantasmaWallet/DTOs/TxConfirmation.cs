@@ -10,6 +10,6 @@ namespace Phantasma.Wallet.DTOs
         [JsonProperty("confirmations")]
         public int Confirmations { get; set; }
 
-        public bool IsConfirmed => Confirmations >= 5;
+        public bool IsConfirmed => Confirmations >= 1;
     }
 }
