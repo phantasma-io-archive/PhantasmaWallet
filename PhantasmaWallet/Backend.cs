@@ -23,7 +23,7 @@ namespace Phantasma.Wallet
             viewsRenderer.SetupHandlers();
             viewsRenderer.SetupControllers();
 
-            site.server.Run(site);
+            site.Server.Run();
         }
     }
 

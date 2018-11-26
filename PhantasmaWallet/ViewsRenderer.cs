@@ -64,6 +64,7 @@ namespace Phantasma.Wallet
         public void SetupControllers()
         {
             AccountController = new AccountController();
+            AccountController.InitController();
         }
 
         private AccountController AccountController { get; set; }
@@ -168,8 +169,6 @@ namespace Phantasma.Wallet
                 UpdateContext(request, "name", "Anonymous");
                 UpdateContext(request, "address", keyPair.Address);
 
-                // just need one time request
-                AccountController.InitController();
                 UpdateContext(request, "chains", AccountController.PhantasmaChains);
                 UpdateContext(request, "tokens", AccountController.PhantasmaTokens);
 
@@ -205,7 +204,7 @@ namespace Phantasma.Wallet
 
             TemplateEngine.Site.Get("/error", RouteError);
 
-            TemplateEngine.Site.Get("/wait/{txhash}", RouteWaitingTx);
+            TemplateEngine.Site.Get("/waiting/{txhash}", RouteWaitingTx);
 
             foreach (var entry in MenuEntries)
             {
@@ -339,8 +338,8 @@ namespace Phantasma.Wallet
                 UpdateContext(request, "error", new ErrorContext { ErrorCode = "", ErrorDescription = "Error sending tx." });
                 return HTTPResponse.Redirect("/error");
             }
-            //return HTTPResponse.Redirect($"/wait/{result}");
-            return HTTPResponse.Redirect($"/history");
+            return HTTPResponse.Redirect($"/waiting/{result}");
+            //return HTTPResponse.Redirect("/history");
         }
 
         private object RouteWaitingTx(HTTPRequest request)
@@ -350,13 +349,14 @@ namespace Phantasma.Wallet
                 return HTTPResponse.Redirect("/login");
             }
             var txHash = request.GetVariable("txhash");
-            RendererView(request, "layout", "waiting");
+            return RendererView(request, "layout", "waiting");
 
-            while (!AccountController.GetTxConfirmations(txHash).Result.IsConfirmed)
-            {
-                Thread.Sleep(2000);
-            }
-            return RendererView(request, "layout", "history");
+            //Task.Run()
+            //while (!AccountController.GetTxConfirmations(txHash).Result.IsConfirmed)
+            //{
+            //    Thread.Sleep(2000);
+            //}
+            //return RendererView(request, "layout", "history");
         }
         #endregion
 
@@ -374,8 +374,6 @@ namespace Phantasma.Wallet
             //new MenuEntry(){ Id = "settings", Icon = "fa-cog", Caption = "Settings", Enabled = true, IsSelected = false},
             new MenuEntry(){ Id = "logout", Icon = "fa-sign-out-alt", Caption = "Log Out", Enabled = true, IsSelected = false},
         };
-
-        private static Chains Chains { get; set; }
 
         private static readonly Net[] Networks = new Net[]
         {

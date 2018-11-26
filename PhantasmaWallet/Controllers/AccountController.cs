@@ -24,6 +24,7 @@ namespace Phantasma.Wallet.Controllers
         private List<Token> AccountHoldings { get; set; }
 
         public Chains PhantasmaChains { get; set; }
+
         public List<Token> PhantasmaTokens { get; set; }
 
         public AccountController()
@@ -209,7 +210,7 @@ namespace Phantasma.Wallet.Controllers
                         break;
                 }
             }
-
+            if (PhantasmaTokens == null) InitController();
             if (description == null)
             {
                 if (amount > 0 && senderAddress != Address.Null && receiverAddress != Address.Null && senderToken != null && senderToken == receiverToken)

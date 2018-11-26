@@ -5,7 +5,7 @@ namespace Phantasma.Wallet.RpcClient.API
 {
     public class PhantasmaGetTokens : GenericRpcRequestResponseHandlerNoParam<TokenList>
     {
-        public PhantasmaGetTokens(IClient client) : base(client, APIMethods.gettokens.ToString())
+        public PhantasmaGetTokens(IClient client) : base(client, APIMethods.getTokens.ToString())
         {
         }
     }
