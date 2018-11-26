@@ -206,6 +206,8 @@ namespace Phantasma.Wallet
 
             TemplateEngine.Site.Get("/waiting/{txhash}", RouteWaitingTx);
 
+            TemplateEngine.Site.Get("confirmations/{txhash}", RouteConfirmations);
+
             foreach (var entry in MenuEntries)
             {
                 var url = $"/{entry.Id}";
@@ -339,7 +341,7 @@ namespace Phantasma.Wallet
                 UpdateContext(request, "error", new ErrorContext { ErrorCode = "", ErrorDescription = "Error sending tx." });
                 return "";
             }
-            //return HTTPResponse.Redirect($"/waiting/{result}");
+            UpdateContext(request, "ConfirmingTxHash", result);
             return result;
         }
 
@@ -350,25 +352,16 @@ namespace Phantasma.Wallet
                 return HTTPResponse.Redirect("/login");
             }
             var txHash = request.GetVariable("txhash");
-            new Thread(() =>
-            {
-                Thread.CurrentThread.IsBackground = true;
-                while (!AccountController.GetTxConfirmations(txHash).Result.IsConfirmed)
-                {
-                    Thread.Sleep(5000);
-                }
-
-                HTTPResponse.Redirect("/history");
-            }).Start();
             return RendererView(request, "layout", "waiting");
-
-            //Task.Run()
-            //while (!AccountController.GetTxConfirmations(txHash).Result.IsConfirmed)
-            //{
-            //    Thread.Sleep(2000);
-            //}
-            //return RendererView(request, "layout", "history");
         }
+
+        private object RouteConfirmations(HTTPRequest request)
+        {
+            var txHash = request.GetVariable("txhash");
+            var confirmations = AccountController.GetTxConfirmations(txHash).Result.IsConfirmed;
+            return confirmations;
+        }
+
         #endregion
 
 

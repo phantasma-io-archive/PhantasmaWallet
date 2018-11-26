@@ -9,3 +9,20 @@
         </div>
     </div>
 </div>
+
+<script>
+
+    $(document).ready(getConfirmations);
+
+    function getConfirmations() {
+        $.get('/confirmations/{{ConfirmingTxHash}}',
+            function(returnedData) {
+                if (returnedData === 'true') {
+                    window.location.replace("/history");
+                } else {
+                    window.location.replace("/error");
+                }
+                console.log(returnedData);
+            });
+    }
+</script>
