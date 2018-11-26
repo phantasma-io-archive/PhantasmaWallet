@@ -270,7 +270,7 @@ body {
     margin: auto;
 }
 
-.loader--dot {
+.loader-dot {
     animation-name: loader;
     animation-timing-function: ease-in-out;
     animation-duration: 3s;
@@ -283,37 +283,52 @@ body {
     border: 2px solid white;
 }
 
-    .loader--dot:first-child {
-        background-color: #005073;
-        animation-delay: 0.5s;
-    }
+.loader-dot:first-child {
+	background-color: #005073;
+	animation-delay: 0.5s;
+}
 
-    .loader--dot:nth-child(2) {
-        background-color: #107dac;
-        animation-delay: 0.4s;
-    }
+.loader-dot:nth-child(2) {
+	background-color: #107dac;
+	animation-delay: 0.4s;
+}
 
-    .loader--dot:nth-child(3) {
-        background-color: #189ad3;
-        animation-delay: 0.3s;
-    }
+.loader-dot:nth-child(3) {
+	background-color: #189ad3;
+	animation-delay: 0.3s;
+}
 
-.loader--text {
+.loader-text {
     position: absolute;
     top: 200%;
     left: 0;
     right: 0;
-    width: 300px;
+    width: 350px;
     margin: auto;
+	font-weight: bold;
+	display: inline-flex;
 }
 
-    .loader--text:after {
-        content: "Waiting for transaction confirmations";
-        font-weight: bold;
-        animation-name: loading-text;
-        animation-duration: 3s;
-        animation-iteration-count: infinite;
-    }
+.loader-text:after {
+  overflow: hidden;
+  vertical-align: bottom;
+  -webkit-animation: ellipsis steps(4,end) 3000ms infinite;      
+  animation: ellipsis steps(4,end) 3000ms infinite;
+  content: "\2026"; /* ascii code for the ellipsis character */
+  width: 0px;
+}
+
+@keyframes ellipsis {
+  to {
+    width: 1em;    
+  }
+}
+
+@-webkit-keyframes ellipsis {
+  to {
+    width: 1em;    
+  }
+}
 
 @keyframes loader {
     15% {
@@ -330,24 +345,6 @@ body {
 
     95% {
         transform: translateX(0);
-    }
-}
-
-@keyframes loading-text {
-    0% {
-        content: "Waiting for transaction confirmations";
-    }
-
-    25% {
-        content: "Waiting for transaction confirmations..";
-    }
-
-    50% {
-        content: "Waiting for transaction confirmations...";
-    }
-
-    75% {
-        content: "Waiting for transaction confirmations....";
     }
 }
 
