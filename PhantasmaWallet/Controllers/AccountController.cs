@@ -23,7 +23,7 @@ namespace Phantasma.Wallet.Controllers
 
         private List<Token> AccountHoldings { get; set; }
 
-        public Chains PhantasmaChains { get; set; }
+        public List<ChainElement> PhantasmaChains { get; set; }
 
         public List<Token> PhantasmaTokens { get; set; }
 
@@ -37,25 +37,12 @@ namespace Phantasma.Wallet.Controllers
         {
             try
             {
-                PhantasmaChains = _phantasmaRpcService.GetChains.SendRequestAsync().Result;
+                PhantasmaChains = _phantasmaRpcService.GetChains.SendRequestAsync().Result.ChainList;
                 PhantasmaTokens = _phantasmaRpcService.GetTokens.SendRequestAsync().Result.Tokens;
             }
             catch (Exception ex)
             {
                 //todo
-            }
-        }
-
-        public async Task<Chains> GetChains()
-        {
-            try
-            {
-                PhantasmaChains = await _phantasmaRpcService.GetChains.SendRequestAsync();
-                return PhantasmaChains;
-            }
-            catch (Exception ex)
-            {
-                return new Chains();
             }
         }
 
@@ -291,7 +278,7 @@ namespace Phantasma.Wallet.Controllers
 
         private string GetChainName(string address)
         {
-            foreach (var element in PhantasmaChains.ChainList)
+            foreach (var element in PhantasmaChains)
             {
                 if (element.Address == address) return element.Name;
             }

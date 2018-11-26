@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using LunarLabs.WebServer.HTTP;
 using LunarLabs.WebServer.Templates;
 using Phantasma.Cryptography;
@@ -351,12 +349,16 @@ namespace Phantasma.Wallet
             {
                 return HTTPResponse.Redirect("/login");
             }
-            var txHash = request.GetVariable("txhash");
             return RendererView(request, "layout", "waiting");
         }
 
         private object RouteConfirmations(HTTPRequest request)
         {
+            if (!HasLogin(request))
+            {
+                return HTTPResponse.Redirect("/login");
+            }
+
             var txHash = request.GetVariable("txhash");
             UpdateContext(request, "error", new ErrorContext { ErrorCode = "", ErrorDescription = $"{txHash} is still not confirmed"});
             var confirmations = AccountController.GetTxConfirmations(txHash).Result.IsConfirmed;

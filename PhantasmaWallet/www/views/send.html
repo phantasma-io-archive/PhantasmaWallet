@@ -66,7 +66,7 @@
                     <div class="form-group">
                         <label class="control-label tab-title">Select destination chain</label>
                         <select class="form-control btn-asset-no-border" id="destinationChain">
-                            {{#each chains.ChainList}}
+                            {{#each chains}}
                             <option>{{Name}}</option>
                             {{/each}}
                         </select>
@@ -238,6 +238,20 @@
             bootbox.alert("The destination address cannot be the same as your own address!");
             return;
         }
+        var selectedDestinationChain = $("#destinationChain").val();
+        var isValid = false;
+
+        {{#each chains}}
+        if (('{{ParentChain}}' === selected_chain && '{{Name}}' === selectedDestinationChain) || ('{{ParentChain}}' === selectedDestinationChain && '{{Name}}' === selected_chain)) {
+            isValid = true;
+        }
+        {{/each}}
+
+
+        if (!isValid) {
+            bootbox.alert("The destination chain must be related to sender chain (parent or child)");
+            return;
+        }
 
         bootbox.confirm({
             title: "Transfer confirmation",
@@ -262,7 +276,6 @@
                     console.log('This was logged in the callback: ' + result);
 
                     var symbol = selected_symbol;
-                    var selectedDestinationChain = $("#destinationChain").val();
                     var amount = document.getElementById("amount");
                     var addressTo = document.getElementById("destination");
                     if (isFungible) {
