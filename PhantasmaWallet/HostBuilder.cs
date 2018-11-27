@@ -1,5 +1,6 @@
 ﻿using LunarLabs.WebServer.Core;
 using LunarLabs.WebServer.HTTP;
+using System;
 
 namespace Phantasma.Wallet
 {
@@ -13,6 +14,7 @@ namespace Phantasma.Wallet
             var settings = ServerSettings.Parse(args);
 
             var sessionStorage = new FileSessionStorage("session");
+            sessionStorage.CookieExpiration = TimeSpan.FromHours(6);
 
             var server = new HTTPServer(settings, log, sessionStorage) { AutoCompress = false };
 
