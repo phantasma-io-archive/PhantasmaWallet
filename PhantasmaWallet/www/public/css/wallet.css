@@ -1,3 +1,7 @@
+.nav > li > a {
+     padding: 0;
+}
+
 /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
 .row.content {
     height: 1000px
@@ -394,3 +398,4 @@ body {
     line-height: 1.428571429;
     border-radius: 15px;
 }
+
