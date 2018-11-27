@@ -44,7 +44,8 @@ namespace Phantasma.Wallet.Controllers
             }
             catch (Exception ex)
             {
-                //todo
+                Console.WriteLine(ex);
+                Environment.Exit(-1);
             }
         }
 
