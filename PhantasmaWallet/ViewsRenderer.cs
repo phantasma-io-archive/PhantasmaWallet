@@ -19,6 +19,13 @@ namespace Phantasma.Wallet
         public bool IsSelected { get; set; }
     }
 
+    public class AccountCache
+    {
+        public DateTime lastUpdated;
+        public Transaction[] transactions;
+        public Holding[] holdings;
+    }
+
     public struct Holding
     {
         public string name;
@@ -137,6 +144,36 @@ namespace Phantasma.Wallet
             }
         }
 
+        private static Dictionary<Address, AccountCache> _accountCaches = new Dictionary<Address, AccountCache>();
+
+        private AccountCache FindCache(Address address)
+        {
+            AccountCache cache;
+
+            var currentTime = DateTime.UtcNow;
+
+            if (_accountCaches.ContainsKey(address))
+            {
+                cache = _accountCaches[address];
+                var diff = currentTime - cache.lastUpdated;
+
+                if (diff.TotalMinutes < 5)
+                {
+                    return cache;
+                }
+            }
+
+            cache = new AccountCache()
+            {
+                lastUpdated = currentTime,
+                holdings = AccountController.GetAccountHoldings(address.Text).Result,
+                transactions = AccountController.GetAccountTransactions(address.Text).Result //todo remove .Result,
+            };
+
+            _accountCaches[address] = cache;
+            return cache;
+        }
+
         private Dictionary<string, object> InitContext(HTTPRequest request)
         {
             var context = request.session.Data.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
@@ -163,12 +200,13 @@ namespace Phantasma.Wallet
                 context["chains"] = AccountController.PhantasmaChains;
                 context["tokens"] = AccountController.PhantasmaTokens;
 
-                var txs = AccountController.GetAccountTransactions(keyPair.Address.Text).Result; //todo remove .Result
+                var cache = FindCache(keyPair.Address);
+                
                 var entry = MenuEntries.FirstOrDefault(e => e.Id == "history");
-                entry.Count = txs.Length;
+                entry.Count = cache.transactions.Length;
 
-                context["transactions"] = txs;
-                context["holdings"] = AccountController.GetAccountHoldings(keyPair.Address.Text).Result;
+                context["transactions"] = cache.transactions;
+                context["holdings"] = cache.holdings;
 
                 if (string.IsNullOrEmpty(AccountController.AccountName))
                 {
