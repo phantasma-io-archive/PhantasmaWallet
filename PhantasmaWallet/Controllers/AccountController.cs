@@ -208,7 +208,7 @@ namespace Phantasma.Wallet.Controllers
                     var amountDecimal = TokenUtils.ToDecimal(amount, PhantasmaTokens.SingleOrDefault(p => p.Symbol == senderToken).Decimals);
                     description = $"{amountDecimal} {senderToken} sent from {senderAddress.Text} to {receiverAddress.Text}";
                 }
-                else if (amount > 0 && senderAddress != Address.Null && receiverAddress != Address.Null && senderToken != null && receiverToken != null)
+                else if (amount > 0 && senderAddress != Address.Null && receiverAddress != Address.Null && senderToken != null)
                 {
                     var amountDecimal = TokenUtils.ToDecimal(amount, PhantasmaTokens.SingleOrDefault(p => p.Symbol == receiverToken).Decimals);
                     description = $"{amountDecimal} {receiverToken} sent from {senderAddress.Text} to {receiverAddress.Text}";
@@ -218,7 +218,7 @@ namespace Phantasma.Wallet.Controllers
                     description = "Custom transaction";
                 }
 
-                if (receiverChain != Address.Null && senderChain != Address.Null && receiverChain != senderChain)
+                if (receiverChain != Address.Null && receiverChain != senderChain)
                 {
                     description += $" from {GetChainName(senderChain.Text)} chain to {GetChainName(receiverChain.Text)} chain";
                 }
