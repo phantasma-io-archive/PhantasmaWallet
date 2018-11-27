@@ -214,15 +214,19 @@
         let amount = $("#amount").val();
         let target_address = $("#destination").val();
 
-        if (amount <= 0) {
-            bootbox.alert("Please insert a valid amount!");
-            return;
+        if (isFungible) {
+            if (amount <= 0) {
+                bootbox.alert("Please insert a valid amount!");
+                return;
+            }
+            
+            if (parseInt(amount, 10) > parseInt(max_amount, 10)) {
+                bootbox.alert("Insufficient funds");
+                return;
+            }
         }
 
-        if (parseInt(amount, 10) > parseInt(max_amount, 10)) {
-            bootbox.alert("Insufficient funds");
-            return;
-        }
+
 
         if (target_address.length == 0) {
             bootbox.alert("Please insert an destination address!");

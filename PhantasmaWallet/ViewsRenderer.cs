@@ -315,10 +315,10 @@ namespace Phantasma.Wallet
             var context = InitContext(request);
 
             // get chain addresses
-            var chains = (Chains)context["chains"];
+            var chains = (List<ChainElement>)context["chains"];
             var chainAddress =
-                chains.ChainList.SingleOrDefault(a => a.Name.ToLowerInvariant() == chainName.ToLowerInvariant())?.Address;
-            var destinationChainAddress = chains.ChainList.SingleOrDefault(a => a.Name.ToLowerInvariant() == destinationChain.ToLowerInvariant())?.Address;
+                chains.SingleOrDefault(a => a.Name.ToLowerInvariant() == chainName.ToLowerInvariant())?.Address;
+            var destinationChainAddress = chains.SingleOrDefault(a => a.Name.ToLowerInvariant() == destinationChain.ToLowerInvariant())?.Address;
 
             var symbol = request.GetVariable("token");
             amountOrId = request.GetVariable(isFungible ? "amount" : "id");
@@ -329,7 +329,7 @@ namespace Phantasma.Wallet
             if (string.IsNullOrEmpty(result))
             {
                 context["error"] = new ErrorContext { ErrorCode = "", ErrorDescription = "Error sending tx." };
-                return ""; // TODO why is this empty??
+                return ""; // TODO why is this empty?? because send.html checks callback for "" or txHash
             }
 
             context["ConfirmingTxHash"] = result;
@@ -344,8 +344,6 @@ namespace Phantasma.Wallet
             }
 
             var context = InitContext(request);
-            var txHash = request.GetVariable("txhash"); // TODO this is not being used??
-
             return RendererView(context, "layout", "waiting");
         }
 
