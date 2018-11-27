@@ -97,6 +97,11 @@ namespace Phantasma.Wallet
             var entry = MenuEntries.FirstOrDefault(e => e.Id == "history");
             entry.Count = txs.Length;
 
+            if (request.session.Contains("ConfirmedHash"))
+            {
+                context["ConfirmedHash"] = request.session.GetString("ConfirmedHash");
+            }
+
             context["transactions"] = txs;
             context["active"] = request.session.Contains("active") ? request.session.GetString("active") : "portfolio";
         }
@@ -340,7 +345,6 @@ namespace Phantasma.Wallet
                 return ""; // TODO why is this empty?? because send.html checks callback for "" or txHash
             }
 
-            context["ConfirmingTxHash"] = result;
             return result;
         }
 
@@ -352,6 +356,8 @@ namespace Phantasma.Wallet
             }
 
             var context = InitContext(request);
+            context["ConfirmingTxHash"] = request.GetVariable("txhash");
+
             return RendererView(context, "layout", "waiting");
         }
 
@@ -366,6 +372,12 @@ namespace Phantasma.Wallet
 
             request.session.SetStruct<ErrorContext>("error", new ErrorContext { ErrorCode = "", ErrorDescription = $"{txHash} is still not confirmed" });
             var confirmations = AccountController.GetTxConfirmations(txHash).Result.IsConfirmed;
+
+            if (confirmations)
+            {
+                request.session.SetString("ConfirmedHash", txHash);
+            }
+
             return confirmations.ToString();
         }
 
