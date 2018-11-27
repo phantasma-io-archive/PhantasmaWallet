@@ -59,15 +59,20 @@
             </div>
             <br />
             <br />
+			<h6><em>Account name:</em></h6>
             {{#if name == 'anonymous'}}
-            <h5 style="color: #17B0E7"><em>{{name}}</em></h5>
-            <a href="#" id="editPencil">
-                <i class="fa fa-pencil-alt" aria-hidden="true"></i>
-            </a>
+            <h5 style="color: #17B0E7">{{name}}
+            <!--<a href="#" id="editPencil"><i class="fa fa-pencil-alt" aria-hidden="true"></i></a>-->
+			</h5>
             {{#else}}
             <h5 style="color: #17B0E7"><em>{{name}}</em></h5>
             {{/if}}
-            <!--<h6>{{address}}</h6>-->
+
+			<!--<br>
+			<h6><em>Account address:</em></h6>
+            <h5>{{address}}</h5>-->
+			<hr/>
+			
             <ul class="nav nav-pills nav-stacked">
                 {{#each menu}}
                 {{#if Enabled}}
