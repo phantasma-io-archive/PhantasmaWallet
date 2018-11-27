@@ -24,6 +24,7 @@ namespace Phantasma.Wallet
         public DateTime lastUpdated;
         public Transaction[] transactions;
         public Holding[] holdings;
+        public Token[] tokens;
     }
 
     public struct Holding
@@ -69,6 +70,7 @@ namespace Phantasma.Wallet
         public void SetupControllers()
         {
             AccountController = new AccountController();
+            AccountController.InitController();
         }
 
         private AccountController AccountController { get; set; }
@@ -100,30 +102,18 @@ namespace Phantasma.Wallet
 
         void UpdateHistoryContext(Dictionary<string, object> context, KeyPair keyPair, HTTPRequest request)
         {
-            var txs = AccountController.GetAccountTransactions(keyPair.Address.Text).Result; //todo remove .Result
-            var entry = MenuEntries.FirstOrDefault(e => e.Id == "history");
-            entry.Count = txs.Length;
-
             if (request.session.Contains("ConfirmedHash"))
             {
                 context["ConfirmedHash"] = request.session.GetString("ConfirmedHash");
             }
-
-            context["transactions"] = txs;
-            context["active"] = request.session.Contains("active") ? request.session.GetString("active") : "portfolio";
-        }
-
-        void UpdatePortfolioContext(Dictionary<string, object> context, KeyPair keyPair, HTTPRequest request)
-        {
-            context["holdings"] = AccountController.GetAccountHoldings(keyPair.Address.Text).Result;//todo remove .Result
-            context["active"] = request.session.Contains("active") ? request.session.GetString("active") : "portfolio";
         }
 
         void UpdateSendContext(Dictionary<string, object> context, KeyPair keyPair, HTTPRequest request)
         {
-            var tokens = AccountController.GetAccountTokens(keyPair.Address.Text).Result.ToArray();
+            var cache = FindCache(keyPair.Address);
+
             var availableChains = new List<string>();
-            foreach (var token in tokens)
+            foreach (var token in cache.tokens)
             {
                 foreach (var balanceChain in token.Chains)
                 {
@@ -167,6 +157,7 @@ namespace Phantasma.Wallet
             {
                 lastUpdated = currentTime,
                 holdings = AccountController.GetAccountHoldings(address.Text).Result,
+                tokens = AccountController.GetAccountTokens(address.Text).Result.ToArray(),
                 transactions = AccountController.GetAccountTransactions(address.Text).Result //todo remove .Result,
             };
 
@@ -195,8 +186,7 @@ namespace Phantasma.Wallet
                 context["login"] = true;
 
                 context["address"] = keyPair.Address;
-
-                AccountController.InitController();
+                
                 context["chains"] = AccountController.PhantasmaChains;
                 context["tokens"] = AccountController.PhantasmaTokens;
 
@@ -217,8 +207,6 @@ namespace Phantasma.Wallet
                     context["name"] = AccountController.AccountName;
                 }
             }
-
-            context["active"] = request.session.Contains("active") ? request.session.GetString("active") : "portfolio";
 
             return context;
         }
@@ -329,12 +317,10 @@ namespace Phantasma.Wallet
 
             var context = InitContext(request);
 
+            context["active"] = entry;
+
             switch (entry)
             {
-                case "portfolio":
-                    UpdatePortfolioContext(context, keyPair, request);
-                    break;
-
                 case "history":
                     UpdateHistoryContext(context, keyPair, request);
                     break;
