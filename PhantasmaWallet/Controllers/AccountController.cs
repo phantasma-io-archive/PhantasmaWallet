@@ -27,6 +27,8 @@ namespace Phantasma.Wallet.Controllers
 
         public List<Token> PhantasmaTokens { get; set; }
 
+        public string AccountName { get; set; }
+
         public AccountController()
         {
             _phantasmaApi = (IPhantasmaRestService)Backend.AppServices.GetService(typeof(IPhantasmaRestService));
@@ -77,6 +79,7 @@ namespace Phantasma.Wallet.Controllers
         {
             var holdings = new List<Holding>();
             var account = await _phantasmaApi.GetAccount(address);
+            AccountName = account.Name;
             var rateUsd = GetCoinRate(2827);
             foreach (var token in account.Tokens)
             {

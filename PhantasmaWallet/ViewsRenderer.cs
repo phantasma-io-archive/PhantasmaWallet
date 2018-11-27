@@ -104,7 +104,7 @@ namespace Phantasma.Wallet
         void UpdatePortfolioContext(Dictionary<string, object> context, KeyPair keyPair, HTTPRequest request)
         {
             context["holdings"] = AccountController.GetAccountHoldings(keyPair.Address.Text).Result;//todo remove .Result
-            context["active"] = request.session.Contains("active") ? request.session.GetString("active") : "portfolio"; 
+            context["active"] = request.session.Contains("active") ? request.session.GetString("active") : "portfolio";
         }
 
         void UpdateSendContext(Dictionary<string, object> context, KeyPair keyPair, HTTPRequest request)
@@ -117,7 +117,7 @@ namespace Phantasma.Wallet
                 {
                     if (!availableChains.Contains(balanceChain.ChainName))
                     {
-                        availableChains.Add(balanceChain.ChainName); //todo add address too
+                        availableChains.Add(balanceChain.ChainName); //todo add address too | why?
                     }
                 }
             }
@@ -143,7 +143,7 @@ namespace Phantasma.Wallet
                 request.session.Remove("error");
             }
 
-            context["menu"] =  MenuEntries;
+            context["menu"] = MenuEntries;
             context["networks"] = Networks;
 
             if (HasLogin(request))
@@ -152,8 +152,7 @@ namespace Phantasma.Wallet
 
                 context["login"] = true;
 
-                context["name"] =  "Anonymous"; // TODO fetch the real name of account
-                context["address"]= keyPair.Address;
+                context["address"] = keyPair.Address;
 
                 AccountController.InitController();
                 context["chains"] = AccountController.PhantasmaChains;
@@ -164,10 +163,19 @@ namespace Phantasma.Wallet
                 entry.Count = txs.Length;
 
                 context["transactions"] = txs;
-                context["holdings"] =  AccountController.GetAccountHoldings(keyPair.Address.Text).Result;
+                context["holdings"] = AccountController.GetAccountHoldings(keyPair.Address.Text).Result;
+
+                if (string.IsNullOrEmpty(AccountController.AccountName))
+                {
+                    context["name"] = "Anonymous";
+                }
+                else
+                {
+                    context["name"] = AccountController.AccountName;
+                }
             }
 
-            context["active"]  = request.session.Contains("active") ? request.session.GetString("active") : "portfolio";
+            context["active"] = request.session.Contains("active") ? request.session.GetString("active") : "portfolio";
 
             return context;
         }
@@ -356,7 +364,7 @@ namespace Phantasma.Wallet
 
             var txHash = request.GetVariable("txhash");
 
-            request.session.SetStruct<ErrorContext>("error", new ErrorContext { ErrorCode = "", ErrorDescription = $"{txHash} is still not confirmed"});
+            request.session.SetStruct<ErrorContext>("error", new ErrorContext { ErrorCode = "", ErrorDescription = $"{txHash} is still not confirmed" });
             var confirmations = AccountController.GetTxConfirmations(txHash).Result.IsConfirmed;
             return confirmations.ToString();
         }
