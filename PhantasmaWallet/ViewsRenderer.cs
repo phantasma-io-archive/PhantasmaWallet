@@ -187,12 +187,12 @@ namespace Phantasma.Wallet
                 context["login"] = true;
 
                 context["address"] = keyPair.Address;
-                
+
                 context["chains"] = AccountController.PhantasmaChains;
                 context["tokens"] = AccountController.PhantasmaTokens;
 
                 var cache = FindCache(keyPair.Address);
-                
+
                 var entry = MenuEntries.FirstOrDefault(e => e.Id == "history");
                 entry.Count = cache.transactions.Length;
 
@@ -230,7 +230,7 @@ namespace Phantasma.Wallet
 
             TemplateEngine.Site.Get("/confirmations/{txhash}", RouteConfirmations);
 
-            TemplateEngine.Site.Get("/register/{name}", RouteRegisterName);
+            TemplateEngine.Site.Post("/register", RouteRegisterName);
 
             foreach (var entry in MenuEntries)
             {
@@ -419,16 +419,13 @@ namespace Phantasma.Wallet
                     var soulBalance = balance.SingleOrDefault(b => b.symbol == "SOUL");
                     if (soulBalance.amount < 0.1m) //RegistrationCost
                     {
-                        return false.ToString();
+                        var keyPair = GetLoginKey(request);
+                        var registerTx = AccountController.RegisterName(keyPair, name).Result;
+                        return registerTx;
                     }
                 }
-                else
-                {
-                    return false.ToString();
-                }
             }
-
-            return true.ToString();
+            return "";
         }
 
         #endregion

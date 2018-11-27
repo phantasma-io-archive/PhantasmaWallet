@@ -1,15 +1,15 @@
 function copyText(text, name) {
 
-	navigator.clipboard.writeText(text).then(function() {
-		bootbox.alert(name + " was copied to the clipboard.");		
-	}, function(err) {
-		bootbox.alert("Could not copy " + name + "...");
-  });
-  
-/*  var copyText = document.getElementById("myAddress");
-  copyText.select();
-  document.execCommand("copy");
-*/  
+    navigator.clipboard.writeText(text).then(function () {
+        bootbox.alert(name + " was copied to the clipboard.");
+    }, function (err) {
+        bootbox.alert("Could not copy " + name + "...");
+    });
+
+    /*  var copyText = document.getElementById("myAddress");
+      copyText.select();
+      document.execCommand("copy");
+    */
 }
 
 $('#editPencil').click(function () {
@@ -46,11 +46,10 @@ $('#editPencil').click(function () {
                 },
                 function (returnedData) {
 
-                    if (returnedData === 'True') {
-                        //todo call to register
+                    if (returnedData !== "") {
+                        console.log("error");
                     }
-
-                    console.log(returnedData);
+                    console.log("Register name tx: " + returnedData);
                 }).fail(function () {
                     console.log("error registering name");
                 });
