@@ -230,7 +230,7 @@ namespace Phantasma.Wallet
 
             TemplateEngine.Site.Get("/confirmations/{txhash}", RouteConfirmations);
 
-            TemplateEngine.Site.Get("/register/{name}", RouteRegisterName);
+            TemplateEngine.Site.Post("/register", RouteRegisterName);
 
             foreach (var entry in MenuEntries)
             {
