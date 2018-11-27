@@ -200,7 +200,7 @@ namespace Phantasma.Wallet.Controllers
                         break;
                 }
             }
-            
+
             if (description == null)
             {
                 if (amount > 0 && senderAddress != Address.Null && receiverAddress != Address.Null && senderToken != null && senderToken == receiverToken)
@@ -286,6 +286,33 @@ namespace Phantasma.Wallet.Controllers
                 if (element.Address == address) return element.Name;
             }
             return string.Empty;
+        }
+
+        public async Task<string> RegisterName(KeyPair keyPair, string name)
+        {
+            try
+            {
+                var accountChain = PhantasmaChains.SingleOrDefault(p => p.Name == "account");
+                if (accountChain != null)
+                {
+                    var script = ScriptUtils.CallContractScript(Address.FromText(accountChain.Address), "Register", keyPair.Address, name);
+
+                    // TODO this should be a dropdown in the wallet settings!!
+                    var nexusName = "simnet";
+                    var tx = new Blockchain.Transaction(nexusName, accountChain.Name, script, 0, 0, DateTime.UtcNow + TimeSpan.FromHours(1), 0);
+
+                    tx.Sign(keyPair);
+
+                    var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(tx.ToByteArray(true).Encode());
+                    var txHash = txResult?.GetValue("hash");
+                    return txHash?.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                //todo
+            }
+            return "";
         }
 
         public static decimal GetCoinRate(uint ticker, string symbol = "USD")
