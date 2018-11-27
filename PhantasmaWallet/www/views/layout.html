@@ -5,18 +5,19 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" integrity="sha256-fmMNkMcjSw3xcp9iuPnku/ryk9kaWgrEbfJfKmdZ45o=" crossorigin="anonymous" />
-
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" integrity="sha256-fmMNkMcjSw3xcp9iuPnku/ryk9kaWgrEbfJfKmdZ45o=" crossorigin="anonymous" />
+    
+    <script src="/js/teste.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>	
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.0/moment.min.js" integrity="sha256-Mwee5t+bD35zhwF9nGFf7szo0kMlILdBFdSK5xPQaTI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.0/moment.min.js" integrity="sha256-Mwee5t+bD35zhwF9nGFf7szo0kMlILdBFdSK5xPQaTI=" crossorigin="anonymous"></script>
 
-    {{#css wallet}}  
+    {{#css wallet}}
     {{#javascript qrcode}}
-	{{#javascript instascan}}
-	{{#javascript wallet}}
+    {{#javascript instascan}}
+    {{#javascript wallet}}
 </head>
 <body>
     <!--<nav class="navbar navbar-inverse visible-xs">
@@ -42,46 +43,50 @@
         </div>
     </nav>-->
 
-    <div class="container-fluid">
-        <div class="row content">
-            <div class="col-sm-2 sidenav hidden-xs">
-                <br />
-                <div class="media">
-                    <div class="media-left">
-                        <a href="#">
-                            <img src="/img/phantasma_logo.png" style="display: inline; height: 34px; margin-top: 3px; margin-right: 5px;" />
-                        </a>
-                    </div>
-                    <div class="media-body">
-                        <span class="wallet-title">PHANTASMA</span><br />
-                        <span class="wallet-subtitle">WALLET</span>
-                    </div>
+<div class="container-fluid">
+    <div class="row content">
+        <div class="col-sm-2 sidenav hidden-xs">
+            <br />
+            <div class="media">
+                <div class="media-left">
+                    <a href="#">
+                        <img src="/img/phantasma_logo.png" style="display: inline; height: 34px; margin-top: 3px; margin-right: 5px;" />
+                    </a>
                 </div>
-                <br />
-                <br />
-				<p><em><small>Account Name:</small></em></p>
-                <h5 style="color: #17B0E7">{{name}}</h5>
-				<hr/>
-                <!--<h6>{{address}}</h6>-->
-                <ul class="nav nav-pills nav-stacked">
-                    {{#each menu}}
-                    {{#if Enabled}}
-                    {{#if IsSelected}}
-                    <li {{#if url=active}} class="active menu-item-highlight" {{/if}}><a href="/{{Id}}" style="color: #17B0E7;"><i class="fas {{Icon}} menu-icon"></i>{{Caption}}</a></li>
-
-                    {{#else}}
-                    <li {{#if url=active}} class="active" {{/if}}><a href="/{{Id}}"><i class="fas {{Icon}} menu-icon"></i>{{Caption}}</a></li>
-                    {{/if}}
-                    {{/if}}
-                    {{/each}}
-                </ul><br>
+                <div class="media-body">
+                    <span class="wallet-title">PHANTASMA</span><br />
+                    <span class="wallet-subtitle">WALLET</span>
+                </div>
             </div>
+            <br />
+            <br />
+            {{#if name == 'anonymous'}}
+            <h5 style="color: #17B0E7"><em>{{name}}</em></h5>
+            <a href="#" id="editPencil">
+                <i class="fa fa-pencil-alt" aria-hidden="true"></i>
+            </a>
+            {{#else}}
+            <h5 style="color: #17B0E7"><em>{{name}}</em></h5>
+            {{/if}}
+            <!--<h6>{{address}}</h6>-->
+            <ul class="nav nav-pills nav-stacked">
+                {{#each menu}}
+                {{#if Enabled}}
+                {{#if IsSelected}}
+                <li {{#if url=active}} class="active menu-item-highlight" {{/if}}><a href="/{{Id}}" style="color: #17B0E7;"><i class="fas {{Icon}} menu-icon"></i>{{Caption}}</a></li>
 
-            <div class="col-sm-10">
-                <div class="well">{{#body}}</div>
-            </div>
+                {{#else}}
+                <li {{#if url=active}} class="active" {{/if}}><a href="/{{Id}}"><i class="fas {{Icon}} menu-icon"></i>{{Caption}}</a></li>
+                {{/if}}
+                {{/if}}
+                {{/each}}
+            </ul><br>
+        </div>
+
+        <div class="col-sm-10">
+            <div class="well">{{#body}}</div>
         </div>
     </div>
-
+</div>
 </body>
 </html>

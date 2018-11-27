@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LunarLabs.WebServer.HTTP;
 using LunarLabs.WebServer.Templates;
+using Phantasma.Blockchain.Contracts.Native;
 using Phantasma.Cryptography;
 using Phantasma.Wallet.Controllers;
 using Phantasma.Wallet.DTOs;
@@ -229,6 +230,8 @@ namespace Phantasma.Wallet
 
             TemplateEngine.Site.Get("/confirmations/{txhash}", RouteConfirmations);
 
+            TemplateEngine.Site.Get("/register/{name}", RouteRegisterName);
+
             foreach (var entry in MenuEntries)
             {
                 var url = $"/{entry.Id}";
@@ -403,6 +406,29 @@ namespace Phantasma.Wallet
             }
 
             return confirmations.ToString();
+        }
+
+        private object RouteRegisterName(HTTPRequest request)
+        {
+            var name = request.GetVariable("name");
+            var context = InitContext(request);
+            if (AccountContract.ValidateAddressName(name))
+            {
+                if (context["holdings"] is Holding[] balance)
+                {
+                    var soulBalance = balance.SingleOrDefault(b => b.symbol == "SOUL");
+                    if (soulBalance.amount < 0.1m) //RegistrationCost
+                    {
+                        return false.ToString();
+                    }
+                }
+                else
+                {
+                    return false.ToString();
+                }
+            }
+
+            return true.ToString();
         }
 
         #endregion
