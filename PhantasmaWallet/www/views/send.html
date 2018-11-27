@@ -251,6 +251,9 @@
         }
         {{/each}}
 
+        if (selected_chain === selectedDestinationChain) {
+            isValid = true;
+        }
 
         if (!isValid) {
             bootbox.alert("The destination chain must be related to sender chain (parent or child)");
