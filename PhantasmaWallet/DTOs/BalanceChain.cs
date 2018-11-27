@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Phantasma.Wallet.DTOs
 {
@@ -9,5 +10,8 @@ namespace Phantasma.Wallet.DTOs
 
         [JsonProperty("balance")]
         public string Balance { get; set; }
+
+        [JsonProperty("ids")]
+        public List<string> Ids { get; set; } = new List<string>();
     }
 }

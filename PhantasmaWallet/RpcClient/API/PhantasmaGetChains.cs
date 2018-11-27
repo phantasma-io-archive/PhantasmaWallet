@@ -5,7 +5,7 @@ namespace Phantasma.Wallet.RpcClient.API
 {
     public class PhantasmaGetChains : GenericRpcRequestResponseHandlerNoParam<Chains>
     {
-        public PhantasmaGetChains(IClient client) : base(client, APIMethods.getchains.ToString())
+        public PhantasmaGetChains(IClient client) : base(client, APIMethods.getChains.ToString())
         {
         }
     }

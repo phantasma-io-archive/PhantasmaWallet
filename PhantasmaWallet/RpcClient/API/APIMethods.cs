@@ -2,9 +2,18 @@
 {
     public enum APIMethods
     {
-        getaccount,
-        getaddresstransactions,
-        getchains,
-        sendrawtransaction
+        getAccount,
+        getBlockNumber,
+        getBlockTransactionCountByHash,
+        getBlockByHash,
+        getBlockByNumber,
+        getChains,
+        getTransactionByHash,
+        getTransactionByBlockHashAndIndex,
+        getAddressTransactions,
+        getTokens,
+        getConfirmations,
+        sendRawTransaction,
+
     }
 }

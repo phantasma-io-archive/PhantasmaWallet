@@ -8,7 +8,7 @@ namespace Phantasma.Wallet.RpcClient.API
 {
     public class PhantasmaSendRawTx : JsonRpc.Client.RpcRequestResponseHandler<JObject>
     {
-        public PhantasmaSendRawTx(IClient client) : base(client, APIMethods.sendrawtransaction.ToString()) { }
+        public PhantasmaSendRawTx(IClient client) : base(client, APIMethods.sendRawTransaction.ToString()) { }
 
         public Task<JObject> SendRequestAsync(string signedTx, object id = null)
         {
@@ -16,10 +16,10 @@ namespace Phantasma.Wallet.RpcClient.API
             return SendRequestAsync(id, signedTx);
         }
 
-        public RpcRequest BuildRequest(string address, object id = null)
+        public RpcRequest BuildRequest(string signedTx, object id = null)
         {
-            if (address == null) throw new ArgumentNullException(nameof(address));
-            return BuildRequest(id, address);
+            if (signedTx == null) throw new ArgumentNullException(nameof(signedTx));
+            return BuildRequest(id, signedTx);
         }
     }
 }

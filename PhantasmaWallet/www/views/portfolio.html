@@ -12,8 +12,8 @@
         {{#each holdings}}
         <tr class="token-shadow">
             <td class="col-6"><img class="token-icon" src="img/{{icon}}.png" /> {{name}}</td>
-            <td class="col-3">{{amount}} <a href="http://localhost:7074/token/{{symbol}}"  style="color: #17B0E7">{{symbol}}</a></td>
-            <td class="col-3">${{usd}}</td>
+            <td class="col-3">{{amountFormated}} <a href="http://localhost:7074/token/{{symbol}}" style="color: #17B0E7">{{symbol}}</a></td>
+            <td class="col-3">${{usdFormated}}</td>
         </tr>
         {{/each}}
     </tbody>

@@ -1,0 +1,37 @@
+
+<div class="row" style="padding-top: 50px;">
+    <div class='container'>
+        <div class='loader'>
+            <div class='loader-dot'></div>
+            <div class='loader-dot'></div>
+            <div class='loader-dot'></div>
+            <div class='loader-text'>Waiting for transaction confirmations<div class="loader-dots"></div></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var counter = 0;
+
+    $(document).ready(getConfirmations());
+
+    function getConfirmations() {
+        $.get('/confirmations/{{ConfirmingTxHash}}',
+            function(returnedData) {
+				console.log('confirmations: ', returnedData);
+                if (returnedData === 'True') {
+                    window.location.replace("/history");
+                }
+				else {
+					counter++;
+					if (counter >= 10){
+						window.location.replace("/error");
+					}
+					else {
+						setTimeout(getConfirmations, 2000);
+					}
+				}
+				
+            });
+    }
+</script>
