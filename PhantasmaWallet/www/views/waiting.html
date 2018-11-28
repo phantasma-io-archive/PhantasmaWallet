@@ -5,22 +5,27 @@
             <div class='loader-dot'></div>
             <div class='loader-dot'></div>
             <div class='loader-dot'></div>
-            <div class='loader-text'>Waiting for transaction confirmations<div class="loader-dots"></div></div>
+            <div class='loader-text' id="waitingText">Waiting for transaction confirmations<div class="loader-dots"></div></div>
         </div>
     </div>
 </div>
+
 
 <script>
     var counter = 0;
 
     $(document).ready(getConfirmations());
 
+
     function getConfirmations() {
         $.get('/confirmations/{{ConfirmingTxHash}}',
             function(returnedData) {
 				console.log('confirmations: ', returnedData);
-                if (returnedData === 'True') {
+                if (returnedData === 'confirmed') {
                     window.location.replace("/history");
+                } else if (returnedData === 'settling') {
+                    $('#waitingText').text('Waiting for transaction settling confirmation');
+                    setTimeout(getConfirmations, 2000);
                 }
 				else {
 					counter++;
@@ -31,7 +36,7 @@
 						setTimeout(getConfirmations, 2000);
 					}
 				}
-				
+
             });
     }
 </script>

@@ -60,6 +60,13 @@ namespace Phantasma.Wallet
         public string ErrorCode { get; set; }
     }
 
+    public struct SettleTx
+    {
+        public string chainName;
+        public string chainAddress;
+        public string destinationChainAddress;
+    }
+
     public class ViewsRenderer
     {
         public ViewsRenderer(LunarLabs.WebServer.Core.Site site, string viewsPath)
@@ -364,11 +371,30 @@ namespace Phantasma.Wallet
             amountOrId = request.GetVariable(isFungible ? "amount" : "id");
 
             var keyPair = GetLoginKey(request);
-            var result = AccountController.TransferTokens(isFungible, keyPair, addressTo, chainName, chainAddress, destinationChainAddress, symbol, amountOrId).Result;
-
-            if (string.IsNullOrEmpty(result))
+            string result;
+            if (chainAddress == destinationChainAddress)
             {
-                context["error"] = new ErrorContext { ErrorCode = "", ErrorDescription = "Error sending tx." };
+                result = AccountController.TransferTokens(isFungible, keyPair, addressTo, chainName, chainAddress, symbol, amountOrId).Result;
+            }
+            else //cross chain requires 2 txs
+            {
+                result = AccountController.CrossChainTransferToken(isFungible, keyPair, addressTo, chainName, chainAddress, destinationChainAddress, symbol, amountOrId).Result;
+                if (!string.IsNullOrEmpty(result))
+                {
+                    request.session.SetBool("IsCrossTransfer", true);
+
+                    request.session.SetStruct<SettleTx>("settleTx",
+                        new SettleTx
+                        {
+                            chainName = chainName,
+                            chainAddress = chainAddress,
+                            destinationChainAddress = destinationChainAddress,
+                        });
+                }
+            }
+            if (string.IsNullOrEmpty(result))  //todo refactor this 
+            {
+                PushError(request, "Error sending tx.");
                 return ""; // TODO why is this empty?? because send.html checks callback for "" or txHash
             }
 
@@ -395,17 +421,31 @@ namespace Phantasma.Wallet
                 return HTTPResponse.Redirect("/login");
             }
 
+            var context = InitContext(request);
             var txHash = request.GetVariable("txhash");
 
             request.session.SetStruct<ErrorContext>("error", new ErrorContext { ErrorCode = "", ErrorDescription = $"{txHash} is still not confirmed" });
-            var confirmations = AccountController.GetTxConfirmations(txHash).Result.IsConfirmed;
+            var confirmationDto = AccountController.GetTxConfirmations(txHash).Result;
 
-            if (confirmations)
+            if (confirmationDto.IsConfirmed)
             {
                 request.session.SetString("ConfirmedHash", txHash);
+                if (request.session.GetBool("IsCrossTransfer"))
+                {
+                    var data = request.session.GetStruct<SettleTx>("settleTx");
+                    var settleTx = AccountController.SettleBlockTransfer(GetLoginKey(request), data.chainAddress,
+                        confirmationDto.Hash, data.destinationChainAddress).Result;
+
+                    if (!string.IsNullOrEmpty(settleTx))
+                    {
+                        context["ConfirmingTxHash"] = settleTx;
+                        return "settling";
+                    }
+                    return "";
+                }
             }
 
-            return confirmations.ToString();
+            return confirmationDto.IsConfirmed ? "confirmed" : "unconfirmed";
         }
 
         private object RouteRegisterName(HTTPRequest request)
@@ -426,7 +466,7 @@ namespace Phantasma.Wallet
                 }
             }
             // todo fix error, page does not show anything
-            request.session.SetStruct<ErrorContext>("error", new ErrorContext { ErrorCode = "", ErrorDescription = "error while registering name" });
+            PushError(request, "Error while registering name");
             return "";
         }
 

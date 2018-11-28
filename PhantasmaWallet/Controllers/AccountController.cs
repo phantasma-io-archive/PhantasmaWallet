@@ -227,29 +227,75 @@ namespace Phantasma.Wallet.Controllers
             return description;
         }
 
-        public async Task<string> TransferTokens(bool isFungible, KeyPair keyPair, string addressTo, string chainName, string chainAddress, string destinationChainAddress, string symbol, string amountId)
+
+        public async Task<string> SettleBlockTransfer(KeyPair keyPair, string sourceChainAddress, string blockHash, string destinationChainAddress)
+        {
+            try
+            {
+                var sourceChain = Address.FromText(sourceChainAddress);
+                var destinationChain = Address.FromText(destinationChainAddress);
+                var destinationChainName =
+                    PhantasmaChains.SingleOrDefault(c => c.Address == destinationChainAddress).Name;
+                var nexusName = "simnet";
+
+                var block = Hash.Parse(blockHash);
+                var settleTxScript = ScriptUtils.CallContractScript(destinationChain, "SettleBlock", sourceChain, block);
+                var settleTx = new Blockchain.Transaction(nexusName, destinationChainName, settleTxScript, 0, 0, DateTime.UtcNow + TimeSpan.FromHours(1), 0);
+                settleTx.Sign(keyPair);
+
+                var settleResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(settleTx.ToByteArray(true).Encode());
+                var settleTxHash = settleResult?.GetValue("hash");
+                return settleTxHash?.ToString();
+            }
+            catch (Exception ex)
+            {
+                //todo
+                return "";
+            }
+        }
+
+        public async Task<string> CrossChainTransferToken(bool isFungible, KeyPair keyPair, string addressTo, string chainName, string chainAddress, string destinationChainAddress, string symbol, string amountId)
         {
             try
             {
                 var chain = Address.FromText(chainAddress);
-                var destinationChain = Address.FromText(destinationChainAddress);
                 var destinationAddress = Address.FromText(addressTo);
-                byte[] script;
+                int decimals = AccountHoldings.SingleOrDefault(t => t.Symbol == symbol).Decimals;
+                var bigIntAmount = TokenUtils.ToBigInteger(decimal.Parse(amountId), decimals);
+                var destinationChain = Address.FromText(destinationChainAddress);
+
+                var script = isFungible
+                    ? ScriptUtils.CrossTokenTransferScript(chain, destinationChain, symbol, keyPair.Address,
+                        destinationAddress, bigIntAmount)
+                    : ScriptUtils.CrossNfTokenTransferScript(chain, destinationChain, symbol, keyPair.Address,
+                        destinationAddress, bigIntAmount);
+
+                var nexusName = "simnet";
+
+                var tx = new Blockchain.Transaction(nexusName, chainName, script, 0, 0, DateTime.UtcNow + TimeSpan.FromHours(1), 0);
+                tx.Sign(keyPair);
+
+                var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(tx.ToByteArray(true).Encode());
+                var txHash = txResult?.GetValue("hash");
+
+                return txHash?.ToString();
+            }
+            catch (Exception ex)
+            {
+                return "";
+            }
+        }
+
+        public async Task<string> TransferTokens(bool isFungible, KeyPair keyPair, string addressTo, string chainName, string chainAddress, string symbol, string amountId)
+        {
+            try
+            {
+                var chain = Address.FromText(chainAddress);
+                var destinationAddress = Address.FromText(addressTo);
                 int decimals = AccountHoldings.SingleOrDefault(t => t.Symbol == symbol).Decimals;
                 var bigIntAmount = TokenUtils.ToBigInteger(decimal.Parse(amountId), decimals);
 
-                if (chain.Equals(destinationChain)) //same chain transfer
-                {
-                    script = isFungible ? ScriptUtils.TokenTransferScript(chain, symbol, keyPair.Address, destinationAddress, bigIntAmount) : ScriptUtils.NfTokenTransferScript(chain, symbol, keyPair.Address, destinationAddress, bigIntAmount);
-                }
-                else // cross-chain transfer
-                {
-                    script = isFungible
-                        ? ScriptUtils.CrossTokenTransferScript(chain, destinationChain, symbol, keyPair.Address,
-                            destinationAddress, bigIntAmount)
-                        : ScriptUtils.CrossNfTokenTransferScript(chain, destinationChain, symbol, keyPair.Address,
-                            destinationAddress, bigIntAmount);
-                }
+                var script = isFungible ? ScriptUtils.TokenTransferScript(chain, symbol, keyPair.Address, destinationAddress, bigIntAmount) : ScriptUtils.NfTokenTransferScript(chain, symbol, keyPair.Address, destinationAddress, bigIntAmount);
 
                 // TODO this should be a dropdown in the wallet settings!!
                 var nexusName = "simnet";
