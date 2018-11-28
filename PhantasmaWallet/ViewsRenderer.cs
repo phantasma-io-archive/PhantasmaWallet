@@ -417,7 +417,7 @@ namespace Phantasma.Wallet
                 if (context["holdings"] is Holding[] balance)
                 {
                     var soulBalance = balance.SingleOrDefault(b => b.symbol == "SOUL");
-                    if (soulBalance.amount < 0.1m) //RegistrationCost
+                    if (soulBalance.amount > 0.1m) //RegistrationCost
                     {
                         var keyPair = GetLoginKey(request);
                         var registerTx = AccountController.RegisterName(keyPair, name).Result;
@@ -425,6 +425,8 @@ namespace Phantasma.Wallet
                     }
                 }
             }
+            // todo fix error, page does not show anything
+            request.session.SetStruct<ErrorContext>("error", new ErrorContext { ErrorCode = "", ErrorDescription = "error while registering name" });
             return "";
         }
 
