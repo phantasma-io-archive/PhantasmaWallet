@@ -238,10 +238,10 @@
             return;
         }
 
-        //if (target_address == '{{address}}') {
-        //    bootbox.alert("The destination address cannot be the same as your own address!");
-        //    return;
-        //}
+        if (target_address == '{{address}}') {
+            bootbox.alert("The destination address cannot be the same as your own address!");
+            return;
+        }
         var selectedDestinationChain = $("#destinationChain").val();
         var isValid = false;
 
