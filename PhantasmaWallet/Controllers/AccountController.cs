@@ -209,10 +209,10 @@ namespace Phantasma.Wallet.Controllers
                     var amountDecimal = TokenUtils.ToDecimal(amount, PhantasmaTokens.SingleOrDefault(p => p.Symbol == senderToken).Decimals);
                     description = $"{amountDecimal} {senderToken} sent from {senderAddress.Text} to {receiverAddress.Text}";
                 }
-                else if (amount > 0 && senderAddress != Address.Null && receiverAddress != Address.Null && senderToken != null)
+                else if (amount > 0 && receiverAddress != Address.Null && receiverToken != null)
                 {
                     var amountDecimal = TokenUtils.ToDecimal(amount, PhantasmaTokens.SingleOrDefault(p => p.Symbol == receiverToken).Decimals);
-                    description = $"{amountDecimal} {receiverToken} sent from {senderAddress.Text} to {receiverAddress.Text}";
+                    description = $"{amountDecimal} {receiverToken} received on {receiverAddress.Text} ";
                 }
                 else
                 {
