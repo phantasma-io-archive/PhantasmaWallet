@@ -12,6 +12,7 @@ using Phantasma.Cryptography;
 using Phantasma.Wallet.DTOs;
 using Phantasma.Wallet.Interfaces;
 using Phantasma.Numerics;
+using Transaction = Phantasma.Wallet.DTOs.Transaction;
 
 namespace Phantasma.Wallet.Controllers
 {
