@@ -432,9 +432,16 @@ namespace Phantasma.Wallet
                 request.session.SetString("ConfirmedHash", txHash);
                 if (request.session.GetBool("IsCrossTransfer"))
                 {
-                    var data = request.session.GetStruct<SettleTx>("settleTx");
-                    var settleTx = AccountController.SettleBlockTransfer(GetLoginKey(request), data.chainAddress,
-                        confirmationDto.Hash, data.destinationChainAddress).Result;
+                    //temp workaround, todo remove
+                    var data = request.session.Data.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+                    var settleTx = AccountController.SettleBlockTransfer(
+                        GetLoginKey(request),
+                        data["settleTx.chainAddress"].ToString(),
+                        confirmationDto.Hash, data["settleTx.destinationChainAddress"].ToString()).Result;
+
+                    // clear
+                    request.session.SetBool("IsCrossTransfer", false);
 
                     if (!string.IsNullOrEmpty(settleTx))
                     {
