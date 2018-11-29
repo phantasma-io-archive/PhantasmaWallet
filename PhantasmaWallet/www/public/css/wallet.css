@@ -1,5 +1,6 @@
 .nav > li > a {
-     padding: 0;
+    padding: 20px;
+    align-content: left;
 }
 
 /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
@@ -49,31 +50,40 @@ body {
     color: #7C95AB;
 }
 
-.nav-pills li {
-    margin-bottom: 50px;
-    margin-left: 50px;
-    margin-right: 50px;
-    margin-top: 50px;
+ul.nav.nav-pills {
+    text-align: left;
+    display: inline-block;
 }
 
 .nav-stacked > li + li {
-    margin-left: 50px;
-    margin-right: 50px;
+    width: 100%;
+    float: none;
+    margin-bottom: 20px;
+    display: inline-block;
 }
 
-.nav-pills > li.active > a /*, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover*/ {
+.nav-pills li {
+    float: none;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    width: 100%;
+    display: inline-block;
+}
+
+.nav-pills > li > a /*, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover*/ {
     color: #7C95AB;
-    text-align: center;
+    background-color: white;
+    text-align: left;
     background-color: white;
 }
 
-    .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
+    .nav-pills > li > a:focus, .nav-pills > li > a:hover {
         color: #17B0E7;
-        text-align: center;
+        text-align: left;
         background-color: white;
     }
 
-    .nav-pills > li.active > a:hover {
+    .nav-pills > li > a:hover {
         -webkit-box-shadow: 0px 0px 30px 5px rgba(222,222,222,0.5);
         -moz-box-shadow: 0px 0px 30px 5px rgba(222,222,222,0.5);
         box-shadow: 0px 0px 30px 5px rgba(222,222,222,0.5);
@@ -98,8 +108,12 @@ body {
 }
 
 .menu-icon {
-    min-width: 20px;
-    margin-right: 2px;
+    margin-right: 15px;
+    margin-left: 30px;
+    width: 20px;
+    height: 20px;
+    vertical-align: bottom;
+    fill: #17B0E7 !important;
 }
 
 .btn-primary {
@@ -287,20 +301,20 @@ body {
     border: 2px solid white;
 }
 
-.loader-dot:first-child {
-	background-color: #005073;
-	animation-delay: 0.5s;
-}
+    .loader-dot:first-child {
+        background-color: #005073;
+        animation-delay: 0.5s;
+    }
 
-.loader-dot:nth-child(2) {
-	background-color: #107dac;
-	animation-delay: 0.4s;
-}
+    .loader-dot:nth-child(2) {
+        background-color: #107dac;
+        animation-delay: 0.4s;
+    }
 
-.loader-dot:nth-child(3) {
-	background-color: #189ad3;
-	animation-delay: 0.3s;
-}
+    .loader-dot:nth-child(3) {
+        background-color: #189ad3;
+        animation-delay: 0.3s;
+    }
 
 .loader-text {
     position: absolute;
@@ -309,29 +323,29 @@ body {
     right: 0;
     width: 350px;
     margin: auto;
-	font-weight: bold;
-	display: inline-flex;
+    font-weight: bold;
+    display: inline-flex;
 }
 
-.loader-text:after {
-  overflow: hidden;
-  vertical-align: bottom;
-  -webkit-animation: ellipsis steps(4,end) 3000ms infinite;      
-  animation: ellipsis steps(4,end) 3000ms infinite;
-  content: "\2026"; /* ascii code for the ellipsis character */
-  width: 0px;
-}
+    .loader-text:after {
+        overflow: hidden;
+        vertical-align: bottom;
+        -webkit-animation: ellipsis steps(4,end) 3000ms infinite;
+        animation: ellipsis steps(4,end) 3000ms infinite;
+        content: "\2026"; /* ascii code for the ellipsis character */
+        width: 0px;
+    }
 
 @keyframes ellipsis {
-  to {
-    width: 1em;    
-  }
+    to {
+        width: 1em;
+    }
 }
 
 @-webkit-keyframes ellipsis {
-  to {
-    width: 1em;    
-  }
+    to {
+        width: 1em;
+    }
 }
 
 @keyframes loader {
@@ -398,4 +412,3 @@ body {
     line-height: 1.428571429;
     border-radius: 15px;
 }
-
