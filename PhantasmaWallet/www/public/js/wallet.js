@@ -51,13 +51,13 @@ $(document).ready(function () {
                         bootbox.alert("Only lowercase, underscore and numbers allowed");
                         return;
                     }
-
+                    $('#nameSpinner').show();
                     $.post('/register',
                         {
                             name: name
                         },
                         function (returnedData) {
-
+                            $('#nameSpinner').hide();
                             if (returnedData !== "") {
                                 window.location.replace("/waiting/" + returnedData);
                                 console.log("error");
@@ -67,6 +67,7 @@ $(document).ready(function () {
                             console.log("Register name tx: " + returnedData);
                         }).fail(function () {
                             console.log("error registering name");
+                            $('#nameSpinner').hide();
                         });
                 }
         });

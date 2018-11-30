@@ -1,7 +1,7 @@
 {{#if holdings}}
 
 <div class="container">
-    <div id="cover-spin"></div>
+    <div id="sendSpinner" class="loading">Loading&#8230;</div>
     <div class="stepwizard">
         <div class="stepwizard-row setup-panel">
             <div class="stepwizard-step">
@@ -116,6 +116,8 @@
 
     $(document).ready(function () {
 
+        $('#sendSpinner').hide();
+
         var navListItems = $('div.setup-panel div a'),
             allWells = $('.setup-content'),
             allNextBtn = $('.nextBtn');
@@ -215,9 +217,6 @@
         let amount = $("#amount").val();
         let target_address = $("#destination").val();
 
-
-        $('#cover-spin').show(0);
-
         if (isFungible) {
             if (amount <= 0) {
                 bootbox.alert("Please insert a valid amount!");
@@ -264,6 +263,7 @@
             return;
         }
 
+        $('#sendSpinner').show();
         bootbox.confirm({
             title: "Transfer confirmation",
             message: "Send <strong>" +
@@ -295,6 +295,7 @@
                                 fungible: true, token: symbol, amount: amount.value, dest: addressTo.value, chain: selected_chain , destChain: selectedDestinationChain
                             },
                             function (returnedData) {
+                                $('#sendSpinner').hide();
                                 if (returnedData !== "") {
                                     window.location.replace("/waiting/" + returnedData);
                                 } else {
@@ -311,6 +312,7 @@
                                 fungible: false, token: symbol, id: nftId, dest: addressTo.value, chain: selected_chain , destChain: selectedDestinationChain
                             },
                             function (returnedData) {
+                                $('#sendSpinner').hide();
                                 if (returnedData !== "") {
                                     window.location.replace("/waiting/" + returnedData);
                                 } else {

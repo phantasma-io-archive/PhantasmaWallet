@@ -98,7 +98,7 @@ namespace Phantasma.Wallet
                 cache = _accountCaches[address];
                 var diff = currentTime - cache.lastUpdated;
 
-                if (diff.TotalMinutes < 0.1)
+                if (diff.TotalMinutes < 5)
                 {
                     return cache;
                 }
