@@ -83,10 +83,42 @@ ul.nav.nav-pills {
         background-color: white;
     }
 
+    .nav-pills > li > a:focus, .nav-pills > li > a:hover {
+        color: #17B0E7;
+        text-align: left;
+        background-color: white;
+    }
+
     .nav-pills > li > a:hover {
         -webkit-box-shadow: 0px 0px 30px 5px rgba(222,222,222,0.5);
         -moz-box-shadow: 0px 0px 30px 5px rgba(222,222,222,0.5);
         box-shadow: 0px 0px 30px 5px rgba(222,222,222,0.5);
+    }
+
+        .nav-pills > li > a:hover .menu-icon path {
+            margin-right: 15px;
+            margin-left: 30px;
+            width: 20px;
+            height: 20px;
+            vertical-align: bottom;
+            fill: #17B0E7 !important;
+        }
+
+a .menu-icon {
+    margin-right: 15px;
+    margin-left: 30px;
+    width: 20px;
+    height: 20px;
+    vertical-align: bottom;
+}
+
+    a .menu-icon:hover path {
+        margin-right: 15px;
+        margin-left: 30px;
+        width: 20px;
+        height: 20px;
+        vertical-align: bottom;
+        fill: #17B0E7 !important;
     }
 
 .menu-item-highlight {
@@ -105,15 +137,6 @@ ul.nav.nav-pills {
     -webkit-box-shadow: 0px 0px 15px -6px rgba(216,216,216,1);
     -moz-box-shadow: 0px 0px 15px -6px rgba(216,216,216,1);
     box-shadow: 0px 0px 15px -6px rgba(216,216,216,1);
-}
-
-.menu-icon {
-    margin-right: 15px;
-    margin-left: 30px;
-    width: 20px;
-    height: 20px;
-    vertical-align: bottom;
-    fill: #17B0E7 !important;
 }
 
 .btn-primary {

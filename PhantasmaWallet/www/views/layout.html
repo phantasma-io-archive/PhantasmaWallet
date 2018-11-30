@@ -53,23 +53,23 @@
                     {{#each menu}}
                     {{#if Enabled}}
                     {{#if IsSelected}}
-                    <li{{#if url=active}} class="active menu-item-highlight" {{/if}}>
+                    <li class="menu-item-highlight">
                         <a href="/{{Id}}" style="color: #17B0E7; display: block; width: 100%;">
                             <img src="/img/{{Icon}}.svg" onload="SVGInjector(this)" class="menu-icon" />
                             {{Caption}}
                         </a>
-                        </li>
+                    </li>
 
-                        {{#else}}
-                        <li {{#if url=active}} class="active" {{/if}}>
-                            <a href="/{{Id}}" style="display: block; width: 100%;">
-                                <img src="/img/{{Icon}}.svg" onload="SVGInjector(this)" class="menu-icon" />
-                                {{Caption}}
-                            </a>
-                        </li>
-                        {{/if}}
-                        {{/if}}
-                        {{/each}}
+                    {{#else}}
+                    <li>
+                        <a href="/{{Id}}" style="display: block; width: 100%;">
+                            <img src="/img/{{Icon}}.svg" onload="SVGInjector(this)" class="menu-icon" />
+                            {{Caption}}
+                        </a>
+                    </li>
+                    {{/if}}
+                    {{/if}}
+                    {{/each}}
                 </ul><br>
             </div>
 
