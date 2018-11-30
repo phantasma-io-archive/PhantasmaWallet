@@ -85,6 +85,8 @@ namespace Phantasma.Wallet
             }
         }
 
+        #region Cache
+
         private static Dictionary<Address, AccountCache> _accountCaches = new Dictionary<Address, AccountCache>();
 
         private void InvalidateCache(Address address)
@@ -123,6 +125,9 @@ namespace Phantasma.Wallet
             _accountCaches[address] = cache;
             return cache;
         }
+
+        #endregion
+
 
         private Dictionary<string, object> InitContext(HTTPRequest request)
         {

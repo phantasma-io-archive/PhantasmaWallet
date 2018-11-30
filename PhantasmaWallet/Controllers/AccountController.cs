@@ -179,6 +179,17 @@ namespace Phantasma.Wallet.Controllers
                         }
                         break;
 
+                    case EvtKind.TokenEscrow:
+                        {
+                            var data = nativeEvent.GetContent<TokenEventData>();
+                            amount = data.value;
+                            var amountDecimal = TokenUtils.ToDecimal(amount, PhantasmaTokens.SingleOrDefault(p => p.Symbol == data.symbol).Decimals);
+                            receiverAddress = nativeEvent.Address;
+                            receiverChain = data.chainAddress;
+                            var chain = GetChainName(receiverChain.Text);
+                            description = $"{amountDecimal} {data.symbol} tokens escrowed for address {receiverAddress} in {chain}";
+                        }
+                        break;
                     case EvtKind.AddressRegister:
                         {
                             var name = nativeEvent.GetContent<string>();

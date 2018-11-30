@@ -25,6 +25,7 @@ namespace Phantasma.Wallet.DTOs
         TokenReceive,
         TokenMint,
         TokenBurn,
+        TokenEscrow,
         AddressRegister,
         FriendAdd,
         FriendRemove,
