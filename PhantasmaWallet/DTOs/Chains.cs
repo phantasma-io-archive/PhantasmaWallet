@@ -21,7 +21,22 @@ namespace Phantasma.Wallet.DTOs
         [JsonProperty("address")]
         public string Address { get; set; }
 
-        [JsonProperty("parent")]
-        public string ParentChain { get; set; }
+        [JsonProperty("parentName")]
+        public string ParentChainName { get; set; }
+
+        [JsonProperty("parentAddress")]
+        public string ParentChainAddress { get; set; }
+
+        [JsonProperty("children")]
+        public List<ChildChain> Children { get; set; }
+    }
+
+    public class ChildChain
+    {
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("address")]
+        public string Address { get; set; }
     }
 }

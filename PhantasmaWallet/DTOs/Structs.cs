@@ -58,4 +58,15 @@ namespace Phantasma.Wallet.DTOs
         public string chainAddress;
         public string destinationChainAddress;
     }
+
+    public struct TransferTx
+    {
+        public bool isFungible;
+        public string addressTo;
+        public string chainName;
+        public string chainAddress;
+        public string destinationChainAddress;
+        public string symbol;
+        public string amountOrId;
+    }
 }

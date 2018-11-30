@@ -311,7 +311,6 @@ namespace Phantasma.Wallet
             }
 
             var isFungible = bool.Parse(request.GetVariable("fungible"));
-            string amountOrId = null;
             var addressTo = request.GetVariable("dest");
 
             var chainName = request.GetVariable("chain");
@@ -322,14 +321,24 @@ namespace Phantasma.Wallet
             // get chain addresses
             var chains = (List<ChainElement>)context["chains"];
             var chainAddress =
-                chains.SingleOrDefault(a => a.Name.ToLowerInvariant() == chainName.ToLowerInvariant())?.Address;
-            var destinationChainAddress = chains.SingleOrDefault(a => a.Name.ToLowerInvariant() == destinationChain.ToLowerInvariant())?.Address;
-
+                chains.SingleOrDefault(a => string.Equals(a.Name, chainName, StringComparison.InvariantCultureIgnoreCase))?.Address;
+            var destinationChainAddress = chains.SingleOrDefault(a => string.Equals(a.Name, destinationChain, StringComparison.InvariantCultureIgnoreCase))?.Address;
+            
             var symbol = request.GetVariable("token");
-            amountOrId = request.GetVariable(isFungible ? "amount" : "id");
+            var amountOrId = request.GetVariable(isFungible ? "amount" : "id");
 
             var keyPair = GetLoginKey(request);
             string result;
+
+            //  new todo: tree structure with chains. Add find path method to structure, add finalDestination to TransferTx. 
+            //  e.g.: Transfer 1 Soul from Nacho to Bank:
+            //  From chain          To chain        Path
+            //  Nacho               Apps            Nacho-Apps-Main-Bank
+            //  Apps                Main            Apps-Main-Bank
+            //  Main                Bank            Main-Bank
+                
+
+
 
             if (chainAddress == destinationChainAddress)
             {
@@ -351,6 +360,18 @@ namespace Phantasma.Wallet
                         });
                 }
             }
+
+            // save tx
+            request.session.SetStruct<TransferTx>("transferTx", new TransferTx
+            {
+                isFungible = isFungible,
+                chainName = chainName,
+                addressTo = addressTo,
+                chainAddress = chainAddress,
+                destinationChainAddress = destinationChainAddress,
+                symbol = symbol,
+                amountOrId = amountOrId
+            });
 
             if (string.IsNullOrEmpty(result))  //todo refactor this 
             {
