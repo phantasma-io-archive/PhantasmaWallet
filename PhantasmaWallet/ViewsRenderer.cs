@@ -87,6 +87,14 @@ namespace Phantasma.Wallet
 
         private static Dictionary<Address, AccountCache> _accountCaches = new Dictionary<Address, AccountCache>();
 
+        private void InvalidateCache(Address address)
+        {
+            if (_accountCaches.ContainsKey(address))
+            {
+                _accountCaches.Remove(address);
+            }
+        }
+
         private AccountCache FindCache(Address address)
         {
             AccountCache cache;
@@ -317,6 +325,7 @@ namespace Phantasma.Wallet
 
             var keyPair = GetLoginKey(request);
             string result;
+
             if (chainAddress == destinationChainAddress)
             {
                 result = AccountController.TransferTokens(isFungible, keyPair, addressTo, chainName, chainAddress, symbol, amountOrId).Result;
@@ -337,6 +346,7 @@ namespace Phantasma.Wallet
                         });
                 }
             }
+
             if (string.IsNullOrEmpty(result))  //todo refactor this 
             {
                 PushError(request, "Error sending tx.");
@@ -394,6 +404,11 @@ namespace Phantasma.Wallet
                         return "settling";
                     }
                     return "";
+                }
+                else
+                {
+                    var keyPair = GetLoginKey(request);
+                    InvalidateCache(keyPair.Address);
                 }
             }
 
