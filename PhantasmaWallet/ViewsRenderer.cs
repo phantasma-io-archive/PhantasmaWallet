@@ -330,22 +330,14 @@ namespace Phantasma.Wallet
             var keyPair = GetLoginKey(request);
             string result;
 
-            //  new todo: tree structure with chains. Add find path method to structure, add finalDestination to TransferTx. 
-            //  e.g.: Transfer 1 Soul from Nacho to Bank:
-            //  From chain          To chain        Path
-            //  Nacho               Apps            Nacho-Apps-Main-Bank
-            //  Apps                Main            Apps-Main-Bank
-            //  Main                Bank            Main-Bank
-                
-
-
-
             if (chainAddress == destinationChainAddress)
             {
                 result = AccountController.TransferTokens(isFungible, keyPair, addressTo, chainName, chainAddress, symbol, amountOrId).Result;
             }
             else //cross chain requires 2 txs
             {
+                //todo  GetShortestPath(chainName,destinationChain)
+
                 result = AccountController.CrossChainTransferToken(isFungible, keyPair, addressTo, chainName, chainAddress, destinationChainAddress, symbol, amountOrId).Result;
                 if (!string.IsNullOrEmpty(result))
                 {

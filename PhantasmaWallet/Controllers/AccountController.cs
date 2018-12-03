@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -12,6 +14,7 @@ using Phantasma.Cryptography;
 using Phantasma.Wallet.DTOs;
 using Phantasma.Wallet.Interfaces;
 using Phantasma.Numerics;
+using Phantasma.Wallet.Helpers;
 using Transaction = Phantasma.Wallet.DTOs.Transaction;
 
 namespace Phantasma.Wallet.Controllers
@@ -42,6 +45,7 @@ namespace Phantasma.Wallet.Controllers
                 PhantasmaChains = _phantasmaRpcService.GetChains.SendRequestAsync().Result.ChainList;
                 PhantasmaTokens = _phantasmaRpcService.GetTokens.SendRequestAsync().Result.Tokens;
             }
+
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
@@ -73,6 +77,7 @@ namespace Phantasma.Wallet.Controllers
                     }
                 }
             }
+
             return holdingList;
         }
 
@@ -146,16 +151,18 @@ namespace Phantasma.Wallet.Controllers
 
             BigInteger amount = 0;
 
-            foreach (var evt in tx.Events)//todo move this
+            foreach (var evt in tx.Events) //todo move this
             {
                 Blockchain.Contracts.Event nativeEvent = null;
                 if (evt.Data != null)
                 {
-                    nativeEvent = new Blockchain.Contracts.Event((EventKind)evt.EvtKind, Address.FromText(evt.EventAddress), evt.Data.Decode());
+                    nativeEvent = new Blockchain.Contracts.Event((EventKind)evt.EvtKind,
+                        Address.FromText(evt.EventAddress), evt.Data.Decode());
                 }
                 else
                 {
-                    nativeEvent = new Blockchain.Contracts.Event((EventKind)evt.EvtKind, Address.FromText(evt.EventAddress));
+                    nativeEvent =
+                        new Blockchain.Contracts.Event((EventKind)evt.EvtKind, Address.FromText(evt.EventAddress));
                 }
 
                 switch (evt.EvtKind)
@@ -183,11 +190,13 @@ namespace Phantasma.Wallet.Controllers
                         {
                             var data = nativeEvent.GetContent<TokenEventData>();
                             amount = data.value;
-                            var amountDecimal = TokenUtils.ToDecimal(amount, PhantasmaTokens.SingleOrDefault(p => p.Symbol == data.symbol).Decimals);
+                            var amountDecimal = TokenUtils.ToDecimal(amount,
+                                PhantasmaTokens.SingleOrDefault(p => p.Symbol == data.symbol).Decimals);
                             receiverAddress = nativeEvent.Address;
                             receiverChain = data.chainAddress;
                             var chain = GetChainName(receiverChain.Text);
-                            description = $"{amountDecimal} {data.symbol} tokens escrowed for address {receiverAddress} in {chain}";
+                            description =
+                                $"{amountDecimal} {data.symbol} tokens escrowed for address {receiverAddress} in {chain}";
                         }
                         break;
                     case EvtKind.AddressRegister:
@@ -215,14 +224,18 @@ namespace Phantasma.Wallet.Controllers
 
             if (description == null)
             {
-                if (amount > 0 && senderAddress != Address.Null && receiverAddress != Address.Null && senderToken != null && senderToken == receiverToken)
+                if (amount > 0 && senderAddress != Address.Null && receiverAddress != Address.Null &&
+                    senderToken != null && senderToken == receiverToken)
                 {
-                    var amountDecimal = TokenUtils.ToDecimal(amount, PhantasmaTokens.SingleOrDefault(p => p.Symbol == senderToken).Decimals);
-                    description = $"{amountDecimal} {senderToken} sent from {senderAddress.Text} to {receiverAddress.Text}";
+                    var amountDecimal = TokenUtils.ToDecimal(amount,
+                        PhantasmaTokens.SingleOrDefault(p => p.Symbol == senderToken).Decimals);
+                    description =
+                        $"{amountDecimal} {senderToken} sent from {senderAddress.Text} to {receiverAddress.Text}";
                 }
                 else if (amount > 0 && receiverAddress != Address.Null && receiverToken != null)
                 {
-                    var amountDecimal = TokenUtils.ToDecimal(amount, PhantasmaTokens.SingleOrDefault(p => p.Symbol == receiverToken).Decimals);
+                    var amountDecimal = TokenUtils.ToDecimal(amount,
+                        PhantasmaTokens.SingleOrDefault(p => p.Symbol == receiverToken).Decimals);
                     description = $"{amountDecimal} {receiverToken} received on {receiverAddress.Text} ";
                 }
                 else
@@ -232,14 +245,17 @@ namespace Phantasma.Wallet.Controllers
 
                 if (receiverChain != Address.Null && receiverChain != senderChain)
                 {
-                    description += $" from {GetChainName(senderChain.Text)} chain to {GetChainName(receiverChain.Text)} chain";
+                    description +=
+                        $" from {GetChainName(senderChain.Text)} chain to {GetChainName(receiverChain.Text)} chain";
                 }
             }
+
             return description;
         }
 
 
-        public async Task<string> SettleBlockTransfer(KeyPair keyPair, string sourceChainAddress, string blockHash, string destinationChainAddress)
+        public async Task<string> SettleBlockTransfer(KeyPair keyPair, string sourceChainAddress, string blockHash,
+            string destinationChainAddress)
         {
             try
             {
@@ -250,11 +266,14 @@ namespace Phantasma.Wallet.Controllers
                 var nexusName = "simnet";
 
                 var block = Hash.Parse(blockHash);
-                var settleTxScript = ScriptUtils.CallContractScript(destinationChain, "SettleBlock", sourceChain, block);
-                var settleTx = new Blockchain.Transaction(nexusName, destinationChainName, settleTxScript, 0, 0, DateTime.UtcNow + TimeSpan.FromHours(1), 0);
+                var settleTxScript =
+                    ScriptUtils.CallContractScript(destinationChain, "SettleBlock", sourceChain, block);
+                var settleTx = new Blockchain.Transaction(nexusName, destinationChainName, settleTxScript, 0, 0,
+                    DateTime.UtcNow + TimeSpan.FromHours(1), 0);
                 settleTx.Sign(keyPair);
 
-                var settleResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(settleTx.ToByteArray(true).Encode());
+                var settleResult =
+                    await _phantasmaRpcService.SendRawTx.SendRequestAsync(settleTx.ToByteArray(true).Encode());
                 var settleTxHash = settleResult?.GetValue("hash");
                 return settleTxHash?.ToString();
             }
@@ -265,7 +284,8 @@ namespace Phantasma.Wallet.Controllers
             }
         }
 
-        public async Task<string> CrossChainTransferToken(bool isFungible, KeyPair keyPair, string addressTo, string chainName, string chainAddress, string destinationChainAddress, string symbol, string amountId)
+        public async Task<string> CrossChainTransferToken(bool isFungible, KeyPair keyPair, string addressTo,
+            string chainName, string chainAddress, string destinationChainAddress, string symbol, string amountId)
         {
             try
             {
@@ -283,7 +303,8 @@ namespace Phantasma.Wallet.Controllers
 
                 var nexusName = "simnet";
 
-                var tx = new Blockchain.Transaction(nexusName, chainName, script, 0, 0, DateTime.UtcNow + TimeSpan.FromHours(1), 0);
+                var tx = new Blockchain.Transaction(nexusName, chainName, script, 0, 0,
+                    DateTime.UtcNow + TimeSpan.FromHours(1), 0);
                 tx.Sign(keyPair);
 
                 var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(tx.ToByteArray(true).Encode());
@@ -297,7 +318,8 @@ namespace Phantasma.Wallet.Controllers
             }
         }
 
-        public async Task<string> TransferTokens(bool isFungible, KeyPair keyPair, string addressTo, string chainName, string chainAddress, string symbol, string amountId)
+        public async Task<string> TransferTokens(bool isFungible, KeyPair keyPair, string addressTo, string chainName,
+            string chainAddress, string symbol, string amountId)
         {
             try
             {
@@ -306,12 +328,16 @@ namespace Phantasma.Wallet.Controllers
                 int decimals = AccountHoldings.SingleOrDefault(t => t.Symbol == symbol).Decimals;
                 var bigIntAmount = TokenUtils.ToBigInteger(decimal.Parse(amountId), decimals);
 
-                var script = isFungible ? ScriptUtils.TokenTransferScript(chain, symbol, keyPair.Address, destinationAddress, bigIntAmount) : ScriptUtils.NfTokenTransferScript(chain, symbol, keyPair.Address, destinationAddress, bigIntAmount);
+                var script = isFungible
+                    ? ScriptUtils.TokenTransferScript(chain, symbol, keyPair.Address, destinationAddress, bigIntAmount)
+                    : ScriptUtils.NfTokenTransferScript(chain, symbol, keyPair.Address, destinationAddress,
+                        bigIntAmount);
 
                 // TODO this should be a dropdown in the wallet settings!!
                 var nexusName = "simnet";
 
-                var tx = new Blockchain.Transaction(nexusName, chainName, script, 0, 0, DateTime.UtcNow + TimeSpan.FromHours(1), 0);
+                var tx = new Blockchain.Transaction(nexusName, chainName, script, 0, 0,
+                    DateTime.UtcNow + TimeSpan.FromHours(1), 0);
                 tx.Sign(keyPair);
 
                 var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(tx.ToByteArray(true).Encode());
@@ -343,6 +369,7 @@ namespace Phantasma.Wallet.Controllers
             {
                 if (element.Address == address) return element.Name;
             }
+
             return string.Empty;
         }
 
@@ -353,11 +380,13 @@ namespace Phantasma.Wallet.Controllers
                 var accountChain = PhantasmaChains.SingleOrDefault(p => p.Name == "account");
                 if (accountChain != null)
                 {
-                    var script = ScriptUtils.CallContractScript(Address.FromText(accountChain.Address), "Register", keyPair.Address, name);
+                    var script = ScriptUtils.CallContractScript(Address.FromText(accountChain.Address), "Register",
+                        keyPair.Address, name);
 
                     // TODO this should be a dropdown in the wallet settings!!
                     var nexusName = "simnet";
-                    var tx = new Blockchain.Transaction(nexusName, accountChain.Name, script, 0, 0, DateTime.UtcNow + TimeSpan.FromHours(1), 0);
+                    var tx = new Blockchain.Transaction(nexusName, accountChain.Name, script, 0, 0,
+                        DateTime.UtcNow + TimeSpan.FromHours(1), 0);
 
                     tx.Sign(keyPair);
 
@@ -370,7 +399,62 @@ namespace Phantasma.Wallet.Controllers
             {
                 //todo
             }
+
             return "";
+        }
+
+        public List<string> GetShortestPath(string from, string to)
+        {
+            var vertices = new List<string>();
+            var edges = new List<Tuple<string, string>>();
+            foreach (var chain in PhantasmaChains)
+            {
+                vertices.Add(chain.Name);
+                if (chain.Children != null)
+                {
+                    foreach (var child in chain.Children)
+                    {
+                        edges.Add(new Tuple<string, string>(chain.Name, child.Name));
+                    }
+                }
+            }
+            var graph = new Graph<string>(vertices, edges);
+
+            var shortestPath = Algorithms.ShortestPathFunction(graph, from);
+
+            List<string> allpaths = new List<string>();
+            foreach (var vertex in vertices)
+            {
+                allpaths.Add(string.Join(", ", shortestPath(vertex)));
+            }
+
+            foreach (var allpath in allpaths)
+            {
+                Debug.WriteLine(allpath);
+            }
+
+            return SelectShortestPath(from, to, allpaths);
+        }
+
+        public List<string> SelectShortestPath(string from, string to, List<string> paths)
+        {
+            var finalPath = "";
+            foreach (var path in paths)
+            {
+                if (path.IndexOf(from, StringComparison.Ordinal) != -1 && path.IndexOf(to, StringComparison.Ordinal) != -1)
+                {
+                    if (finalPath == "")
+                    {
+                        finalPath = path;
+                    }
+                    else if (path.Count(d => d == ',') < finalPath.Count(d => d == ','))
+                    {
+                        finalPath = path;
+                    }
+                }
+            }
+            var listStrLineElements = finalPath.Split(',').ToList();
+            return listStrLineElements;
         }
 
         public static decimal GetCoinRate(uint ticker, string symbol = "USD")
@@ -401,4 +485,9 @@ namespace Phantasma.Wallet.Controllers
             }
         }
     }
+
+
+
+
+
 }
