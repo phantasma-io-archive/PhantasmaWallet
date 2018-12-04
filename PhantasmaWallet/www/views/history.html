@@ -1,33 +1,33 @@
 <h3 class="tab-title">Transactions</h3>
 
-{{#if ConfirmedHash}}
-	<div class="alert alert-success">
-	The transaction <a href="http://explorer.phantasma.io/tx/{{ConfirmedHash}}">{{ConfirmedHash}}</a> was sent with <strong>success</strong>!
-	</div>
+{{#if confirmedHash}}
+<div class="alert alert-success">
+    The transaction <a href="http://explorer.phantasma.io/tx/{{confirmedHash}}">{{confirmedHash}}</a> was sent with <strong>success</strong>!
+</div>
 {{/if}}
 
 {{#if transactions}}
 <table class="table table-striped">
-	<thead>
-	  <tr>
-		<th class="col-1">Date (UTC)</th>
-		<th class="col-4">Hash</th>
-		<th class="col-7">Description</th>
-	  </tr>
-	</thead>
-	<tbody>
-		{{#each transactions}}
-	  <tr>
-		<td class="col-1">{{#date date}}</td>
-		<td class="col-4"><small><a href="http://explorer.phantasma.io/tx/{{hash}}">{{hash}}</small></a></td>
-		<td class="col-7">{{description}}</td>
-	  </tr>
-	  {{/each}}
-	</tbody>
+    <thead>
+        <tr>
+            <th class="col-1">Date (UTC)</th>
+            <th class="col-4">Hash</th>
+            <th class="col-7">Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each transactions}}
+        <tr>
+            <td class="col-1">{{#date date}}</td>
+            <td class="col-4"><small><a href="http://explorer.phantasma.io/tx/{{hash}}">{{hash}}</small></a></td>
+            <td class="col-7">{{description}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
 </table>
 {{#else}}
 <div class="alert alert-info" role="alert">
-  This address is still new and does not have any transaction yet.
+    This address is still new and does not have any transaction yet.
 </div>
 
 {{/if}}

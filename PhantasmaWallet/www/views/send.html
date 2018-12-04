@@ -241,26 +241,12 @@
             bootbox.alert("Please insert a valid destination address!");
             return;
         }
+
         if (selected_chain === selectedDestinationChain) {
             if (target_address === '{{address}}') {
                 bootbox.alert("The destination address cannot be the same as your own address!");
                 return;
             }
-        }
-
-        {{#each chains}}
-        if (('{{ParentChain}}' === selected_chain && '{{Name}}' === selectedDestinationChain) || ('{{ParentChain}}' === selectedDestinationChain && '{{Name}}' === selected_chain)) {
-            isValid = true;
-        }
-        {{/each}}
-
-        if (selected_chain === selectedDestinationChain) {
-            isValid = true;
-        }
-
-        if (!isValid) {
-            bootbox.alert("The destination chain must be related to sender chain (parent or child)");
-            return;
         }
 
         $('#sendSpinner').show();

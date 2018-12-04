@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using LunarLabs.Parser.JSON;
 using Phantasma.Blockchain;
 using Phantasma.Blockchain.Contracts;
@@ -285,20 +286,20 @@ namespace Phantasma.Wallet.Controllers
         }
 
         public async Task<string> CrossChainTransferToken(bool isFungible, KeyPair keyPair, string addressTo,
-            string chainName, string chainAddress, string destinationChainAddress, string symbol, string amountId)
+            string chainName, string destinationChain, string symbol, string amountId)
         {
             try
             {
-                var chain = Address.FromText(chainAddress);
+                var fromChain = PhantasmaChains.Find(p => p.Name == chainName);
+                var toChain = PhantasmaChains.Find(p => p.Name == destinationChain);
                 var destinationAddress = Address.FromText(addressTo);
                 int decimals = AccountHoldings.SingleOrDefault(t => t.Symbol == symbol).Decimals;
                 var bigIntAmount = TokenUtils.ToBigInteger(decimal.Parse(amountId), decimals);
-                var destinationChain = Address.FromText(destinationChainAddress);
 
                 var script = isFungible
-                    ? ScriptUtils.CrossTokenTransferScript(chain, destinationChain, symbol, keyPair.Address,
+                    ? ScriptUtils.CrossTokenTransferScript(Address.FromText(fromChain.Address), Address.FromText(toChain.Address), symbol, keyPair.Address,
                         destinationAddress, bigIntAmount)
-                    : ScriptUtils.CrossNfTokenTransferScript(chain, destinationChain, symbol, keyPair.Address,
+                    : ScriptUtils.CrossNfTokenTransferScript(Address.FromText(fromChain.Address), Address.FromText(toChain.Address), symbol, keyPair.Address,
                         destinationAddress, bigIntAmount);
 
                 var nexusName = "simnet";
@@ -318,12 +319,11 @@ namespace Phantasma.Wallet.Controllers
             }
         }
 
-        public async Task<string> TransferTokens(bool isFungible, KeyPair keyPair, string addressTo, string chainName,
-            string chainAddress, string symbol, string amountId)
+        public async Task<string> TransferTokens(bool isFungible, KeyPair keyPair, string addressTo, string chainName, string symbol, string amountId)
         {
             try
             {
-                var chain = Address.FromText(chainAddress);
+                var chain = Address.FromText(PhantasmaChains.Find(p => p.Name == chainName).Address);
                 var destinationAddress = Address.FromText(addressTo);
                 int decimals = AccountHoldings.SingleOrDefault(t => t.Symbol == symbol).Decimals;
                 var bigIntAmount = TokenUtils.ToBigInteger(decimal.Parse(amountId), decimals);
@@ -403,7 +403,7 @@ namespace Phantasma.Wallet.Controllers
             return "";
         }
 
-        public List<string> GetShortestPath(string from, string to)
+        public List<ChainElement> GetShortestPath(string from, string to)
         {
             var vertices = new List<string>();
             var edges = new List<Tuple<string, string>>();
@@ -436,7 +436,7 @@ namespace Phantasma.Wallet.Controllers
             return SelectShortestPath(from, to, allpaths);
         }
 
-        public List<string> SelectShortestPath(string from, string to, List<string> paths)
+        public List<ChainElement> SelectShortestPath(string from, string to, List<string> paths)
         {
             var finalPath = "";
             foreach (var path in paths)
@@ -454,7 +454,12 @@ namespace Phantasma.Wallet.Controllers
                 }
             }
             var listStrLineElements = finalPath.Split(',').ToList();
-            return listStrLineElements;
+            List<ChainElement> chainPath = new List<ChainElement>();
+            foreach (var element in listStrLineElements)
+            {
+                chainPath.Add(PhantasmaChains.Find(p => p.Name == element.Trim()));
+            }
+            return chainPath;
         }
 
         public static decimal GetCoinRate(uint ticker, string symbol = "USD")

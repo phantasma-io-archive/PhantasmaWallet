@@ -63,9 +63,9 @@ namespace Phantasma.Wallet.DTOs
     {
         public bool isFungible;
         public string addressTo;
-        public string chainName;
-        public string chainAddress;
-        public string destinationChainAddress;
+        public string fromChain;
+        public string toChain;
+        public string finalChain;
         public string symbol;
         public string amountOrId;
     }

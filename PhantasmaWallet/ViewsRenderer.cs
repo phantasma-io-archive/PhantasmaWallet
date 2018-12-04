@@ -53,9 +53,9 @@ namespace Phantasma.Wallet
 
         void UpdateHistoryContext(Dictionary<string, object> context, KeyPair keyPair, HTTPRequest request)
         {
-            if (request.session.Contains("ConfirmedHash"))
+            if (request.session.Contains("confirmedHash"))
             {
-                context["ConfirmedHash"] = request.session.GetString("ConfirmedHash");
+                context["confirmedHash"] = request.session.GetString("confirmedHash");
             }
         }
 
@@ -316,54 +316,64 @@ namespace Phantasma.Wallet
             var chainName = request.GetVariable("chain");
             var destinationChain = request.GetVariable("destChain");
 
-            var context = InitContext(request);
+            //var context = InitContext(request); //todo is this needed?
 
-            // get chain addresses
-            var chains = (List<ChainElement>)context["chains"];
-            var chainAddress =
-                chains.SingleOrDefault(a => string.Equals(a.Name, chainName, StringComparison.InvariantCultureIgnoreCase))?.Address;
-            var destinationChainAddress = chains.SingleOrDefault(a => string.Equals(a.Name, destinationChain, StringComparison.InvariantCultureIgnoreCase))?.Address;
-            
             var symbol = request.GetVariable("token");
             var amountOrId = request.GetVariable(isFungible ? "amount" : "id");
 
             var keyPair = GetLoginKey(request);
             string result;
 
-            if (chainAddress == destinationChainAddress)
+            if (chainName == destinationChain)
             {
-                result = AccountController.TransferTokens(isFungible, keyPair, addressTo, chainName, chainAddress, symbol, amountOrId).Result;
+                result = AccountController.TransferTokens(isFungible, keyPair, addressTo, chainName, symbol, amountOrId).Result;
+
+                //reset session fields
+                request.session.Remove("settleTx");
+                request.session.SetBool("isCrossTransfer", false);
+                request.session.Remove("txNumber");
             }
             else //cross chain requires 2 txs
             {
-                //todo  GetShortestPath(chainName,destinationChain)
+                var pathList = AccountController.GetShortestPath(chainName, destinationChain).ToArray();
 
-                result = AccountController.CrossChainTransferToken(isFungible, keyPair, addressTo, chainName, chainAddress, destinationChainAddress, symbol, amountOrId).Result;
+                request.session.SetInt("txNumber", pathList.Length);
+
+                if (pathList.Length > 2)
+                {
+                    chainName = pathList[0].Name;
+                    destinationChain = pathList[1].Name;
+
+                    // save tx
+                    request.session.SetStruct<TransferTx>("transferTx", new TransferTx
+                    {
+                        isFungible = isFungible,
+                        fromChain = chainName,
+                        toChain = destinationChain,
+                        finalChain = pathList[pathList.Length - 1].Name,
+                        addressTo = addressTo,
+                        symbol = symbol,
+                        amountOrId = amountOrId
+                    });
+
+                    result = AccountController.CrossChainTransferToken(isFungible, keyPair, keyPair.Address.Text, chainName, destinationChain, symbol, amountOrId).Result;
+                }
+                else
+                {
+                    result = AccountController.CrossChainTransferToken(isFungible, keyPair, addressTo, chainName, destinationChain, symbol, amountOrId).Result;
+                }
                 if (!string.IsNullOrEmpty(result))
                 {
-                    request.session.SetBool("IsCrossTransfer", true);
-
+                    request.session.SetBool("isCrossTransfer", true);
                     request.session.SetStruct<SettleTx>("settleTx",
                         new SettleTx
                         {
                             chainName = chainName,
-                            chainAddress = chainAddress,
-                            destinationChainAddress = destinationChainAddress,
+                            chainAddress = AccountController.PhantasmaChains.Find(p => p.Name == chainName).Address,
+                            destinationChainAddress = AccountController.PhantasmaChains.Find(p => p.Name == destinationChain).Address,
                         });
                 }
             }
-
-            // save tx
-            request.session.SetStruct<TransferTx>("transferTx", new TransferTx
-            {
-                isFungible = isFungible,
-                chainName = chainName,
-                addressTo = addressTo,
-                chainAddress = chainAddress,
-                destinationChainAddress = destinationChainAddress,
-                symbol = symbol,
-                amountOrId = amountOrId
-            });
 
             if (string.IsNullOrEmpty(result))  //todo refactor this 
             {
@@ -382,7 +392,7 @@ namespace Phantasma.Wallet
             }
 
             var context = InitContext(request);
-            context["ConfirmingTxHash"] = request.GetVariable("txhash");
+            context["confirmingTxHash"] = request.GetVariable("txhash");
 
             return RendererView(context, "layout", "waiting");
         }
@@ -402,8 +412,8 @@ namespace Phantasma.Wallet
 
             if (confirmationDto.IsConfirmed)
             {
-                request.session.SetString("ConfirmedHash", txHash);
-                if (request.session.GetBool("IsCrossTransfer"))
+                request.session.SetString("confirmedHash", txHash);
+                if (request.session.GetBool("isCrossTransfer"))
                 {
                     //temp workaround, todo remove
                     var data = request.session.Data.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
@@ -414,19 +424,27 @@ namespace Phantasma.Wallet
                         confirmationDto.Hash, data["settleTx.destinationChainAddress"].ToString()).Result;
 
                     // clear
-                    request.session.SetBool("IsCrossTransfer", false);
+                    request.session.SetBool("isCrossTransfer", false);
 
                     if (!string.IsNullOrEmpty(settleTx))
                     {
-                        context["ConfirmingTxHash"] = settleTx;
+                        context["confirmingTxHash"] = settleTx;
                         return "settling";
                     }
                     return "";
                 }
                 else
                 {
-                    var keyPair = GetLoginKey(request);
-                    InvalidateCache(keyPair.Address);
+                    if (request.session.GetInt("txNumber") >= 2)
+                    {
+                        var txToComplete = request.session.GetStruct<TransferTx>("transferTx");
+                        return "continue";
+                    }
+                    else
+                    {
+                        var keyPair = GetLoginKey(request);
+                        InvalidateCache(keyPair.Address);
+                    }
                 }
             }
 

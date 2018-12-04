@@ -18,7 +18,7 @@
 
 
     function getConfirmations() {
-        $.get('/confirmations/{{ConfirmingTxHash}}',
+        $.get('/confirmations/{{confirmingTxHash}}',
             function(returnedData) {
 				console.log('confirmations: ', returnedData);
                 if (returnedData === 'confirmed') {
@@ -26,6 +26,21 @@
                 } else if (returnedData === 'settling') {
                     $('#waitingText').text('Waiting for transaction settling confirmation');
                     setTimeout(getConfirmations, 2000);
+                } else if (returnedData === 'continue') {
+                    $.post('/sendrawtx',
+                        {
+                            fungible: '{{transferTx.isFungible}}', token: '{{transferTx.symbol}}', amount: '{{transferTx.amountOrId}}', dest: '{{transferTx.addressTo}}', chain: '{{transferTx.fromChain}}' , destChain: '{{transferTx.finalChain}}'
+                        },
+                        function (returnedData) {
+                            if (returnedData !== "") {
+                                window.location.replace("/waiting/" + returnedData);
+                            } else {
+                                window.location.replace("/error");
+                            }
+                            console.log(returnedData);
+                        }).fail(function() {
+                        console.log("error");
+                    });
                 }
 				else {
 					counter++;
