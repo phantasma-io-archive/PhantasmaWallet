@@ -316,7 +316,7 @@ namespace Phantasma.Wallet
             var chainName = request.GetVariable("chain");
             var destinationChain = request.GetVariable("destChain");
 
-            //var context = InitContext(request); //todo is this needed?
+            var context = InitContext(request); //todo is this needed?
 
             var symbol = request.GetVariable("token");
             var amountOrId = request.GetVariable(isFungible ? "amount" : "id");
@@ -393,7 +393,7 @@ namespace Phantasma.Wallet
 
             var context = InitContext(request);
             context["confirmingTxHash"] = request.GetVariable("txhash");
-
+            context["transferTx"] = request.session.GetStruct<TransferTx>("transferTx");
             return RendererView(context, "layout", "waiting");
         }
 
@@ -436,7 +436,8 @@ namespace Phantasma.Wallet
                 {
                     if (request.session.GetInt("txNumber") > 2)
                     {
-                        var txToComplete = request.session.GetStruct<TransferTx>("transferTx");
+                        //var txToComplete = request.session.GetStruct<TransferTx>("transferTx");
+                        //context["transferTx"] = txToComplete;
                         return "continue";
                     }
                     else

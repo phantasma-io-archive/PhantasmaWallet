@@ -65,7 +65,7 @@ namespace Phantasma.Wallet.Controllers
                     {
                         holdingList.Add(new SendHolding
                         {
-                            Amount = decimal.Parse(balanceChain.Balance),
+                            Amount = TokenUtils.ToDecimal(BigInteger.Parse(balanceChain.Balance), holding.Decimals),
                             ChainName = balanceChain.ChainName,
                             Name = holding.Name,
                             Symbol = holding.Symbol,

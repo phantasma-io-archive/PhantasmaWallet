@@ -339,7 +339,7 @@
 		function saveToken() {
 		    selected_symbol = $('#select-token-form').val();
 		    {{#each chainTokens}}
-            if ('{{Symbol}}' === selected_symbol) {
+            if ('{{Symbol}}' === selected_symbol && selected_chain === '{{ChainName}}') {
                 max_amount = '{{Amount}}';
                 if ('{{Fungible}}' === 'False') {
                     isFungible = false;
@@ -354,7 +354,11 @@
                     {{/each}}
                     return;
                 }
-                else {
+                else{
+                            var existingText = $('#select-token-form option:selected').text();
+                            if (!existingText.includes(max_amount)) {
+                                $('#select-token-form option:selected').text(existingText + " - " + max_amount);
+                            }
                             $('#amountGroup').show();
                             $('#nft-id-group').hide();
                             isFungible = true;
