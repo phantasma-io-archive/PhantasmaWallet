@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using LunarLabs.Parser.JSON;
 using Phantasma.Blockchain;
 using Phantasma.Blockchain.Contracts;
@@ -261,14 +259,13 @@ namespace Phantasma.Wallet.Controllers
             try
             {
                 var sourceChain = Address.FromText(sourceChainAddress);
-                var destinationChain = Address.FromText(destinationChainAddress);
                 var destinationChainName =
                     PhantasmaChains.SingleOrDefault(c => c.Address == destinationChainAddress).Name;
                 var nexusName = "simnet";
 
                 var block = Hash.Parse(blockHash);
                 var settleTxScript =
-                    ScriptUtils.CallContractScript(destinationChain, "SettleBlock", sourceChain, block);
+                    ScriptUtils.CallContractScript("token", "SettleBlock", sourceChain, block);
                 var settleTx = new Blockchain.Transaction(nexusName, destinationChainName, settleTxScript, 0, 0,
                     DateTime.UtcNow + TimeSpan.FromHours(1), 0);
                 settleTx.Sign(keyPair);
@@ -290,16 +287,15 @@ namespace Phantasma.Wallet.Controllers
         {
             try
             {
-                var fromChain = PhantasmaChains.Find(p => p.Name == chainName);
                 var toChain = PhantasmaChains.Find(p => p.Name == destinationChain);
                 var destinationAddress = Address.FromText(addressTo);
                 int decimals = AccountHoldings.SingleOrDefault(t => t.Symbol == symbol).Decimals;
                 var bigIntAmount = TokenUtils.ToBigInteger(decimal.Parse(amountId), decimals);
 
                 var script = isFungible
-                    ? ScriptUtils.CrossTokenTransferScript(Address.FromText(fromChain.Address), Address.FromText(toChain.Address), symbol, keyPair.Address,
+                    ? ScriptUtils.CrossTokenTransferScript(Address.FromText(toChain.Address), symbol, keyPair.Address,
                         destinationAddress, bigIntAmount)
-                    : ScriptUtils.CrossNfTokenTransferScript(Address.FromText(fromChain.Address), Address.FromText(toChain.Address), symbol, keyPair.Address,
+                    : ScriptUtils.CrossNfTokenTransferScript(Address.FromText(toChain.Address), symbol, keyPair.Address,
                         destinationAddress, bigIntAmount);
 
                 var nexusName = "simnet";
@@ -323,14 +319,13 @@ namespace Phantasma.Wallet.Controllers
         {
             try
             {
-                var chain = Address.FromText(PhantasmaChains.Find(p => p.Name == chainName).Address);
                 var destinationAddress = Address.FromText(addressTo);
                 int decimals = AccountHoldings.SingleOrDefault(t => t.Symbol == symbol).Decimals;
                 var bigIntAmount = TokenUtils.ToBigInteger(decimal.Parse(amountId), decimals);
 
                 var script = isFungible
-                    ? ScriptUtils.TokenTransferScript(chain, symbol, keyPair.Address, destinationAddress, bigIntAmount)
-                    : ScriptUtils.NfTokenTransferScript(chain, symbol, keyPair.Address, destinationAddress,
+                    ? ScriptUtils.TokenTransferScript(symbol, keyPair.Address, destinationAddress, bigIntAmount)
+                    : ScriptUtils.NfTokenTransferScript(symbol, keyPair.Address, destinationAddress,
                         bigIntAmount);
 
                 // TODO this should be a dropdown in the wallet settings!!
@@ -380,7 +375,7 @@ namespace Phantasma.Wallet.Controllers
                 var accountChain = PhantasmaChains.SingleOrDefault(p => p.Name == "account");
                 if (accountChain != null)
                 {
-                    var script = ScriptUtils.CallContractScript(Address.FromText(accountChain.Address), "Register",
+                    var script = ScriptUtils.CallContractScript("token", "Register",
                         keyPair.Address, name);
 
                     // TODO this should be a dropdown in the wallet settings!!

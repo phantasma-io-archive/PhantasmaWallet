@@ -100,7 +100,6 @@ namespace Phantasma.Wallet.JsonRpc.Client
                 httpResponseMessage.EnsureSuccessStatusCode();
 
                 var stream = await httpResponseMessage.Content.ReadAsStreamAsync();
-                var test = await httpResponseMessage.Content.ReadAsStringAsync();
                 using (var streamReader = new StreamReader(stream))
                 using (var reader = new JsonTextReader(streamReader))
                 {

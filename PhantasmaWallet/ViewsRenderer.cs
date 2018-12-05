@@ -415,13 +415,12 @@ namespace Phantasma.Wallet
                 request.session.SetString("confirmedHash", txHash);
                 if (request.session.GetBool("isCrossTransfer"))
                 {
-                    //temp workaround, todo remove
-                    var data = request.session.Data.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+                    var settle = request.session.GetStruct<SettleTx>("settleTx");
 
                     var settleTx = AccountController.SettleBlockTransfer(
                         GetLoginKey(request),
-                        data["settleTx.chainAddress"].ToString(),
-                        confirmationDto.Hash, data["settleTx.destinationChainAddress"].ToString()).Result;
+                        settle.chainAddress,
+                        confirmationDto.Hash, settle.destinationChainAddress).Result;
 
                     // clear
                     request.session.SetBool("isCrossTransfer", false);
@@ -435,7 +434,7 @@ namespace Phantasma.Wallet
                 }
                 else
                 {
-                    if (request.session.GetInt("txNumber") >= 2)
+                    if (request.session.GetInt("txNumber") > 2)
                     {
                         var txToComplete = request.session.GetStruct<TransferTx>("transferTx");
                         return "continue";
@@ -474,6 +473,11 @@ namespace Phantasma.Wallet
         }
 
         #endregion
+
+        private void ResetTxFields(HTTPRequest request)
+        {
+
+        }
 
 
         private static readonly MenuEntry[] MenuEntries = new MenuEntry[]

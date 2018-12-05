@@ -278,7 +278,7 @@
                     if (isFungible) {
                         $.post('/sendrawtx',
                             {
-                                fungible: true, token: symbol, amount: amount.value, dest: addressTo.value, chain: selected_chain , destChain: selectedDestinationChain
+                                fungible: 'True', token: symbol, amount: amount.value, dest: addressTo.value, chain: selected_chain , destChain: selectedDestinationChain
                             },
                             function (returnedData) {
                                 $('#sendSpinner').hide();
@@ -295,7 +295,7 @@
                         var nftId = $("#select-id").val();
                         $.post('/sendrawtx',
                             {
-                                fungible: false, token: symbol, id: nftId, dest: addressTo.value, chain: selected_chain , destChain: selectedDestinationChain
+                                fungible: 'False', token: symbol, id: nftId, dest: addressTo.value, chain: selected_chain , destChain: selectedDestinationChain
                             },
                             function (returnedData) {
                                 $('#sendSpinner').hide();
