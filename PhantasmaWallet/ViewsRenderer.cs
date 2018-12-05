@@ -436,19 +436,19 @@ namespace Phantasma.Wallet
                 {
                     if (request.session.GetInt("txNumber") > 2)
                     {
-                        //var txToComplete = request.session.GetStruct<TransferTx>("transferTx");
-                        //context["transferTx"] = txToComplete;
                         return "continue";
                     }
-                    else
-                    {
-                        var keyPair = GetLoginKey(request);
-                        InvalidateCache(keyPair.Address);
-                    }
+
+                    //if it gets here, there are no more txs to process
+                    var keyPair = GetLoginKey(request);
+                    InvalidateCache(keyPair.Address);
+
+                    ResetSessionSendFields(request);
+                    return "confirmed";
                 }
             }
 
-            return confirmationDto.IsConfirmed ? "confirmed" : "unconfirmed";
+            return "unconfirmed";
         }
 
         private object RouteRegisterName(HTTPRequest request)
@@ -475,12 +475,28 @@ namespace Phantasma.Wallet
 
         #endregion
 
-        private void ResetTxFields(HTTPRequest request)
+        private void ResetSessionSendFields(HTTPRequest request)
         {
+            if (request.session.Contains("txNumber"))
+            {
+                request.session.Remove("txNumber");
+            }
 
+            if (request.session.Contains("transferTx"))
+            {
+                request.session.Remove("transferTx");
+            }
+
+            if (request.session.Contains("settleTx"))
+            {
+                request.session.Remove("settleTx");
+            }
+
+            if (request.session.Contains("isCrossTransfer"))
+            {
+                request.session.Remove("isCrossTransfer");
+            }
         }
-
-
         private static readonly MenuEntry[] MenuEntries = new MenuEntry[]
         {
             new MenuEntry(){ Id = "portfolio", Icon = "fa-wallet", Caption = "Portfolio", Enabled = true, IsSelected = true},
