@@ -90,10 +90,10 @@ namespace Phantasma.Wallet.Controllers
             {
                 var holding = new Holding
                 {
-                    symbol = token.Symbol,
-                    icon = "phantasma_logo",
-                    name = token.Name,
-                    rate = rateUsd
+                    Symbol = token.Symbol,
+                    Icon = "phantasma_logo",
+                    Name = token.Name,
+                    Rate = rateUsd
                 };
                 decimal amount = 0;
                 foreach (var tokenChain in token.Chains)
@@ -105,7 +105,7 @@ namespace Phantasma.Wallet.Controllers
                     }
                 }
 
-                holding.amount = amount;
+                holding.Amount = amount;
                 holdings.Add(holding);
             }
 
@@ -127,9 +127,9 @@ namespace Phantasma.Wallet.Controllers
             {
                 txs.Add(new Transaction
                 {
-                    date = new Timestamp(tx.Timestamp),
-                    hash = tx.Txid,
-                    description = GetTxDescription(tx)
+                    Date = new Timestamp(tx.Timestamp),
+                    Hash = tx.Txid,
+                    Description = GetTxDescription(tx)
                 });
             }
 

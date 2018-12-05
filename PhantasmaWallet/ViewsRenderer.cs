@@ -51,7 +51,7 @@ namespace Phantasma.Wallet
             request.session.SetStruct<ErrorContext>("error", temp);
         }
 
-        void UpdateHistoryContext(Dictionary<string, object> context, KeyPair keyPair, HTTPRequest request)
+        void UpdateHistoryContext(Dictionary<string, object> context, HTTPRequest request)
         {
             if (request.session.Contains("confirmedHash"))
             {
@@ -64,7 +64,7 @@ namespace Phantasma.Wallet
             var cache = FindCache(keyPair.Address);
 
             var availableChains = new List<string>();
-            foreach (var token in cache.tokens)
+            foreach (var token in cache.Tokens)
             {
                 foreach (var balanceChain in token.Chains)
                 {
@@ -106,7 +106,7 @@ namespace Phantasma.Wallet
             if (_accountCaches.ContainsKey(address))
             {
                 cache = _accountCaches[address];
-                var diff = currentTime - cache.lastUpdated;
+                var diff = currentTime - cache.LastUpdated;
 
                 if (diff.TotalMinutes < 5)
                 {
@@ -116,10 +116,10 @@ namespace Phantasma.Wallet
 
             cache = new AccountCache()
             {
-                lastUpdated = currentTime,
-                holdings = AccountController.GetAccountHoldings(address.Text).Result,
-                tokens = AccountController.GetAccountTokens(address.Text).Result.ToArray(),
-                transactions = AccountController.GetAccountTransactions(address.Text).Result //todo remove .Result,
+                LastUpdated = currentTime,
+                Holdings = AccountController.GetAccountHoldings(address.Text).Result,
+                Tokens = AccountController.GetAccountTokens(address.Text).Result.ToArray(),
+                Transactions = AccountController.GetAccountTransactions(address.Text).Result //todo remove .Result,
             };
 
             _accountCaches[address] = cache;
@@ -157,10 +157,10 @@ namespace Phantasma.Wallet
                 var cache = FindCache(keyPair.Address);
 
                 var entry = MenuEntries.FirstOrDefault(e => e.Id == "history");
-                entry.Count = cache.transactions.Length;
+                entry.Count = cache.Transactions.Length;
 
-                context["transactions"] = cache.transactions;
-                context["holdings"] = cache.holdings;
+                context["transactions"] = cache.Transactions;
+                context["holdings"] = cache.Holdings;
 
                 if (string.IsNullOrEmpty(AccountController.AccountName))
                 {
@@ -290,7 +290,7 @@ namespace Phantasma.Wallet
             switch (entry)
             {
                 case "history":
-                    UpdateHistoryContext(context, keyPair, request);
+                    UpdateHistoryContext(context, request);
                     break;
 
                 case "send":
@@ -347,13 +347,13 @@ namespace Phantasma.Wallet
                     // save tx
                     request.session.SetStruct<TransferTx>("transferTx", new TransferTx
                     {
-                        isFungible = isFungible,
-                        fromChain = chainName,
-                        toChain = destinationChain,
-                        finalChain = pathList[pathList.Length - 1].Name,
-                        addressTo = addressTo,
-                        symbol = symbol,
-                        amountOrId = amountOrId
+                        IsFungible = isFungible,
+                        FromChain = chainName,
+                        ToChain = destinationChain,
+                        FinalChain = pathList[pathList.Length - 1].Name,
+                        AddressTo = addressTo,
+                        Symbol = symbol,
+                        AmountOrId = amountOrId
                     });
 
                     result = AccountController.CrossChainTransferToken(isFungible, keyPair, keyPair.Address.Text, chainName, destinationChain, symbol, amountOrId).Result;
@@ -368,9 +368,9 @@ namespace Phantasma.Wallet
                     request.session.SetStruct<SettleTx>("settleTx",
                         new SettleTx
                         {
-                            chainName = chainName,
-                            chainAddress = AccountController.PhantasmaChains.Find(p => p.Name == chainName).Address,
-                            destinationChainAddress = AccountController.PhantasmaChains.Find(p => p.Name == destinationChain).Address,
+                            ChainName = chainName,
+                            ChainAddress = AccountController.PhantasmaChains.Find(p => p.Name == chainName).Address,
+                            DestinationChainAddress = AccountController.PhantasmaChains.Find(p => p.Name == destinationChain).Address,
                         });
                 }
             }
@@ -419,8 +419,8 @@ namespace Phantasma.Wallet
 
                     var settleTx = AccountController.SettleBlockTransfer(
                         GetLoginKey(request),
-                        settle.chainAddress,
-                        confirmationDto.Hash, settle.destinationChainAddress).Result;
+                        settle.ChainAddress,
+                        confirmationDto.Hash, settle.DestinationChainAddress).Result;
 
                     // clear
                     request.session.SetBool("isCrossTransfer", false);
@@ -459,8 +459,8 @@ namespace Phantasma.Wallet
             {
                 if (context["holdings"] is Holding[] balance)
                 {
-                    var soulBalance = balance.SingleOrDefault(b => b.symbol == "SOUL");
-                    if (soulBalance.amount > 0.1m) //RegistrationCost
+                    var soulBalance = balance.SingleOrDefault(b => b.Symbol == "SOUL");
+                    if (soulBalance.Amount > 0.1m) //RegistrationCost
                     {
                         var keyPair = GetLoginKey(request);
                         var registerTx = AccountController.RegisterName(keyPair, name).Result;
@@ -511,7 +511,7 @@ namespace Phantasma.Wallet
             new MenuEntry(){ Id = "logout", Icon = "fa-sign-out-alt", Caption = "Log Out", Enabled = true, IsSelected = false},
         };
 
-        private static readonly Net[] Networks = new Net[]
+        private static readonly Net[] Networks =
         {
             new Net{Name = "simnet", IsEnabled = true, Value = 1},
             new Net{Name = "testnet", IsEnabled = false, Value = 2},

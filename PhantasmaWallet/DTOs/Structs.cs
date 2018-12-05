@@ -14,29 +14,29 @@ namespace Phantasma.Wallet.DTOs
 
     public class AccountCache
     {
-        public DateTime lastUpdated;
-        public Transaction[] transactions;
-        public Holding[] holdings;
-        public Token[] tokens;
+        public DateTime LastUpdated;
+        public Transaction[] Transactions;
+        public Holding[] Holdings;
+        public Token[] Tokens;
     }
 
     public struct Holding
     {
-        public string name;
-        public string symbol;
-        public string icon;
-        public decimal amount;
-        public decimal rate;
-        public decimal usd => (amount * rate);
-        public string amountFormated => amount.ToString("0.####");
-        public string usdFormated => usd.ToString("0.####");
+        public string Name;
+        public string Symbol;
+        public string Icon;
+        public decimal Amount;
+        public decimal Rate;
+        public decimal Usd => (Amount * Rate);
+        public string AmountFormated => Amount.ToString("0.####");
+        public string UsdFormated => Usd.ToString("0.####");
     }
 
     public struct Transaction
     {
-        public DateTime date;
-        public string hash;
-        public string description;
+        public DateTime Date;
+        public string Hash;
+        public string Description;
     }
 
     public class Net
@@ -54,19 +54,19 @@ namespace Phantasma.Wallet.DTOs
 
     public struct SettleTx
     {
-        public string chainName;
-        public string chainAddress;
-        public string destinationChainAddress;
+        public string ChainName;
+        public string ChainAddress;
+        public string DestinationChainAddress;
     }
 
     public struct TransferTx
     {
-        public bool isFungible;
-        public string addressTo;
-        public string fromChain;
-        public string toChain;
-        public string finalChain;
-        public string symbol;
-        public string amountOrId;
+        public bool IsFungible;
+        public string AddressTo;
+        public string FromChain;
+        public string ToChain;
+        public string FinalChain;
+        public string Symbol;
+        public string AmountOrId;
     }
 }

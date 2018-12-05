@@ -29,7 +29,7 @@
                 } else if (returnedData === 'continue') {
                     $.post('/sendrawtx',
                         {
-                            fungible: '{{transferTx.isFungible}}', token: '{{transferTx.symbol}}', amount: '{{transferTx.amountOrId}}', dest: '{{transferTx.addressTo}}', chain: '{{transferTx.toChain}}' , destChain: '{{transferTx.finalChain}}'
+                            fungible: '{{transferTx.IsFungible}}', token: '{{transferTx.Symbol}}', amount: '{{transferTx.AmountOrId}}', dest: '{{transferTx.AddressTo}}', chain: '{{transferTx.ToChain}}' , destChain: '{{transferTx.FinalChain}}'
                         },
                         function (returnedData) {
                             if (returnedData !== "") {
