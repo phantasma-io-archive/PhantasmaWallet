@@ -20,7 +20,6 @@ namespace Phantasma.Wallet.DTOs
     {
         ChainCreate,
         TokenCreate,
-        TokenInfo,
         TokenSend,
         TokenReceive,
         TokenMint,
@@ -29,5 +28,7 @@ namespace Phantasma.Wallet.DTOs
         AddressRegister,
         FriendAdd,
         FriendRemove,
+        GasEscrow,
+        GasPayment,
     }
 }

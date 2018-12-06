@@ -264,10 +264,18 @@ namespace Phantasma.Wallet.Controllers
                 var nexusName = "simnet";
 
                 var block = Hash.Parse(blockHash);
-                var settleTxScript =
-                    ScriptUtils.CallContractScript("token", "SettleBlock", sourceChain, block);
-                var settleTx = new Blockchain.Transaction(nexusName, destinationChainName, settleTxScript, 0, 0,
-                    DateTime.UtcNow + TimeSpan.FromHours(1), 0);
+
+                var settleTxScript = ScriptUtils.BeginScript()
+                    .CallContract("token", "SettleBlock", sourceChain, block)
+                    .AllowGas(sourceChain, 1, 9999)
+                    .SpendGas(sourceChain)
+                    .EndScript();
+
+                //var settleTxScript =
+                //    ScriptUtils.CallContractScript("token", "SettleBlock", sourceChain, block);
+
+
+                var settleTx = new Blockchain.Transaction(nexusName, destinationChainName, settleTxScript, DateTime.UtcNow + TimeSpan.FromHours(1), 0);
                 settleTx.Sign(keyPair);
 
                 var settleResult =
@@ -293,15 +301,23 @@ namespace Phantasma.Wallet.Controllers
                 var bigIntAmount = TokenUtils.ToBigInteger(decimal.Parse(amountId), decimals);
 
                 var script = isFungible
-                    ? ScriptUtils.CrossTokenTransferScript(Address.FromText(toChain.Address), symbol, keyPair.Address,
-                        destinationAddress, bigIntAmount)
-                    : ScriptUtils.CrossNfTokenTransferScript(Address.FromText(toChain.Address), symbol, keyPair.Address,
-                        destinationAddress, bigIntAmount);
+                    ? ScriptUtils.BeginScript()
+                        .AllowGas(keyPair.Address, 1, 9999)
+                        .CrossTransferToken(Address.FromText(toChain.Address), symbol, keyPair.Address,
+                            destinationAddress, bigIntAmount)
+                        .SpendGas(keyPair.Address)
+                        .EndScript()
+
+                    : ScriptUtils.BeginScript()
+                        .AllowGas(keyPair.Address, 1, 9999)
+                        .CrossTransferNFT(Address.FromText(toChain.Address), symbol, keyPair.Address,
+                            destinationAddress, bigIntAmount)
+                        .SpendGas(keyPair.Address)
+                        .EndScript();
 
                 var nexusName = "simnet";
 
-                var tx = new Blockchain.Transaction(nexusName, chainName, script, 0, 0,
-                    DateTime.UtcNow + TimeSpan.FromHours(1), 0);
+                var tx = new Blockchain.Transaction(nexusName, chainName, script, DateTime.UtcNow + TimeSpan.FromHours(1), 0);
                 tx.Sign(keyPair);
 
                 var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(tx.ToByteArray(true).Encode());
@@ -324,15 +340,21 @@ namespace Phantasma.Wallet.Controllers
                 var bigIntAmount = TokenUtils.ToBigInteger(decimal.Parse(amountId), decimals);
 
                 var script = isFungible
-                    ? ScriptUtils.TokenTransferScript(symbol, keyPair.Address, destinationAddress, bigIntAmount)
-                    : ScriptUtils.NfTokenTransferScript(symbol, keyPair.Address, destinationAddress,
-                        bigIntAmount);
+                    ? ScriptUtils.BeginScript()
+                        .AllowGas(keyPair.Address, 1, 9999)
+                        .TransferTokens(symbol, keyPair.Address, destinationAddress, bigIntAmount)
+                        .SpendGas(keyPair.Address)
+                        .EndScript()
+                    : ScriptUtils.BeginScript()
+                        .AllowGas(keyPair.Address, 1, 9999)
+                        .TransferNFT(symbol, keyPair.Address, destinationAddress, bigIntAmount)
+                        .SpendGas(keyPair.Address)
+                        .EndScript();
 
                 // TODO this should be a dropdown in the wallet settings!!
                 var nexusName = "simnet";
 
-                var tx = new Blockchain.Transaction(nexusName, chainName, script, 0, 0,
-                    DateTime.UtcNow + TimeSpan.FromHours(1), 0);
+                var tx = new Blockchain.Transaction(nexusName, chainName, script, DateTime.UtcNow + TimeSpan.FromHours(1), 0);
                 tx.Sign(keyPair);
 
                 var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(tx.ToByteArray(true).Encode());
@@ -375,13 +397,15 @@ namespace Phantasma.Wallet.Controllers
                 var accountChain = PhantasmaChains.SingleOrDefault(p => p.Name == "account");
                 if (accountChain != null)
                 {
-                    var script = ScriptUtils.CallContractScript("token", "Register",
-                        keyPair.Address, name);
+                    var script = ScriptUtils.BeginScript()
+                        .AllowGas(keyPair.Address, 1, 9999)
+                        .CallContract("token", "Register", keyPair.Address, name)
+                        .SpendGas(keyPair.Address)
+                        .EndScript();
 
                     // TODO this should be a dropdown in the wallet settings!!
                     var nexusName = "simnet";
-                    var tx = new Blockchain.Transaction(nexusName, accountChain.Name, script, 0, 0,
-                        DateTime.UtcNow + TimeSpan.FromHours(1), 0);
+                    var tx = new Blockchain.Transaction(nexusName, accountChain.Name, script, DateTime.UtcNow + TimeSpan.FromHours(1), 0);
 
                     tx.Sign(keyPair);
 

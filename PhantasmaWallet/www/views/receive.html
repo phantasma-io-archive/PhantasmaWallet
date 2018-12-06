@@ -6,7 +6,18 @@
 
     <h4 style="color: #7C95AB;font-size: 20px; font-weight: 600; text-align: center; padding: 40px;">Your public Phantasma address:</h4>
 
-    <p style="color: #7C95AB;font-size: 20px;  text-align: center; padding: 10px;"><em>{{address}}</em><span class="copy-pad"></span><a href="#" onclick="copyText('{{address}}', 'Address')"><i class="fas fa-copy"></i></a></p>
+    <div style="overflow: auto;">
+        <p style="color: #7C95AB; font-size: 20px; text-align: center; padding: 10px; line-height: 1.5em; height: 3em;">
+            <em>{{address}}</em>
+        </p>
+    </div>
+    <div style="text-align: center;">
+        <span class="copy-pad" style="font-size: 20px;">
+            <a href="#" onclick="copyText('{{address}}', 'Address')">
+                <i class="fas fa-copy"></i>
+            </a>
+        </span>
+    </div>
 
     <input type="hidden" value="{{address}}" id="myAddress">
 </div>

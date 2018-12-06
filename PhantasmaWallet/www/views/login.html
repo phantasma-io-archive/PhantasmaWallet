@@ -5,12 +5,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" integrity="sha256-fmMNkMcjSw3xcp9iuPnku/ryk9kaWgrEbfJfKmdZ45o=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" integrity="sha256-fmMNkMcjSw3xcp9iuPnku/ryk9kaWgrEbfJfKmdZ45o=" crossorigin="anonymous" />
 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>	
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.0/moment.min.js" integrity="sha256-Mwee5t+bD35zhwF9nGFf7szo0kMlILdBFdSK5xPQaTI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.0/moment.min.js" integrity="sha256-Mwee5t+bD35zhwF9nGFf7szo0kMlILdBFdSK5xPQaTI=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
 
     {{#css login}}
@@ -18,69 +18,65 @@
 </head>
 
 <body>
-    <div class="container">
-        <div class="row">
-            <div class="Absolute-Center is-Responsive">
+    <div class="container container-table">
+        <div class="row vertical-center-row">
+
+            <div class="col-md-8 col-md-offset-2 col-xs-12">
                 <div id="logo-container">
                     <img src="/img/phantasma_logo.png" id="logo-img" />
                 </div>
-                <div class="col-sm-12">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="login-tab" data-toggle="tab" href="#login" role="tab" aria-controls="login" aria-selected="true">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="create-tab" data-toggle="tab" href="#create" role="tab" aria-controls="create" aria-selected="false">Create Account</a>
+                    </li>
+                    <!--<li class="nav-item">
+                        <a class="nav-link" id="offline-tab" data-toggle="tab" href="#offline" role="tab" aria-controls="offline" aria-selected="false">Offline Operation</a>
+                    </li>-->
+                </ul>
 
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="login-tab" data-toggle="tab" href="#login" role="tab" aria-controls="login" aria-selected="true">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="create-tab" data-toggle="tab" href="#create" role="tab" aria-controls="create" aria-selected="false">Create Account</a>
-                        </li>
-                        <!--<li class="nav-item">
-                            <a class="nav-link" id="offline-tab" data-toggle="tab" href="#offline" role="tab" aria-controls="offline" aria-selected="false">Offline Operation</a>
-                        </li>-->
-                    </ul>
-
-                    <div class="tab-content login-panel" id="myTabContent">
-                        <div class="tab-pane fade active" id="login" role="tabpanel" aria-labelledby="login-tab">
-                            <form action="" id="loginForm" onsubmit="onLogin()" style="width: 100%;">
-                                <div class="form-group input-group" style="width: 100%;padding-bottom: 40px;">
-                                    <label for="private_key" class="login-label">Private Key</label>
-                                    <!--<span class="input-group-addon"><i class="fas fa-lock"></i></span>-->
-                                    <input class="form-control shadow-box borderless-input" type="password" name='private_key' id='private_key' />
-                                </div>
-                                <div class="form-group">
-                                    <button type="button" class="btn btn-primary btn-block btn-phantasma" id='login-button' onclick="onLogin()">Log In</button>
-                                </div>
-
-                                {{#if error}}
-                                <div class="alert alert-danger">{{error}}</div>
-                                {{/if}}
-
-                            </form>
-                        </div>
-
-                        <div class="tab-pane fade" id="create" role="tabpanel" aria-labelledby="create-tab">
-                            {{#if WIF}}
-                            <div class="alert alert-warning" role="alert">
-                                <strong>Warning!</strong><br>If you want to keep this address then you should save this private key in a safe place. It won't be displayed again.
+                <div class="tab-content login-panel" id="myTabContent">
+                    <div class="tab-pane fade active" id="login" role="tabpanel" aria-labelledby="login-tab">
+                        <form action="" id="loginForm" onsubmit="onLogin()" style="width: 100%;">
+                            <div class="form-group input-group" style="width: 100%;padding-bottom: 40px;">
+                                <label for="private_key" class="login-label">Private Key</label>
+                                <!--<span class="input-group-addon"><i class="fas fa-lock"></i></span>-->
+                                <input class="form-control shadow-box borderless-input" type="password" name='private_key' id='private_key' />
+                            </div>
+                            <div class="form-group">
+                                <button type="button" class="btn btn-primary btn-block btn-phantasma" id='login-button' onclick="onLogin()">Log In</button>
                             </div>
 
-                            <p class="address-label">
-                                Address:<br><span class="address-data-label">{{address}}</span>
-                            </p>
-                            <p class="address-label">
-                                Private Key:<br><span class="address-data-label">{{WIF}}</span><span class="copy-pad"></span><a href="#" onclick="copyText('{{WIF}}', 'Private key')"><i class="fas fa-copy"></i></a></pclass="address-label">
-                                <br>
-                                <button type="button" class="btn btn-primary btn-block btn-phantasma" onclick="location.href='/create'">Generate another</button>
-                                {{#else}}
-                                <button type="button" class="btn btn-primary btn-block btn-phantasma" onclick="location.href='/create'">Generate address</button>
-                                {{/if}}
-                        </div>
+                            {{#if error}}
+                            <div class="alert alert-danger">{{error}}</div>
+                            {{/if}}
 
-                        <div class="tab-pane fade" id="offline" role="tabpanel" aria-labelledby="offline-tab">
-                            TODO...
-                        </div>
+                        </form>
                     </div>
 
+                    <div class="tab-pane fade" id="create" role="tabpanel" aria-labelledby="create-tab">
+                        {{#if WIF}}
+                        <div class="alert alert-warning" role="alert">
+                            <strong>Warning!</strong><br>If you want to keep this address then you should save this private key in a safe place. It won't be displayed again.
+                        </div>
 
+                        <p class="address-label">
+                            Address:<br><span class="address-data-label">{{address}}</span>
+                        </p>
+                        <p class="address-label">
+                            Private Key:<br><span class="address-data-label">{{WIF}}</span><span class="copy-pad"></span><a href="#" onclick="copyText('{{WIF}}', 'Private key')"><i class="fas fa-copy"></i></a></pclass="address-label">
+                            <br>
+                            <button type="button" class="btn btn-primary btn-block btn-phantasma" onclick="location.href='/create'">Generate another</button>
+                            {{#else}}
+                            <button type="button" class="btn btn-primary btn-block btn-phantasma" onclick="location.href='/create'">Generate address</button>
+                            {{/if}}
+                    </div>
+
+                    <div class="tab-pane fade" id="offline" role="tabpanel" aria-labelledby="offline-tab">
+                        TODO...
+                    </div>
                 </div>
             </div>
         </div>

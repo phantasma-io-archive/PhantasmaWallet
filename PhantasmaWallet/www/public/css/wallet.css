@@ -21,6 +21,18 @@
     .row.content {
         height: auto;
     }
+    .content {
+        padding: 1px !important;
+        padding-top: 40px !important;
+    }
+
+    .tab-title {
+        font-size: 15px !important;
+        padding-bottom: 10px !important;
+    }
+    .well {
+        padding: 5px !important;
+    }
 }
 
 body {
@@ -242,6 +254,7 @@ ul.nav.nav-pills {
 
     .table-striped tbody tr {
         border: 1px solid #17B0E7;
+        border-left: 2px solid #17B0E7 !important;
     }
 
     .table-striped th {
@@ -249,18 +262,11 @@ ul.nav.nav-pills {
         font-weight: 600;
         color: #7C95AB;
         border-bottom: 1px solid #17B0E7 !important;
-        /*white-space: normal;
-	width: auto;*/
     }
 
 
     .table-striped td {
-        /*max-width: 100%;*/
-        /*overflow: hidden;
-	text-overflow: ellipsis;*/
         color: #7C95AB;
-        /*word-wrap: break-word;
-	display: block;*/
     }
 
         .table-striped td a {

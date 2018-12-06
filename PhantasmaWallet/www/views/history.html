@@ -7,24 +7,26 @@
 {{/if}}
 
 {{#if transactions}}
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th class="col-1">Date (UTC)</th>
-            <th class="col-4">Hash</th>
-            <th class="col-7">Description</th>
-        </tr>
-    </thead>
-    <tbody>
-        {{#each transactions}}
-        <tr>
-            <td class="col-1">{{#date Date}}</td>
-            <td class="col-4"><small><a href="http://explorer.phantasma.io/tx/{{Hash}}">{{Hash}}</a></small></td>
-            <td class="col-7">{{Description}}</td>
-        </tr>
-        {{/each}}
-    </tbody>
-</table>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th class="col-1">Date (UTC)</th>
+                <th class="col-4">Hash</th>
+                <th class="col-7">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each transactions}}
+            <tr>
+                <td class="col-1">{{#date Date}}</td>
+                <td class="col-4"><small><a href="http://explorer.phantasma.io/tx/{{Hash}}">{{Hash}}</a></small></td>
+                <td class="col-7">{{Description}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
 {{#else}}
 <div class="alert alert-info" role="alert">
     This address is still new and does not have any transaction yet.

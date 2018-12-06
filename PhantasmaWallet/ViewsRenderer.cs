@@ -447,7 +447,7 @@ namespace Phantasma.Wallet
                     return "confirmed";
                 }
             }
-
+            PushError(request, "Error sending tx.");
             return "unconfirmed";
         }
 
