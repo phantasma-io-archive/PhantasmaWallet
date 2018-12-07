@@ -267,13 +267,9 @@ namespace Phantasma.Wallet.Controllers
 
                 var settleTxScript = ScriptUtils.BeginScript()
                     .CallContract("token", "SettleBlock", sourceChain, block)
-                    .AllowGas(sourceChain, 1, 9999)
-                    .SpendGas(sourceChain)
+                    .AllowGas(keyPair.Address, 1, 9999)
+                    .SpendGas(keyPair.Address)
                     .EndScript();
-
-                //var settleTxScript =
-                //    ScriptUtils.CallContractScript("token", "SettleBlock", sourceChain, block);
-
 
                 var settleTx = new Blockchain.Transaction(nexusName, destinationChainName, settleTxScript, DateTime.UtcNow + TimeSpan.FromHours(1), 0);
                 settleTx.Sign(keyPair);
@@ -299,10 +295,13 @@ namespace Phantasma.Wallet.Controllers
                 var destinationAddress = Address.FromText(addressTo);
                 int decimals = AccountHoldings.SingleOrDefault(t => t.Symbol == symbol).Decimals;
                 var bigIntAmount = TokenUtils.ToBigInteger(decimal.Parse(amountId), decimals);
+                var fee = TokenUtils.ToBigInteger(0.1m, 8);
 
                 var script = isFungible
                     ? ScriptUtils.BeginScript()
                         .AllowGas(keyPair.Address, 1, 9999)
+                        .CrossTransferToken(Address.FromText(toChain.Address), symbol, keyPair.Address,
+                            keyPair.Address, fee)
                         .CrossTransferToken(Address.FromText(toChain.Address), symbol, keyPair.Address,
                             destinationAddress, bigIntAmount)
                         .SpendGas(keyPair.Address)
