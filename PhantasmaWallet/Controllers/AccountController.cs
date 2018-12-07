@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
-using LunarLabs.Parser.JSON;
 using Phantasma.Blockchain;
 using Phantasma.Blockchain.Contracts;
 using Phantasma.Blockchain.Contracts.Native;
@@ -16,7 +13,6 @@ using Phantasma.Numerics;
 using Phantasma.Wallet.Helpers;
 using Transaction = Phantasma.Wallet.DTOs.Transaction;
 using Token = Phantasma.Wallet.DTOs.Token;
-using Phantasma.Blockchain.Tokens;
 
 namespace Phantasma.Wallet.Controllers
 {
@@ -236,7 +232,7 @@ namespace Phantasma.Wallet.Controllers
         }
 
 
-        public async Task<string> SettleBlockTransfer(KeyPair keyPair, string sourceChainAddress, string blockHash,
+        public async Task<SendRawTx> SettleBlockTransfer(KeyPair keyPair, string sourceChainAddress, string blockHash,
             string destinationChainAddress)
         {
             try
@@ -259,16 +255,15 @@ namespace Phantasma.Wallet.Controllers
 
                 var settleResult =
                     await _phantasmaRpcService.SendRawTx.SendRequestAsync(settleTx.ToByteArray(true).Encode());
-                return settleResult.Hash;//todo error
+                return settleResult;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                //todo
-                return "";
+                return new SendRawTx { Error = "Something bad happened when trying to settle transaction." };
             }
         }
 
-        public async Task<string> CrossChainTransferToken(bool isFungible, KeyPair keyPair, string addressTo,
+        public async Task<SendRawTx> CrossChainTransferToken(bool isFungible, KeyPair keyPair, string addressTo,
             string chainName, string destinationChain, string symbol, string amountId)
         {
             try
@@ -302,15 +297,15 @@ namespace Phantasma.Wallet.Controllers
                 tx.Sign(keyPair);
 
                 var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(tx.ToByteArray(true).Encode());
-                return txResult.Hash;//todo error
+                return txResult;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return "";
+                return new SendRawTx { Error = "Something bad happened when trying to send tx." };
             }
         }
 
-        public async Task<string> TransferTokens(bool isFungible, KeyPair keyPair, string addressTo, string chainName, string symbol, string amountId)
+        public async Task<SendRawTx> TransferTokens(bool isFungible, KeyPair keyPair, string addressTo, string chainName, string symbol, string amountId)
         {
             try
             {
@@ -337,11 +332,11 @@ namespace Phantasma.Wallet.Controllers
                 tx.Sign(keyPair);
 
                 var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(tx.ToByteArray(true).Encode());
-                return txResult.Hash;//todo error
+                return txResult;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return "";
+                return new SendRawTx { Error = "Something bad happened when trying to send tx." };
             }
         }
 
@@ -352,7 +347,7 @@ namespace Phantasma.Wallet.Controllers
                 var txConfirmation = await _phantasmaRpcService.GetTxConfirmations.SendRequestAsync(txHash);
                 return txConfirmation;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -368,35 +363,29 @@ namespace Phantasma.Wallet.Controllers
             return string.Empty;
         }
 
-        public async Task<string> RegisterName(KeyPair keyPair, string name)
+        public async Task<SendRawTx> RegisterName(KeyPair keyPair, string name)
         {
             try
             {
-                var accountChain = PhantasmaChains.SingleOrDefault(p => p.Name == "account");
-                if (accountChain != null)
-                {
-                    var script = ScriptUtils.BeginScript()
-                        .AllowGas(keyPair.Address, 1, 9999)
-                        .CallContract("token", "Register", keyPair.Address, name)
-                        .SpendGas(keyPair.Address)
-                        .EndScript();
+                var script = ScriptUtils.BeginScript()
+                       .AllowGas(keyPair.Address, 1, 9999)
+                       .CallContract("account", "Register", keyPair.Address, name)
+                       .SpendGas(keyPair.Address)
+                       .EndScript();
 
-                    // TODO this should be a dropdown in the wallet settings!!
-                    var nexusName = "simnet";
-                    var tx = new Blockchain.Transaction(nexusName, accountChain.Name, script, DateTime.UtcNow + TimeSpan.FromHours(1), 0);
+                // TODO this should be a dropdown in the wallet settings!!
+                var nexusName = "simnet";
+                var tx = new Blockchain.Transaction(nexusName, "main", script, DateTime.UtcNow + TimeSpan.FromHours(1), 0);
 
-                    tx.Sign(keyPair);
+                tx.Sign(keyPair);
 
-                    var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(tx.ToByteArray(true).Encode());
-                    return txResult.Hash;//todo error
-                }
+                var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(tx.ToByteArray(true).Encode());
+                return txResult;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                //todo
+                return new SendRawTx { Error = "Something bad happened when trying to send tx." };
             }
-
-            return "";
         }
 
         public List<ChainElement> GetShortestPath(string chainName, string destinationChain)
@@ -444,7 +433,7 @@ namespace Phantasma.Wallet.Controllers
             {
                 chains = _phantasmaRpcService.GetChains.SendRequestAsync().Result.ChainList;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //todo
             }
@@ -459,7 +448,7 @@ namespace Phantasma.Wallet.Controllers
             {
                 tokens = _phantasmaRpcService.GetTokens.SendRequestAsync().Result.Tokens;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //todo
             }

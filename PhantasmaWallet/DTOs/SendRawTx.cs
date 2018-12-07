@@ -10,6 +10,8 @@ namespace Phantasma.Wallet.DTOs
         [JsonProperty("error")]
         public string Error { get; set; }
 
+        public bool HasError => string.IsNullOrEmpty(Hash) && !string.IsNullOrEmpty(Error);
+
         public static SendRawTx FromJson(string json) => JsonConvert.DeserializeObject<SendRawTx>(json, JsonUtils.Settings);
     }
 }

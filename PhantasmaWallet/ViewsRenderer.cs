@@ -315,13 +315,11 @@ namespace Phantasma.Wallet
             var chainName = request.GetVariable("chain");
             var destinationChain = request.GetVariable("destChain");
 
-            var context = InitContext(request); //todo is this needed?
-
             var symbol = request.GetVariable("token");
             var amountOrId = request.GetVariable(isFungible ? "amount" : "id");
 
             var keyPair = GetLoginKey(request);
-            string result;
+            SendRawTx result;
 
             if (chainName == destinationChain)
             {
@@ -358,7 +356,7 @@ namespace Phantasma.Wallet
                 {
                     result = AccountController.CrossChainTransferToken(isFungible, keyPair, addressTo, chainName, destinationChain, symbol, amountOrId).Result;
                 }
-                if (!string.IsNullOrEmpty(result))
+                if (!result.HasError)
                 {
                     request.session.SetBool("isCrossTransfer", true);
                     request.session.SetStruct<SettleTx>("settleTx",
@@ -371,13 +369,13 @@ namespace Phantasma.Wallet
                 }
             }
 
-            if (string.IsNullOrEmpty(result))  //todo refactor this 
+            if (result.HasError)
             {
-                PushError(request, "Error sending tx.");
-                return ""; // TODO why is this empty?? because send.html checks callback for "" or txHash
+                PushError(request, result.Error);
+                return "";
             }
 
-            return result;
+            return result.Hash;
         }
 
         private object RouteWaitingTx(HTTPRequest request)
@@ -421,12 +419,13 @@ namespace Phantasma.Wallet
                     // clear
                     request.session.SetBool("isCrossTransfer", false);
 
-                    if (!string.IsNullOrEmpty(settleTx))
+                    if (!settleTx.HasError)
                     {
                         context["confirmingTxHash"] = settleTx;
                         return "settling";
                     }
-                    return "";
+                    PushError(request, settleTx.Error);
+                    return "unconfirmed";
                 }
                 else
                 {
@@ -460,11 +459,16 @@ namespace Phantasma.Wallet
                     {
                         var keyPair = GetLoginKey(request);
                         var registerTx = AccountController.RegisterName(keyPair, name).Result;
-                        return registerTx;
+                        if (!registerTx.HasError)
+                        {
+                            return registerTx.Hash;
+                        }
+
+                        PushError(request, registerTx.Error);
+                        return "";
                     }
                 }
             }
-            // todo fix error, page does not show anything
             PushError(request, "Error while registering name");
             return "";
         }
