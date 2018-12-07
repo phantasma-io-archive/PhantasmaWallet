@@ -17,13 +17,13 @@ namespace Phantasma.Wallet
             IServiceCollection serviceCollection = new ServiceCollection();
             _app = new Application(serviceCollection);
 
-            var site = HostBuilder.CreateSite(args, "public");
-            var viewsRenderer = new ViewsRenderer(site, "views");
+            var server = HostBuilder.CreateServer(args);
+            var viewsRenderer = new ViewsRenderer(server, "views");
 
             viewsRenderer.SetupHandlers();
             viewsRenderer.SetupControllers();
 
-            site.Server.Run();
+            server.Run();
         }
     }
 

@@ -25,31 +25,12 @@ namespace Phantasma.Wallet.Controllers
 
         private List<Token> AccountHoldings { get; set; }
 
-        public List<ChainElement> PhantasmaChains { get; set; }
-
-        public List<Token> PhantasmaTokens { get; set; }
-
         public string AccountName { get; set; }
 
         public AccountController()
         {
             _phantasmaApi = (IPhantasmaRestService)Backend.AppServices.GetService(typeof(IPhantasmaRestService));
             _phantasmaRpcService = (IPhantasmaRpcService)Backend.AppServices.GetService(typeof(IPhantasmaRpcService));
-        }
-
-        public void InitController()
-        {
-            try
-            {
-                PhantasmaChains = _phantasmaRpcService.GetChains.SendRequestAsync().Result.ChainList;
-                PhantasmaTokens = _phantasmaRpcService.GetTokens.SendRequestAsync().Result.Tokens;
-            }
-
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                Environment.Exit(-1);
-            }
         }
 
         public List<SendHolding> PrepareSendHoldings()
@@ -85,7 +66,7 @@ namespace Phantasma.Wallet.Controllers
             var holdings = new List<Holding>();
             var account = await _phantasmaApi.GetAccount(address);
             AccountName = account.Name;
-            var rateUsd = GetCoinRate(2827);
+            var rateUsd = Utils.GetCoinRate(2827);
             foreach (var token in account.Tokens)
             {
                 var holding = new Holding
@@ -152,7 +133,7 @@ namespace Phantasma.Wallet.Controllers
 
             foreach (var evt in tx.Events) //todo move this
             {
-                Blockchain.Contracts.Event nativeEvent = null;
+                Blockchain.Contracts.Event nativeEvent;
                 if (evt.Data != null)
                 {
                     nativeEvent = new Blockchain.Contracts.Event((EventKind)evt.EvtKind,
@@ -276,8 +257,7 @@ namespace Phantasma.Wallet.Controllers
 
                 var settleResult =
                     await _phantasmaRpcService.SendRawTx.SendRequestAsync(settleTx.ToByteArray(true).Encode());
-                var settleTxHash = settleResult?.GetValue("hash");
-                return settleTxHash?.ToString();
+                return settleResult.Hash;//todo error
             }
             catch (Exception ex)
             {
@@ -320,9 +300,7 @@ namespace Phantasma.Wallet.Controllers
                 tx.Sign(keyPair);
 
                 var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(tx.ToByteArray(true).Encode());
-                var txHash = txResult?.GetValue("hash");
-
-                return txHash?.ToString();
+                return txResult.Hash;//todo error
             }
             catch (Exception ex)
             {
@@ -357,8 +335,7 @@ namespace Phantasma.Wallet.Controllers
                 tx.Sign(keyPair);
 
                 var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(tx.ToByteArray(true).Encode());
-                var txHash = txResult?.GetValue("hash");
-                return txHash?.ToString();
+                return txResult.Hash;//todo error
             }
             catch (Exception ex)
             {
@@ -409,8 +386,7 @@ namespace Phantasma.Wallet.Controllers
                     tx.Sign(keyPair);
 
                     var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(tx.ToByteArray(true).Encode());
-                    var txHash = txResult?.GetValue("hash");
-                    return txHash?.ToString();
+                    return txResult.Hash;//todo error
                 }
             }
             catch (Exception ex)
@@ -421,96 +397,72 @@ namespace Phantasma.Wallet.Controllers
             return "";
         }
 
-        public List<ChainElement> GetShortestPath(string from, string to)
+        public List<ChainElement> GetShortestPath(string chainName, string destinationChain)
         {
-            var vertices = new List<string>();
-            var edges = new List<Tuple<string, string>>();
-            foreach (var chain in PhantasmaChains)
-            {
-                vertices.Add(chain.Name);
-                if (chain.Children != null)
-                {
-                    foreach (var child in chain.Children)
-                    {
-                        edges.Add(new Tuple<string, string>(chain.Name, child.Name));
-                    }
-                }
-            }
-            var graph = new Graph<string>(vertices, edges);
-
-            var shortestPath = Algorithms.ShortestPathFunction(graph, from);
-
-            List<string> allpaths = new List<string>();
-            foreach (var vertex in vertices)
-            {
-                allpaths.Add(string.Join(", ", shortestPath(vertex)));
-            }
-
-            foreach (var allpath in allpaths)
-            {
-                Debug.WriteLine(allpath);
-            }
-
-            return SelectShortestPath(from, to, allpaths);
+            return SendUtils.GetShortestPath(chainName, destinationChain, PhantasmaChains);
         }
 
-        public List<ChainElement> SelectShortestPath(string from, string to, List<string> paths)
+        #region Public Lists
+        public List<ChainElement> PhantasmaChains
         {
-            var finalPath = "";
-            foreach (var path in paths)
+            get
             {
-                if (path.IndexOf(from, StringComparison.Ordinal) != -1 && path.IndexOf(to, StringComparison.Ordinal) != -1)
+                if (_phantasmaChains != null && _phantasmaChains.Any())
                 {
-                    if (finalPath == "")
-                    {
-                        finalPath = path;
-                    }
-                    else if (path.Count(d => d == ',') < finalPath.Count(d => d == ','))
-                    {
-                        finalPath = path;
-                    }
+                    return _phantasmaChains;
                 }
+
+                _phantasmaChains = GetPhantasmaChains();
+                return _phantasmaChains;
             }
-            var listStrLineElements = finalPath.Split(',').ToList();
-            List<ChainElement> chainPath = new List<ChainElement>();
-            foreach (var element in listStrLineElements)
-            {
-                chainPath.Add(PhantasmaChains.Find(p => p.Name == element.Trim()));
-            }
-            return chainPath;
         }
 
-        public static decimal GetCoinRate(uint ticker, string symbol = "USD")
+        private List<ChainElement> _phantasmaChains;
+
+        public List<Token> PhantasmaTokens
         {
-            var url = $"https://api.coinmarketcap.com/v2/ticker/{ticker}/?convert={symbol}";
+            get
+            {
+                if (_phantasmaTokens != null && _phantasmaTokens.Any())
+                {
+                    return _phantasmaTokens;
+                }
 
-            string json;
+                _phantasmaTokens = GetPhantasmaTokens();
+                return _phantasmaTokens;
+            }
+        }
+        private List<Token> _phantasmaTokens;
+        #endregion
 
+        private List<ChainElement> GetPhantasmaChains()
+        {
+            List<ChainElement> chains = null;
             try
             {
-                using (var wc = new WebClient())
-                {
-                    json = wc.DownloadString(url);
-                }
-
-                var root = JSONReader.ReadFromString(json);
-
-                root = root["data"];
-                var quotes = root["quotes"][symbol];
-
-                var price = quotes.GetDecimal("price");
-
-                return price;
+                chains = _phantasmaRpcService.GetChains.SendRequestAsync().Result.ChainList;
             }
-            catch
+            catch (Exception ex)
             {
-                return 0;
+                //todo
             }
+
+            return chains;
+        }
+
+        private List<Token> GetPhantasmaTokens()
+        {
+            List<Token> tokens = null;
+            try
+            {
+                tokens = _phantasmaRpcService.GetTokens.SendRequestAsync().Result.Tokens;
+            }
+            catch (Exception ex)
+            {
+                //todo
+            }
+
+            return tokens;
         }
     }
-
-
-
-
-
 }

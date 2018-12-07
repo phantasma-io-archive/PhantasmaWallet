@@ -12,16 +12,15 @@ namespace Phantasma.Wallet
 {
     public class ViewsRenderer
     {
-        public ViewsRenderer(LunarLabs.WebServer.Core.Site site, string viewsPath)
+        public ViewsRenderer(HTTPServer server, string viewsPath)
         {
-            if (site == null) throw new ArgumentNullException(nameof(site));
-            TemplateEngine = new TemplateEngine(site, viewsPath);
+            if (server == null) throw new ArgumentNullException(nameof(server));
+            TemplateEngine = new TemplateEngine(server, viewsPath);
         }
 
         public void SetupControllers()
         {
             AccountController = new AccountController();
-            AccountController.InitController();
         }
 
         private AccountController AccountController { get; set; }
@@ -87,7 +86,7 @@ namespace Phantasma.Wallet
 
         #region Cache
 
-        private static Dictionary<Address, AccountCache> _accountCaches = new Dictionary<Address, AccountCache>();
+        private static readonly Dictionary<Address, AccountCache> _accountCaches = new Dictionary<Address, AccountCache>();
 
         private void InvalidateCache(Address address)
         {
@@ -177,23 +176,23 @@ namespace Phantasma.Wallet
 
         public void SetupHandlers()
         {
-            TemplateEngine.Site.Get("/", RouteHome);
+            TemplateEngine.Server.Get("/", RouteHome);
 
-            TemplateEngine.Site.Get("/login/{key}", RouteLoginWithParams);
+            TemplateEngine.Server.Get("/login/{key}", RouteLoginWithParams);
 
-            TemplateEngine.Site.Get("/login", RouteLogin);
+            TemplateEngine.Server.Get("/login", RouteLogin);
 
-            TemplateEngine.Site.Get("/create", RouteCreateAccount);
+            TemplateEngine.Server.Get("/create", RouteCreateAccount);
 
-            TemplateEngine.Site.Post("/sendrawtx", RouteSendRawTx);
+            TemplateEngine.Server.Post("/sendrawtx", RouteSendRawTx);
 
-            TemplateEngine.Site.Get("/error", RouteError);
+            TemplateEngine.Server.Get("/error", RouteError);
 
-            TemplateEngine.Site.Get("/waiting/{txhash}", RouteWaitingTx);
+            TemplateEngine.Server.Get("/waiting/{txhash}", RouteWaitingTx);
 
-            TemplateEngine.Site.Get("/confirmations/{txhash}", RouteConfirmations);
+            TemplateEngine.Server.Get("/confirmations/{txhash}", RouteConfirmations);
 
-            TemplateEngine.Site.Post("/register", RouteRegisterName);
+            TemplateEngine.Server.Post("/register", RouteRegisterName);
 
             foreach (var entry in MenuEntries)
             {
@@ -201,11 +200,11 @@ namespace Phantasma.Wallet
 
                 if (entry.Id == "logout")
                 {
-                    TemplateEngine.Site.Get(url, RouteLogout);
+                    TemplateEngine.Server.Get(url, RouteLogout);
                 }
                 else
                 {
-                    TemplateEngine.Site.Get(url, request => RouteMenuItems(request, url, entry.Id));
+                    TemplateEngine.Server.Get(url, request => RouteMenuItems(request, url, entry.Id));
                 }
             }
         }
@@ -328,10 +327,7 @@ namespace Phantasma.Wallet
             {
                 result = AccountController.TransferTokens(isFungible, keyPair, addressTo, chainName, symbol, amountOrId).Result;
 
-                //reset session fields
-                request.session.Remove("settleTx");
-                request.session.SetBool("isCrossTransfer", false);
-                request.session.Remove("txNumber");
+                ResetSessionSendFields(request);
             }
             else //cross chain requires 2 txs
             {
@@ -497,6 +493,16 @@ namespace Phantasma.Wallet
                 request.session.Remove("isCrossTransfer");
             }
         }
+
+        private void UpdateMenus(string id)
+        {
+            foreach (var menuEntry in MenuEntries)
+            {
+                menuEntry.IsSelected = menuEntry.Id == id;
+            }
+        }
+
+        #region UI
         private static readonly MenuEntry[] MenuEntries = new MenuEntry[]
         {
             new MenuEntry(){ Id = "portfolio", Icon = "fa-wallet", Caption = "Portfolio", Enabled = true, IsSelected = true},
@@ -517,13 +523,6 @@ namespace Phantasma.Wallet
             new Net{Name = "testnet", IsEnabled = false, Value = 2},
             new Net{Name = "mainnet", IsEnabled = false, Value = 3},
         };
-
-        private void UpdateMenus(string id)
-        {
-            foreach (var menuEntry in MenuEntries)
-            {
-                menuEntry.IsSelected = menuEntry.Id == id;
-            }
-        }
+        #endregion
     }
 }
