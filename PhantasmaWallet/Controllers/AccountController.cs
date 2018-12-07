@@ -295,7 +295,7 @@ namespace Phantasma.Wallet.Controllers
                 var destinationAddress = Address.FromText(addressTo);
                 int decimals = AccountHoldings.SingleOrDefault(t => t.Symbol == symbol).Decimals;
                 var bigIntAmount = TokenUtils.ToBigInteger(decimal.Parse(amountId), decimals);
-                var fee = TokenUtils.ToBigInteger(0.1m, 8);
+                var fee = TokenUtils.ToBigInteger(0.0001m, 8);
 
                 var script = isFungible
                     ? ScriptUtils.BeginScript()
