@@ -15,6 +15,8 @@ using Phantasma.Wallet.Interfaces;
 using Phantasma.Numerics;
 using Phantasma.Wallet.Helpers;
 using Transaction = Phantasma.Wallet.DTOs.Transaction;
+using Token = Phantasma.Wallet.DTOs.Token;
+using Phantasma.Blockchain.Tokens;
 
 namespace Phantasma.Wallet.Controllers
 {
