@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Phantasma.Blockchain;
 using Phantasma.Blockchain.Contracts;
 using Phantasma.Blockchain.Contracts.Native;
+using Phantasma.Blockchain.Tokens;
 using Phantasma.Core.Types;
 using Phantasma.Cryptography;
 using Phantasma.Wallet.DTOs;

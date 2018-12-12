@@ -223,8 +223,6 @@ namespace Phantasma.Wallet
             }
 
             var context = InitContext(request);
-            var error = request.session.GetStruct<ErrorContext>("error");
-            context["error"] = error;
             return RendererView(context, "layout", "error");
         }
 
@@ -240,7 +238,7 @@ namespace Phantasma.Wallet
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                PushError(request, "Error decoding key...");
+                PushError(request, "Error decoding key.");
                 return HTTPResponse.Redirect("/login");
             }
 
@@ -401,7 +399,7 @@ namespace Phantasma.Wallet
             var context = InitContext(request);
             var txHash = request.GetVariable("txhash");
 
-            request.session.SetStruct<ErrorContext>("error", new ErrorContext { ErrorCode = "", ErrorDescription = $"{txHash} is still not confirmed" });
+            request.session.SetStruct<ErrorContext>("error", new ErrorContext { ErrorCode = "", ErrorDescription = $"{txHash} is still not confirmed." });
             var confirmationDto = AccountController.GetTxConfirmations(txHash).Result;
 
             if (confirmationDto.IsConfirmed)
@@ -465,11 +463,17 @@ namespace Phantasma.Wallet
                         }
 
                         PushError(request, registerTx.Error);
-                        return "";
+                    }
+                    else
+                    {
+                        PushError(request, "You need a small drop of SOUL (+0.1) to register a name.");
                     }
                 }
             }
-            PushError(request, "Error while registering name");
+            else
+            {
+                PushError(request, "Error while registering name.");
+            }
             return "";
         }
 

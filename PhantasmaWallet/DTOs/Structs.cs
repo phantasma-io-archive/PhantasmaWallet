@@ -48,8 +48,8 @@ namespace Phantasma.Wallet.DTOs
 
     public struct ErrorContext
     {
-        public string ErrorDescription { get; set; }
-        public string ErrorCode { get; set; }
+        public string ErrorDescription;
+        public string ErrorCode;
     }
 
     public struct SettleTx
