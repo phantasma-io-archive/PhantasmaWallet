@@ -83,8 +83,20 @@
                             <span>Menu</span>
                         </a>
                     </div>
+
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                                            
+                        <h6><em>Account name:</em></h6>
+                        {{#if name == 'anonymous'}}
+                        <h5 style="color: #17B0E7">
+                            {{name}}
+                            <a href="#" class="editbutton" id="editPencil2"><i class="fa fa-pencil-alt" aria-hidden="true"></i></a>
+                        </h5>
+                        {{#else}}
+                        <h5 style="color: #17B0E7"><em>{{name}}</em></h5>
+                        {{/if}}
+                        <hr />
                         <ul class="nav navbar-nav">
                             {{#each menu}}
                             {{#if Enabled}}
