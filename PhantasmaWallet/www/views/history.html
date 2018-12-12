@@ -1,9 +1,11 @@
 <h3 class="tab-title">Transactions</h3>
 
 {{#if confirmedHash}}
-<div class="alert alert-success">
+<!--<div class="table-responsive">-->
+<div class="alert alert-success" style="overflow: auto">
     The transaction <a href="http://explorer.phantasma.io/tx/{{confirmedHash}}">{{confirmedHash}}</a> was sent with <strong>success</strong>!
 </div>
+<!--</div>-->
 {{/if}}
 
 {{#if transactions}}

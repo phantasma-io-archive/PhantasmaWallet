@@ -1,23 +1,25 @@
 <h3 class="tab-title">Portfolio</h3>
 {{#if holdings}}
-<table class="table table-general">
-    <thead>
-        <tr>
-            <th class="col-6">Name</th>
-            <th class="col-3">Amount</th>
-            <th class="col-3">Value (USD)</th>
-        </tr>
-    </thead>
-    <tbody>
-        {{#each holdings}}
-        <tr class="token-shadow">
-            <td class="col-6"><img class="token-icon" src="img/{{Icon}}.png" /> {{Name}}</td>
-            <td class="col-3">{{AmountFormated}} <a href="http://localhost:7074/token/{{Symbol}}" style="color: #17B0E7">{{Symbol}}</a></td>
-            <td class="col-3">${{UsdFormated}}</td>
-        </tr>
-        {{/each}}
-    </tbody>
-</table>
+<div class="table-responsive">
+    <table class="table table-general">
+        <thead>
+            <tr>
+                <th class="col-6">Name</th>
+                <th class="col-3">Amount</th>
+                <th class="col-3">Value (USD)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each holdings}}
+            <tr class="token-shadow">
+                <td class="col-6"><img class="token-icon" src="img/{{Icon}}.png" /> {{Name}}</td>
+                <td class="col-3">{{AmountFormated}} <a href="http://localhost:7074/token/{{Symbol}}" style="color: #17B0E7">{{Symbol}}</a></td>
+                <td class="col-3">${{UsdFormated}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
 {{#else}}
 <div class="alert alert-info" role="alert">
     This address is still new and does not have any assets yet.

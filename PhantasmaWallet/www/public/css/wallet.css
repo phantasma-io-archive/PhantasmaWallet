@@ -21,25 +21,27 @@
     .row.content {
         height: auto;
     }
+
     .content {
         padding: 1px !important;
         padding-top: 40px !important;
     }
 
     .tab-title {
-        font-size: 15px !important;
+        font-size: 16px !important;
         padding-bottom: 10px !important;
         padding-left: 1px !important;
     }
 
     .well {
         padding: 5px !important;
-        margin-top: 80px !important;
+        margin-top: 50px !important;
     }
 
     body {
         background-size: cover !important;
     }
+
     .menu-item-highlight {
         background-color: white !important;
     }
@@ -74,9 +76,11 @@ body {
 .navbar-toggle {
     background: #06A2DA;
 }
+
 .icon-bar {
     background-color: white;
 }
+
 .wallet-title {
     font-size: 14px;
     font-weight: bold;
@@ -188,6 +192,14 @@ ul.nav.nav-pills {
     color: #7C95AB;
 }
 
+.btn-lg {
+    margin-top: 20px;
+}
+
+.form-group {
+    margin-top: 20px;
+}
+
 .qrbox {
     /*padding: 1px;
     border: 1px solid #e3e3e3;
@@ -236,6 +248,12 @@ ul.nav.nav-pills {
     color: #7C95AB;
 }
 
+.table-responsive {
+    border: none;
+    background-color: transparent;
+    color: transparent;
+    padding: 10px;
+}
 
 .borderless-input {
     border-radius: 0px;
@@ -246,7 +264,7 @@ ul.nav.nav-pills {
 .table-general {
     color: #7C95AB;
     border-spacing: 0 30px;
-    border-collapse: separate;
+    border-collapse: collapse;
 }
 
     .table-general thead tr {
@@ -281,7 +299,6 @@ ul.nav.nav-pills {
 
     .table-striped tbody tr {
         border: 1px solid #17B0E7;
-        border-left: 2px solid #17B0E7 !important;
     }
 
     .table-striped th {
