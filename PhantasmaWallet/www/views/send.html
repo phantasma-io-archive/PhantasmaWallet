@@ -23,7 +23,7 @@
             <div class="col-xs-12">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label class="control-label tab-title">Select chain</label>
+                        <label class="control-label send-label">Select chain</label>
                         <select class="form-control btn-asset-no-border" id="selectChain">
                             {{#each availableChains}}
                             <option>{{this}}</option>
@@ -38,15 +38,15 @@
             <div class="col-xs-12">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label class="control-label tab-title">Select token</label>
+                        <label class="control-label send-label">Select token</label>
                         <select class="form-control btn-asset-no-border" id="select-token-form" onchange="saveToken()"></select>
                     </div>
                     <div class="form-group" id="amountGroup">
-                        <label class="control-label tab-title">Amount</label>
+                        <label class="control-label send-label">Amount</label>
                         <input onfocusin="saveToken()" maxlength="100" type="number" required="required" class="form-control borderless-input shadow-box" placeholder="Enter amount" id="amount" />
                     </div>
                     <div class="form-group" id="nft-id-group" hidden>
-                        <label class="control-label tab-title">Select token ID</label>
+                        <label class="control-label send-label">Select token ID</label>
                         <select class="form-control btn-asset-no-border" id="select-id"></select>
                     </div>
                     <button class="btn btn-primary nextBtn btn-lg pull-right" type="button">Next</button>
@@ -57,7 +57,7 @@
             <div class="col-xs-12">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label class="control-label tab-title">Select destination address</label>
+                        <label class="control-label send-label">Select destination address</label>
                         <input maxlength="100" type="text" required="required" class="form-control borderless-input shadow-box" id="destination" placeholder="Enter destination address" />
                     </div>
                     <div class="form-group">
@@ -65,7 +65,7 @@
                         <br>
                     </div>
                     <div class="form-group">
-                        <label class="control-label tab-title">Select destination chain</label>
+                        <label class="control-label send-label">Select destination chain</label>
                         <select class="form-control btn-asset-no-border" id="destinationChain">
                             {{#each chains}}
                             <option>{{Name}}</option>
@@ -370,7 +370,7 @@
 
 </script>
 {{#else}}
-<h4 class="tab-title">Not assets available</h4>
+<h4 class="send-label">Not assets available</h4>
 <div class="alert alert-info" role="alert">
     This address is still new and does not have any assets yet.
 </div>

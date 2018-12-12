@@ -28,6 +28,10 @@
     }
 
     .tab-title {
+        display: none;
+    }
+
+    .send-label {
         font-size: 16px !important;
         padding-bottom: 10px !important;
         padding-left: 1px !important;
@@ -44,6 +48,10 @@
 
     .menu-item-highlight {
         background-color: white !important;
+    }
+    
+    .alert {
+        margin: 10px;
     }
 }
 
@@ -242,6 +250,13 @@ ul.nav.nav-pills {
 
 
 .tab-title {
+    font-size: 25px;
+    padding-bottom: 20px;
+    font-family: "Open Sans";
+    color: #7C95AB;
+}
+
+.send-label {
     font-size: 25px;
     padding-bottom: 20px;
     font-family: "Open Sans";

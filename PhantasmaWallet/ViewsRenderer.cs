@@ -277,8 +277,7 @@ namespace Phantasma.Wallet
 
             var keyPair = GetLoginKey(request);
 
-            request.session.SetString("active", url);
-            UpdateMenus(entry);
+            UpdateMenus(entry, url, request);
 
             var context = InitContext(request);
 
@@ -502,12 +501,14 @@ namespace Phantasma.Wallet
             }
         }
 
-        private void UpdateMenus(string id)
+        private void UpdateMenus(string id, string url, HTTPRequest request)
         {
+            request.session.SetString("active", url);
             foreach (var menuEntry in MenuEntries)
             {
                 menuEntry.IsSelected = menuEntry.Id == id;
             }
+            request.session.SetString("selectedMenu", MenuEntries.SingleOrDefault(m => m.IsSelected).Caption);
         }
 
         #region UI
