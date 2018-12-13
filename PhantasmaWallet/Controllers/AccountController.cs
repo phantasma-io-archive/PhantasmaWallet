@@ -304,7 +304,7 @@ namespace Phantasma.Wallet.Controllers
             {
                 chains = _phantasmaRpcService.GetChains.SendRequestAsync().Result.ChainList;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 //todo
             }
@@ -319,7 +319,7 @@ namespace Phantasma.Wallet.Controllers
             {
                 tokens = _phantasmaRpcService.GetTokens.SendRequestAsync().Result.Tokens;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 //todo
             }

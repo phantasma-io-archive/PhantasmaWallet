@@ -1,3 +1,14 @@
+@media screen and (max-width: 767px) {
+    .container-fluid {
+        margin: 2px !important;
+    }
+
+    #logo-container {
+        min-width: 100% !important;
+    }
+}
+
+
 body {
     font-family: Open Sans;
     background-image: url('../img/background.png');
@@ -10,14 +21,12 @@ div.well {
     height: 300px;
 }
 
-.vertical-center-row {
-    display: table-cell;
-    vertical-align: middle;
-    padding: 40px;
-}
-
 .container-table {
     display: table;
+}
+
+.container-fluid {
+    margin: 60px;
 }
 
 #logo-container {
@@ -64,6 +73,7 @@ div.well {
     margin-bottom: 20px;
     margin-top: 20px;
     font-size: 12px;
+    overflow: auto;
 }
 
 .address-data-label {
@@ -107,6 +117,7 @@ div.well {
 
 .nav-tabs {
     border-bottom: 1px solid #fff;
+    margin-top: 80px;
 }
 
     .nav-tabs > li.active > a {
