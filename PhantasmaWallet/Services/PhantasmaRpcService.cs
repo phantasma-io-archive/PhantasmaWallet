@@ -11,6 +11,8 @@ namespace Phantasma.Wallet.Services
         {
             GetAccount = new PhantasmaGetAccount(client);
             GetAccountTransactions = new PhantasmaGetAccountTransactions(client);
+            GetApplications = new PhantasmaGetApplications(client);
+            GetBlockByHash = new PhantasmaGetBlockByHash(client);
             GetChains = new PhantasmaGetChains(client);
             GetTxConfirmations = new PhantasmaGetTxConfirmations(client);
             GetTokens = new PhantasmaGetTokens(client);
@@ -19,6 +21,8 @@ namespace Phantasma.Wallet.Services
 
         public PhantasmaGetAccount GetAccount { get; }
         public PhantasmaGetAccountTransactions GetAccountTransactions { get; }
+        public PhantasmaGetApplications GetApplications { get; }
+        public PhantasmaGetBlockByHash GetBlockByHash { get; }
         public PhantasmaGetChains GetChains { get; }
         public PhantasmaGetTokens GetTokens { get; }
         public PhantasmaGetTxConfirmations GetTxConfirmations { get; set; }

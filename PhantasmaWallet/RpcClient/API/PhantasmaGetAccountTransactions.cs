@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Phantasma.Wallet.DTOs;
-using IClient = Phantasma.Wallet.JsonRpc.Client.IClient;
-using RpcRequest = Phantasma.Wallet.JsonRpc.Client.RpcRequest;
+using Phantasma.Wallet.JsonRpc.Client;
 
 namespace Phantasma.Wallet.RpcClient.API
 {
-    public class PhantasmaGetAccountTransactions : JsonRpc.Client.RpcRequestResponseHandler<AccountTransactions>
+    public class PhantasmaGetAccountTransactions : RpcRequestResponseHandler<AccountTransactions>
     {
-        public PhantasmaGetAccountTransactions(IClient client) : base(client, APIMethods.getAddressTransactions.ToString()) { }
+        public PhantasmaGetAccountTransactions(IClient client) : base(client, ApiMethods.getAddressTransactions.ToString()) { }
 
         public Task<AccountTransactions> SendRequestAsync(string address, object id = null)
         {

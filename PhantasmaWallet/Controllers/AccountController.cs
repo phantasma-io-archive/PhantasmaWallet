@@ -295,6 +295,7 @@ namespace Phantasma.Wallet.Controllers
                 return _phantasmaTokens;
             }
         }
+
         private List<Token> _phantasmaTokens;
 
         private List<ChainElement> GetPhantasmaChains()

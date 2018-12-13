@@ -8,7 +8,7 @@ namespace Phantasma.Wallet.RpcClient.API
 {
     public class PhantasmaGetAccount : JsonRpc.Client.RpcRequestResponseHandler<Account>
     {
-        public PhantasmaGetAccount(IClient client) : base(client, APIMethods.getAccount.ToString()) { }
+        public PhantasmaGetAccount(IClient client) : base(client, ApiMethods.getAccount.ToString()) { }
 
         public Task<Account> SendRequestAsync(string address, object id = null)
         {

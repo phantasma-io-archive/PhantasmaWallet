@@ -5,14 +5,14 @@ using Phantasma.Wallet.JsonRpc.Client;
 
 namespace Phantasma.Wallet.RpcClient.API
 {
-    public class PhantasmaGetTxConfirmations : JsonRpc.Client.RpcRequestResponseHandler<TxConfirmation>
+   public class PhantasmaGetBlockByHash : RpcRequestResponseHandler<Block>
     {
-        public PhantasmaGetTxConfirmations(IClient client) : base(client, ApiMethods.getConfirmations.ToString()) { }
+        public PhantasmaGetBlockByHash(IClient client) : base(client, ApiMethods.getBlockByHash.ToString()) { }
 
-        public Task<TxConfirmation> SendRequestAsync(string hash, object id = null)
+        public Task<Block> SendRequestAsync(string hash, object id = null)
         {
             if (hash == null) throw new ArgumentNullException(nameof(hash));
-            return SendRequestAsync(id, hash);
+            return SendRequestAsync(id, hash);//todo
         }
 
         public RpcRequest BuildRequest(string hash, object id = null)

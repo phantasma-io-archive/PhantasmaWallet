@@ -1,12 +1,10 @@
 ﻿using Phantasma.Wallet.DTOs;
-using IClient = Phantasma.Wallet.JsonRpc.Client.IClient;
+using Phantasma.Wallet.JsonRpc.Client;
 
 namespace Phantasma.Wallet.RpcClient.API
 {
     public class PhantasmaGetChains : GenericRpcRequestResponseHandlerNoParam<Chains>
     {
-        public PhantasmaGetChains(IClient client) : base(client, APIMethods.getChains.ToString())
-        {
-        }
+        public PhantasmaGetChains(IClient client) : base(client, ApiMethods.getChains.ToString()) { }
     }
 }

@@ -1,19 +1,19 @@
 ﻿namespace Phantasma.Wallet.RpcClient.API
 {
-    public enum APIMethods
+    public enum ApiMethods
     {
         getAccount,
-        getBlockNumber,
-        getBlockTransactionCountByHash,
+        getApps,
+        getAddressTransactions,
         getBlockByHash,
-        getBlockByNumber,
+        getBlockByHeight,
+        getBlockHeight,
+        getBlockTransactionCountByHash,
         getChains,
+        getConfirmations,
         getTransactionByHash,
         getTransactionByBlockHashAndIndex,
-        getAddressTransactions,
         getTokens,
-        getConfirmations,
         sendRawTransaction,
-
     }
 }
