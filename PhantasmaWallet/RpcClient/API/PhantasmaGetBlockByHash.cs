@@ -12,7 +12,7 @@ namespace Phantasma.Wallet.RpcClient.API
         public Task<Block> SendRequestAsync(string hash, object id = null)
         {
             if (hash == null) throw new ArgumentNullException(nameof(hash));
-            return SendRequestAsync(id, hash);//todo
+            return SendRequestAsync(id, hash);
         }
 
         public RpcRequest BuildRequest(string hash, object id = null)

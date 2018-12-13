@@ -226,7 +226,7 @@ namespace Phantasma.Wallet.Controllers
         {
             try
             {
-                var txConfirmation = await _phantasmaRpcService.GetTxConfirmations.SendRequestAsync(txHash);
+                var txConfirmation = await _phantasmaRpcService.GetTransactionConfirmations.SendRequestAsync(txHash);
                 return txConfirmation;
             }
             catch (Exception)

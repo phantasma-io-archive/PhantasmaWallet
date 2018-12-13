@@ -5,9 +5,9 @@ using Phantasma.Wallet.JsonRpc.Client;
 
 namespace Phantasma.Wallet.RpcClient.API
 {
-    public class PhantasmaGetTxConfirmations : JsonRpc.Client.RpcRequestResponseHandler<TxConfirmation>
+    public class PhantasmaGetTransactionConfirmations : RpcRequestResponseHandler<TxConfirmation>
     {
-        public PhantasmaGetTxConfirmations(IClient client) : base(client, ApiMethods.getConfirmations.ToString()) { }
+        public PhantasmaGetTransactionConfirmations(IClient client) : base(client, ApiMethods.getConfirmations.ToString()) { }
 
         public Task<TxConfirmation> SendRequestAsync(string hash, object id = null)
         {

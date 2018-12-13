@@ -13,9 +13,14 @@ namespace Phantasma.Wallet.Services
             GetAccountTransactions = new PhantasmaGetAccountTransactions(client);
             GetApplications = new PhantasmaGetApplications(client);
             GetBlockByHash = new PhantasmaGetBlockByHash(client);
+            GetBlockByHeight = new PhantasmaGetBlockByHeight(client);
+            GetBlockHeight = new PhantasmaGetBlockHeight(client);
+            GetBlockTxCountByHash = new PhantasmaGetBlockTxCountByHash(client);
             GetChains = new PhantasmaGetChains(client);
-            GetTxConfirmations = new PhantasmaGetTxConfirmations(client);
             GetTokens = new PhantasmaGetTokens(client);
+            GetTransactionByBlockHashAndIndex = new PhantasmaGetTransactionByBlockHashAndIndex(client);
+            GetTransactionByHash = new PhantasmaGetTransactionByHash(client);
+            GetTransactionConfirmations = new PhantasmaGetTransactionConfirmations(client);
             SendRawTx = new PhantasmaSendRawTx(client);
         }
 
@@ -23,9 +28,14 @@ namespace Phantasma.Wallet.Services
         public PhantasmaGetAccountTransactions GetAccountTransactions { get; }
         public PhantasmaGetApplications GetApplications { get; }
         public PhantasmaGetBlockByHash GetBlockByHash { get; }
+        public PhantasmaGetBlockByHeight GetBlockByHeight { get; }
+        public PhantasmaGetBlockHeight GetBlockHeight { get; }
+        public PhantasmaGetBlockTxCountByHash GetBlockTxCountByHash { get; }
         public PhantasmaGetChains GetChains { get; }
         public PhantasmaGetTokens GetTokens { get; }
-        public PhantasmaGetTxConfirmations GetTxConfirmations { get; set; }
+        public PhantasmaGetTransactionByBlockHashAndIndex GetTransactionByBlockHashAndIndex { get; }
+        public PhantasmaGetTransactionByHash GetTransactionByHash { get; }
+        public PhantasmaGetTransactionConfirmations GetTransactionConfirmations { get; set; }
         public PhantasmaSendRawTx SendRawTx { get; }
     }
 }
