@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Phantasma.Blockchain;
@@ -307,7 +308,7 @@ namespace Phantasma.Wallet.Controllers
             }
             catch (Exception ex)
             {
-                //todo
+                Debug.WriteLine(ex.Message);
             }
 
             return chains;
@@ -322,7 +323,7 @@ namespace Phantasma.Wallet.Controllers
             }
             catch (Exception ex)
             {
-                //todo
+                Debug.WriteLine(ex.Message);
             }
 
             return tokens;

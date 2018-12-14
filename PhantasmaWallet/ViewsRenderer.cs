@@ -69,7 +69,7 @@ namespace Phantasma.Wallet
                 {
                     if (!availableChains.Contains(balanceChain.ChainName))
                     {
-                        availableChains.Add(balanceChain.ChainName); //todo add address too | why?
+                        availableChains.Add(balanceChain.ChainName);
                     }
                 }
             }
