@@ -62,7 +62,7 @@ namespace Phantasma.Wallet.Controllers
         public async Task<Holding[]> GetAccountHoldings(string address)
         {
             var holdings = new List<Holding>();
-            var account = await _phantasmaApi.GetAccount(address);
+            var account = await _phantasmaRpcService.GetAccount.SendRequestAsync(address);
             AccountName = account.Name;
             var rateUsd = Utils.GetCoinRate(2827);
             foreach (var token in account.Tokens)
