@@ -11,6 +11,7 @@ using Phantasma.Wallet.DTOs;
 using Phantasma.Wallet.Interfaces;
 using Phantasma.Numerics;
 using Phantasma.Wallet.Helpers;
+using Phantasma.Wallet.JsonRpc.Client;
 using Transaction = Phantasma.Wallet.DTOs.Transaction;
 using Token = Phantasma.Wallet.DTOs.Token;
 
@@ -34,7 +35,7 @@ namespace Phantasma.Wallet.Controllers
         public List<SendHolding> PrepareSendHoldings()
         {
             var holdingList = new List<SendHolding>();
-            if (AccountHoldings.Count == 0) return holdingList;
+            if (AccountHoldings == null || AccountHoldings.Count == 0) return holdingList;
 
             foreach (var holding in AccountHoldings)
             {
@@ -61,58 +62,96 @@ namespace Phantasma.Wallet.Controllers
 
         public async Task<Holding[]> GetAccountHoldings(string address)
         {
-            var holdings = new List<Holding>();
-            var account = await _phantasmaRpcService.GetAccount.SendRequestAsync(address);
-            AccountName = account.Name;
-            var rateUsd = Utils.GetCoinRate(2827);
-            foreach (var token in account.Tokens)
+            try
             {
-                var holding = new Holding
+                var holdings = new List<Holding>();
+                var account = await _phantasmaRpcService.GetAccount.SendRequestAsync(address);
+                AccountName = account.Name;
+                var rateUsd = Utils.GetCoinRate(2827);
+                foreach (var token in account.Tokens)
                 {
-                    Symbol = token.Symbol,
-                    Icon = "phantasma_logo",
-                    Name = token.Name,
-                    Rate = rateUsd
-                };
-                decimal amount = 0;
-                foreach (var tokenChain in token.Chains)
-                {
-                    if (BigInteger.TryParse(tokenChain.Balance, out var balance))
+                    var holding = new Holding
                     {
-                        decimal chainAmount = TokenUtils.ToDecimal(balance, token.Decimals);
-                        amount += chainAmount;
+                        Symbol = token.Symbol,
+                        Icon = "phantasma_logo",
+                        Name = token.Name,
+                        Rate = rateUsd
+                    };
+                    decimal amount = 0;
+                    foreach (var tokenChain in token.Chains)
+                    {
+                        if (BigInteger.TryParse(tokenChain.Balance, out var balance))
+                        {
+                            decimal chainAmount = TokenUtils.ToDecimal(balance, token.Decimals);
+                            amount += chainAmount;
+                        }
                     }
+
+                    holding.Amount = amount;
+                    holdings.Add(holding);
                 }
 
-                holding.Amount = amount;
-                holdings.Add(holding);
+                AccountHoldings = account.Tokens;
+                return holdings.ToArray();
+            }
+            catch (RpcResponseException rpcEx)
+            {
+                Debug.WriteLine($"RPC Exception occurred: {rpcEx.RpcError.Message}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception occurred: {ex.Message}");
             }
 
-            AccountHoldings = account.Tokens;
-            return holdings.ToArray();
+            return new Holding[0];
         }
 
         public async Task<List<Token>> GetAccountTokens(string address)
         {
-            var account = await _phantasmaApi.GetAccount(address);
-            return account.Tokens;
+            try
+            {
+                var account = await _phantasmaRpcService.GetAccount.SendRequestAsync(address);
+                return account.Tokens;
+            }
+            catch (RpcResponseException rpcEx)
+            {
+                Debug.WriteLine($"RPC Exception occurred: {rpcEx.RpcError.Message}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception occurred: {ex.Message}");
+            }
+
+            return new List<Token>();
         }
 
         public async Task<Transaction[]> GetAccountTransactions(string address, int amount = 20)
         {
-            var txs = new List<Transaction>();
-            var accountTxs = await _phantasmaApi.GetAccountTxs(address, amount);
-            foreach (var tx in accountTxs.Txs)
+            try
             {
-                txs.Add(new Transaction
+                var txs = new List<Transaction>();
+                var accountTxs = await _phantasmaRpcService.GetAccountTransactions.SendRequestAsync(address, amount);
+                foreach (var tx in accountTxs.Txs)
                 {
-                    Date = new Timestamp(tx.Timestamp),
-                    Hash = tx.Txid,
-                    Description = Utils.GetTxDescription(tx, PhantasmaChains, PhantasmaTokens)
-                });
+                    txs.Add(new Transaction
+                    {
+                        Date = new Timestamp(tx.Timestamp),
+                        Hash = tx.Txid,
+                        Description = Utils.GetTxDescription(tx, PhantasmaChains, PhantasmaTokens)
+                    });
+                }
+                return txs.ToArray();
+            }
+            catch (RpcResponseException rpcEx)
+            {
+                Debug.WriteLine($"RPC Exception occurred: {rpcEx.RpcError.Message}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception occurred: {ex.Message}");
             }
 
-            return txs.ToArray();
+            return new Transaction[0];
         }
 
         public async Task<SendRawTx> SettleBlockTransfer(KeyPair keyPair, string sourceChainAddress, string blockHash,
@@ -140,8 +179,14 @@ namespace Phantasma.Wallet.Controllers
                     await _phantasmaRpcService.SendRawTx.SendRequestAsync(settleTx.ToByteArray(true).Encode());
                 return settleResult;
             }
-            catch (Exception)
+            catch (RpcResponseException rpcEx)
             {
+                Debug.WriteLine($"RPC Exception occurred: {rpcEx.RpcError.Message}");
+                return new SendRawTx { Error = rpcEx.RpcError.Message };
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception occurred: {ex.Message}");
                 return new SendRawTx { Error = "Something bad happened when trying to settle transaction." };
             }
         }
@@ -182,8 +227,14 @@ namespace Phantasma.Wallet.Controllers
                 var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(tx.ToByteArray(true).Encode());
                 return txResult;
             }
-            catch (Exception)
+            catch (RpcResponseException rpcEx)
             {
+                Debug.WriteLine($"RPC Exception occurred: {rpcEx.RpcError.Message}");
+                return new SendRawTx { Error = rpcEx.RpcError.Message };
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception occurred: {ex.Message}");
                 return new SendRawTx { Error = "Something bad happened when trying to send tx." };
             }
         }
@@ -211,14 +262,21 @@ namespace Phantasma.Wallet.Controllers
                 // TODO this should be a dropdown in the wallet settings!!
                 var nexusName = "simnet";
 
-                var tx = new Blockchain.Transaction(nexusName, chainName, script, DateTime.UtcNow + TimeSpan.FromHours(1), 0);
+                var tx = new Blockchain.Transaction(nexusName, chainName, script,
+                    DateTime.UtcNow + TimeSpan.FromHours(1), 0);
                 tx.Sign(keyPair);
 
                 var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(tx.ToByteArray(true).Encode());
                 return txResult;
             }
-            catch (Exception)
+            catch (RpcResponseException rpcEx)
             {
+                Debug.WriteLine($"RPC Exception occurred: {rpcEx.RpcError.Message}");
+                return new SendRawTx { Error = rpcEx.RpcError.Message };
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception occurred: {ex.Message}");
                 return new SendRawTx { Error = "Something bad happened when trying to send tx." };
             }
         }
@@ -230,10 +288,16 @@ namespace Phantasma.Wallet.Controllers
                 var txConfirmation = await _phantasmaRpcService.GetTransactionConfirmations.SendRequestAsync(txHash);
                 return txConfirmation;
             }
-            catch (Exception)
+            catch (RpcResponseException rpcEx)
             {
-                return null;
+                Debug.WriteLine($"RPC Exception occurred: {rpcEx.RpcError.Message}");
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception occurred: {ex.Message}");
+            }
+
+            return new TxConfirmation { Confirmations = 0 };
         }
 
         public async Task<SendRawTx> RegisterName(KeyPair keyPair, string name)
@@ -255,8 +319,14 @@ namespace Phantasma.Wallet.Controllers
                 var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(tx.ToByteArray(true).Encode());
                 return txResult;
             }
-            catch (Exception)
+            catch (RpcResponseException rpcEx)
             {
+                Debug.WriteLine($"RPC Exception occurred: {rpcEx.RpcError.Message}");
+                return new SendRawTx { Error = rpcEx.RpcError.Message };
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception occurred: {ex.Message}");
                 return new SendRawTx { Error = "Something bad happened when trying to send tx." };
             }
         }
@@ -306,11 +376,14 @@ namespace Phantasma.Wallet.Controllers
             {
                 chains = _phantasmaRpcService.GetChains.SendRequestAsync().Result.ChainList;
             }
+            catch (RpcResponseException rpcEx)
+            {
+                Debug.WriteLine($"RPC Exception occurred: {rpcEx.RpcError.Message}");
+            }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                Debug.WriteLine($"Exception occurred: {ex.Message}");
             }
-
             return chains;
         }
 
@@ -321,9 +394,13 @@ namespace Phantasma.Wallet.Controllers
             {
                 tokens = _phantasmaRpcService.GetTokens.SendRequestAsync().Result.Tokens;
             }
+            catch (RpcResponseException rpcEx)
+            {
+                Debug.WriteLine($"RPC Exception occurred: {rpcEx.RpcError.Message}");
+            }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                Debug.WriteLine($"Exception occurred: {ex.Message}");
             }
 
             return tokens;
