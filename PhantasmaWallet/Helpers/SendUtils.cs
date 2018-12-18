@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Phantasma.Wallet.DTOs;
+using Phantasma.RpcClient.DTOs;
 
 namespace Phantasma.Wallet.Helpers
 {

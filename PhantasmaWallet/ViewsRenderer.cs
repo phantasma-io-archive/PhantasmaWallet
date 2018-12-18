@@ -5,8 +5,8 @@ using LunarLabs.WebServer.HTTP;
 using LunarLabs.WebServer.Templates;
 using Phantasma.Blockchain.Contracts.Native;
 using Phantasma.Cryptography;
+using Phantasma.RpcClient.DTOs;
 using Phantasma.Wallet.Controllers;
-using Phantasma.Wallet.DTOs;
 
 namespace Phantasma.Wallet
 {

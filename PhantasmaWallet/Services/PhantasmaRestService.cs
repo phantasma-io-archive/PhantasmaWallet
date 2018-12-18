@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Phantasma.Wallet.DTOs;
+using Phantasma.RpcClient.DTOs;
 using Phantasma.Wallet.Interfaces;
 
 namespace Phantasma.Wallet.Services

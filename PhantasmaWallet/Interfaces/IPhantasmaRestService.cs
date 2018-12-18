@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Phantasma.Wallet.DTOs;
+using Phantasma.RpcClient.DTOs;
 
 namespace Phantasma.Wallet.Interfaces
 {

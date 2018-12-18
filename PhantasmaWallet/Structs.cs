@@ -1,6 +1,7 @@
 ﻿using System;
+using Phantasma.RpcClient.DTOs;
 
-namespace Phantasma.Wallet.DTOs
+namespace Phantasma.Wallet
 {
     public class MenuEntry
     {

@@ -7,13 +7,13 @@ using Phantasma.Blockchain;
 using Phantasma.Blockchain.Tokens;
 using Phantasma.Core.Types;
 using Phantasma.Cryptography;
-using Phantasma.Wallet.DTOs;
 using Phantasma.Wallet.Interfaces;
 using Phantasma.Numerics;
+using Phantasma.RpcClient.Client;
+using Phantasma.RpcClient.DTOs;
+using Phantasma.RpcClient.Interfaces;
 using Phantasma.Wallet.Helpers;
-using Phantasma.Wallet.JsonRpc.Client;
-using Transaction = Phantasma.Wallet.DTOs.Transaction;
-using Token = Phantasma.Wallet.DTOs.Token;
+using Token = Phantasma.RpcClient.DTOs.Token;
 
 namespace Phantasma.Wallet.Controllers
 {
@@ -130,7 +130,7 @@ namespace Phantasma.Wallet.Controllers
             try
             {
                 var txs = new List<Transaction>();
-                var accountTxs = await _phantasmaRpcService.GetAccountTransactions.SendRequestAsync(address, amount);
+                var accountTxs = await _phantasmaRpcService.GetAccountTxs.SendRequestAsync(address, amount);
                 foreach (var tx in accountTxs.Txs)
                 {
                     txs.Add(new Transaction
@@ -285,7 +285,7 @@ namespace Phantasma.Wallet.Controllers
         {
             try
             {
-                var txConfirmation = await _phantasmaRpcService.GetTransactionConfirmations.SendRequestAsync(txHash);
+                var txConfirmation = await _phantasmaRpcService.GetTxConfirmations.SendRequestAsync(txHash);
                 return txConfirmation;
             }
             catch (RpcResponseException rpcEx)
