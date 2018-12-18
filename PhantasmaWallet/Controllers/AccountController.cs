@@ -13,6 +13,7 @@ using Phantasma.RpcClient.Client;
 using Phantasma.RpcClient.DTOs;
 using Phantasma.RpcClient.Interfaces;
 using Phantasma.Wallet.Helpers;
+using Chain = Phantasma.RpcClient.DTOs.Chain;
 using Token = Phantasma.RpcClient.DTOs.Token;
 
 namespace Phantasma.Wallet.Controllers
@@ -331,13 +332,13 @@ namespace Phantasma.Wallet.Controllers
             }
         }
 
-        public List<ChainElement> GetShortestPath(string chainName, string destinationChain)
+        public List<Chain> GetShortestPath(string chainName, string destinationChain)
         {
             return SendUtils.GetShortestPath(chainName, destinationChain, PhantasmaChains);
         }
 
         #region Public Lists
-        public List<ChainElement> PhantasmaChains
+        public List<Chain> PhantasmaChains
         {
             get
             {
@@ -351,7 +352,7 @@ namespace Phantasma.Wallet.Controllers
             }
         }
 
-        private List<ChainElement> _phantasmaChains;
+        private List<Chain> _phantasmaChains;
 
         public List<Token> PhantasmaTokens
         {
@@ -369,12 +370,12 @@ namespace Phantasma.Wallet.Controllers
 
         private List<Token> _phantasmaTokens;
 
-        private List<ChainElement> GetPhantasmaChains()
+        private List<Chain> GetPhantasmaChains()
         {
-            List<ChainElement> chains = null;
+            List<Chain> chains = null;
             try
             {
-                chains = _phantasmaRpcService.GetChains.SendRequestAsync().Result.ChainList;
+                chains = _phantasmaRpcService.GetChains.SendRequestAsync().Result.ToList();
             }
             catch (RpcResponseException rpcEx)
             {

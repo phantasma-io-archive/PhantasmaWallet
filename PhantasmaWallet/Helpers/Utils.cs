@@ -14,7 +14,7 @@ namespace Phantasma.Wallet.Helpers
 {
     public static class Utils
     {
-        public static string GetTxDescription(RpcClient.DTOs.Transaction tx, List<ChainElement> phantasmaChains, List<Token> phantasmaTokens)
+        public static string GetTxDescription(RpcClient.DTOs.Transaction tx, List<Chain> phantasmaChains, List<Token> phantasmaTokens)
         {
             string description = null;
 
@@ -130,7 +130,7 @@ namespace Phantasma.Wallet.Helpers
             return description;
         }
 
-        private static string GetChainName(string address, List<ChainElement> phantasmaChains)
+        private static string GetChainName(string address, List<Chain> phantasmaChains)
         {
             foreach (var element in phantasmaChains)
             {

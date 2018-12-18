@@ -8,7 +8,7 @@ namespace Phantasma.Wallet.Helpers
 {
     public static class SendUtils
     {
-        public static List<ChainElement> SelectShortestPath(string from, string to, List<string> paths, List<ChainElement> phantasmaChains)
+        public static List<Chain> SelectShortestPath(string from, string to, List<string> paths, List<Chain> phantasmaChains)
         {
             var finalPath = "";
             foreach (var path in paths)
@@ -26,7 +26,7 @@ namespace Phantasma.Wallet.Helpers
                 }
             }
             var listStrLineElements = finalPath.Split(',').ToList();
-            List<ChainElement> chainPath = new List<ChainElement>();
+            List<Chain> chainPath = new List<Chain>();
             foreach (var element in listStrLineElements)
             {
                 chainPath.Add(phantasmaChains.Find(p => p.Name == element.Trim()));
@@ -34,7 +34,7 @@ namespace Phantasma.Wallet.Helpers
             return chainPath;
         }
 
-        public static List<ChainElement> GetShortestPath(string from, string to, List<ChainElement> phantasmaChains)
+        public static List<Chain> GetShortestPath(string from, string to, List<Chain> phantasmaChains)
         {
             var vertices = new List<string>();
             var edges = new List<Tuple<string, string>>();
