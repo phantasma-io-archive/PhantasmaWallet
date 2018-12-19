@@ -5,8 +5,8 @@ namespace Phantasma.Wallet.Interfaces
 {
     public interface IPhantasmaRestService
     {
-        Task<Account> GetAccount(string address);
-        Task<Block> GetBlock(string blockHash);
-        Task<AccountTransactions> GetAccountTxs(string address, int amount);
+        Task<AccountDto> GetAccount(string address);
+        Task<BlockDto> GetBlock(string blockHash);
+        Task<AccountTransactionsDto> GetAccountTxs(string address, int amount);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using Phantasma.RpcClient.DTOs;
 
-namespace Phantasma.Wallet
+namespace Phantasma.Wallet.Models
 {
     public class MenuEntry
     {
@@ -18,7 +18,7 @@ namespace Phantasma.Wallet
         public DateTime LastUpdated;
         public Transaction[] Transactions;
         public Holding[] Holdings;
-        public Token[] Tokens;
+        public TokenDto[] Tokens;
     }
 
     public struct Holding

@@ -15,54 +15,54 @@ namespace Phantasma.Wallet.Services
             _restClient = new HttpClient() { BaseAddress = new Uri("http://localhost:7074/api/") };
         }
 
-        public async Task<Account> GetAccount(string address)
+        public async Task<AccountDto> GetAccount(string address)
         {
             try
             {
                 HttpResponseMessage responseMessage = await _restClient.GetAsync($"get_account/{address}");
                 responseMessage.EnsureSuccessStatusCode();
                 var data = await responseMessage.Content.ReadAsStringAsync();
-                return Account.FromJson(data);
+                return AccountDto.FromJson(data);
             }
             catch (HttpRequestException e)
             {
                 Console.WriteLine("\nException Caught!");
                 Console.WriteLine("Message :{0} ", e.Message);
-                return new Account(); //todo
+                return new AccountDto(); //todo
             }
         }
 
-        public async Task<Block> GetBlock(string blockHash)
+        public async Task<BlockDto> GetBlock(string blockHash)
         {
             try
             {
                 HttpResponseMessage responseMessage = await _restClient.GetAsync($"get_block/{blockHash}");
                 responseMessage.EnsureSuccessStatusCode();
                 var data = await responseMessage.Content.ReadAsStringAsync();
-                return Block.FromJson(data);
+                return BlockDto.FromJson(data);
             }
             catch (HttpRequestException e)
             {
                 Console.WriteLine("\nException Caught!");
                 Console.WriteLine("Message :{0} ", e.Message);
-                return new Block(); //todo
+                return new BlockDto(); //todo
             }
         }
 
-        public async Task<AccountTransactions> GetAccountTxs(string address, int amount)
+        public async Task<AccountTransactionsDto> GetAccountTxs(string address, int amount)
         {
             try
             {
                 HttpResponseMessage responseMessage = await _restClient.GetAsync($"get_account_txs/{address}/{amount}");
                 responseMessage.EnsureSuccessStatusCode();
                 var data = await responseMessage.Content.ReadAsStringAsync();
-                return AccountTransactions.FromJson(data);
+                return AccountTransactionsDto.FromJson(data);
             }
             catch (HttpRequestException e)
             {
                 Console.WriteLine("\nException Caught!");
                 Console.WriteLine("Message :{0} ", e.Message);
-                return new AccountTransactions(); //todo
+                return new AccountTransactionsDto(); //todo
             }
         }
     }

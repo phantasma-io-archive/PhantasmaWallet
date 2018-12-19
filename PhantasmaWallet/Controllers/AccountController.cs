@@ -13,23 +13,23 @@ using Phantasma.RpcClient.Client;
 using Phantasma.RpcClient.DTOs;
 using Phantasma.RpcClient.Interfaces;
 using Phantasma.Wallet.Helpers;
-using Chain = Phantasma.RpcClient.DTOs.Chain;
-using Token = Phantasma.RpcClient.DTOs.Token;
+using Phantasma.Wallet.Models;
+using Transaction = Phantasma.Wallet.Models.Transaction;
 
 namespace Phantasma.Wallet.Controllers
 {
     public class AccountController
     {
-        private readonly IPhantasmaRestService _phantasmaApi;
+        // private readonly IPhantasmaRestService _phantasmaApi; todo remove 
         private readonly IPhantasmaRpcService _phantasmaRpcService;
 
-        private List<Token> AccountHoldings { get; set; }
+        private List<TokenDto> AccountHoldings { get; set; }
 
         public string AccountName { get; set; }
 
         public AccountController()
         {
-            _phantasmaApi = (IPhantasmaRestService)Backend.AppServices.GetService(typeof(IPhantasmaRestService));
+            //_phantasmaApi = (IPhantasmaRestService)Backend.AppServices.GetService(typeof(IPhantasmaRestService));
             _phantasmaRpcService = (IPhantasmaRpcService)Backend.AppServices.GetService(typeof(IPhantasmaRpcService));
         }
 
@@ -107,7 +107,7 @@ namespace Phantasma.Wallet.Controllers
             return new Holding[0];
         }
 
-        public async Task<List<Token>> GetAccountTokens(string address)
+        public async Task<List<TokenDto>> GetAccountTokens(string address)
         {
             try
             {
@@ -123,7 +123,7 @@ namespace Phantasma.Wallet.Controllers
                 Debug.WriteLine($"Exception occurred: {ex.Message}");
             }
 
-            return new List<Token>();
+            return new List<TokenDto>();
         }
 
         public async Task<Transaction[]> GetAccountTransactions(string address, int amount = 20)
@@ -155,7 +155,7 @@ namespace Phantasma.Wallet.Controllers
             return new Transaction[0];
         }
 
-        public async Task<SendRawTx> SettleBlockTransfer(KeyPair keyPair, string sourceChainAddress, string blockHash,
+        public async Task<SendRawTxDto> SettleBlockTransfer(KeyPair keyPair, string sourceChainAddress, string blockHash,
             string destinationChainAddress)
         {
             try
@@ -183,16 +183,16 @@ namespace Phantasma.Wallet.Controllers
             catch (RpcResponseException rpcEx)
             {
                 Debug.WriteLine($"RPC Exception occurred: {rpcEx.RpcError.Message}");
-                return new SendRawTx { Error = rpcEx.RpcError.Message };
+                return new SendRawTxDto { Error = rpcEx.RpcError.Message };
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Exception occurred: {ex.Message}");
-                return new SendRawTx { Error = "Something bad happened when trying to settle transaction." };
+                return new SendRawTxDto { Error = "Something bad happened when trying to settle transaction." };
             }
         }
 
-        public async Task<SendRawTx> CrossChainTransferToken(bool isFungible, KeyPair keyPair, string addressTo,
+        public async Task<SendRawTxDto> CrossChainTransferToken(bool isFungible, KeyPair keyPair, string addressTo,
             string chainName, string destinationChain, string symbol, string amountId)
         {
             try
@@ -231,16 +231,16 @@ namespace Phantasma.Wallet.Controllers
             catch (RpcResponseException rpcEx)
             {
                 Debug.WriteLine($"RPC Exception occurred: {rpcEx.RpcError.Message}");
-                return new SendRawTx { Error = rpcEx.RpcError.Message };
+                return new SendRawTxDto { Error = rpcEx.RpcError.Message };
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Exception occurred: {ex.Message}");
-                return new SendRawTx { Error = "Something bad happened when trying to send tx." };
+                return new SendRawTxDto { Error = "Something bad happened when trying to send tx." };
             }
         }
 
-        public async Task<SendRawTx> TransferTokens(bool isFungible, KeyPair keyPair, string addressTo, string chainName, string symbol, string amountId)
+        public async Task<SendRawTxDto> TransferTokens(bool isFungible, KeyPair keyPair, string addressTo, string chainName, string symbol, string amountId)
         {
             try
             {
@@ -273,16 +273,16 @@ namespace Phantasma.Wallet.Controllers
             catch (RpcResponseException rpcEx)
             {
                 Debug.WriteLine($"RPC Exception occurred: {rpcEx.RpcError.Message}");
-                return new SendRawTx { Error = rpcEx.RpcError.Message };
+                return new SendRawTxDto { Error = rpcEx.RpcError.Message };
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Exception occurred: {ex.Message}");
-                return new SendRawTx { Error = "Something bad happened when trying to send tx." };
+                return new SendRawTxDto { Error = "Something bad happened when trying to send tx." };
             }
         }
 
-        public async Task<TxConfirmation> GetTxConfirmations(string txHash)
+        public async Task<TxConfirmationDTO> GetTxConfirmations(string txHash)
         {
             try
             {
@@ -298,10 +298,10 @@ namespace Phantasma.Wallet.Controllers
                 Debug.WriteLine($"Exception occurred: {ex.Message}");
             }
 
-            return new TxConfirmation { Confirmations = 0 };
+            return new TxConfirmationDTO { Confirmations = 0 };
         }
 
-        public async Task<SendRawTx> RegisterName(KeyPair keyPair, string name)
+        public async Task<SendRawTxDto> RegisterName(KeyPair keyPair, string name)
         {
             try
             {
@@ -323,22 +323,22 @@ namespace Phantasma.Wallet.Controllers
             catch (RpcResponseException rpcEx)
             {
                 Debug.WriteLine($"RPC Exception occurred: {rpcEx.RpcError.Message}");
-                return new SendRawTx { Error = rpcEx.RpcError.Message };
+                return new SendRawTxDto { Error = rpcEx.RpcError.Message };
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Exception occurred: {ex.Message}");
-                return new SendRawTx { Error = "Something bad happened when trying to send tx." };
+                return new SendRawTxDto { Error = "Something bad happened when trying to send tx." };
             }
         }
 
-        public List<Chain> GetShortestPath(string chainName, string destinationChain)
+        public List<ChainDto> GetShortestPath(string chainName, string destinationChain)
         {
             return SendUtils.GetShortestPath(chainName, destinationChain, PhantasmaChains);
         }
 
         #region Public Lists
-        public List<Chain> PhantasmaChains
+        public List<ChainDto> PhantasmaChains
         {
             get
             {
@@ -352,9 +352,9 @@ namespace Phantasma.Wallet.Controllers
             }
         }
 
-        private List<Chain> _phantasmaChains;
+        private List<ChainDto> _phantasmaChains;
 
-        public List<Token> PhantasmaTokens
+        public List<TokenDto> PhantasmaTokens
         {
             get
             {
@@ -368,11 +368,11 @@ namespace Phantasma.Wallet.Controllers
             }
         }
 
-        private List<Token> _phantasmaTokens;
+        private List<TokenDto> _phantasmaTokens;
 
-        private List<Chain> GetPhantasmaChains()
+        private List<ChainDto> GetPhantasmaChains()
         {
-            List<Chain> chains = null;
+            List<ChainDto> chains = null;
             try
             {
                 chains = _phantasmaRpcService.GetChains.SendRequestAsync().Result.ToList();
@@ -388,9 +388,9 @@ namespace Phantasma.Wallet.Controllers
             return chains;
         }
 
-        private List<Token> GetPhantasmaTokens()
+        private List<TokenDto> GetPhantasmaTokens()
         {
-            List<Token> tokens = null;
+            List<TokenDto> tokens = null;
             try
             {
                 tokens = _phantasmaRpcService.GetTokens.SendRequestAsync().Result.Tokens;

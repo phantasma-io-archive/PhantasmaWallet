@@ -8,13 +8,12 @@ using Phantasma.Blockchain.Tokens;
 using Phantasma.Cryptography;
 using Phantasma.Numerics;
 using Phantasma.RpcClient.DTOs;
-using Token = Phantasma.RpcClient.DTOs.Token;
 
 namespace Phantasma.Wallet.Helpers
 {
     public static class Utils
     {
-        public static string GetTxDescription(RpcClient.DTOs.Transaction tx, List<Chain> phantasmaChains, List<Token> phantasmaTokens)
+        public static string GetTxDescription(TransactionDto tx, List<ChainDto> phantasmaChains, List<TokenDto> phantasmaTokens)
         {
             string description = null;
 
@@ -30,7 +29,7 @@ namespace Phantasma.Wallet.Helpers
 
             foreach (var evt in tx.Events) //todo move this
             {
-                Blockchain.Contracts.Event nativeEvent;
+                Event nativeEvent;
                 if (evt.Data != null)
                 {
                     nativeEvent = new Blockchain.Contracts.Event((EventKind)evt.EvtKind,
@@ -130,7 +129,7 @@ namespace Phantasma.Wallet.Helpers
             return description;
         }
 
-        private static string GetChainName(string address, List<Chain> phantasmaChains)
+        private static string GetChainName(string address, List<ChainDto> phantasmaChains)
         {
             foreach (var element in phantasmaChains)
             {

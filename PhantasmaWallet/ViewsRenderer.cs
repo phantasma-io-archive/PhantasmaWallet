@@ -7,6 +7,7 @@ using Phantasma.Blockchain.Contracts.Native;
 using Phantasma.Cryptography;
 using Phantasma.RpcClient.DTOs;
 using Phantasma.Wallet.Controllers;
+using Phantasma.Wallet.Models;
 
 namespace Phantasma.Wallet
 {
@@ -316,7 +317,7 @@ namespace Phantasma.Wallet
             var amountOrId = request.GetVariable(isFungible ? "amount" : "id");
 
             var keyPair = GetLoginKey(request);
-            SendRawTx result;
+            SendRawTxDto result;
 
             if (chainName == destinationChain)
             {
