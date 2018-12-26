@@ -131,7 +131,7 @@ namespace Phantasma.Wallet.Controllers
             try
             {
                 var txs = new List<Transaction>();
-                var accountTxs = await _phantasmaRpcService.GetAccountTxs.SendRequestAsync(address, amount);
+                var accountTxs = await _phantasmaRpcService.GetAddressTxs.SendRequestAsync(address, amount);
                 foreach (var tx in accountTxs.Txs)
                 {
                     txs.Add(new Transaction
