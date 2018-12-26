@@ -1,4 +1,5 @@
 ﻿using System;
+using Phantasma.RpcClient.DTOs;
 
 namespace Phantasma.Wallet.DTOs
 {
@@ -17,13 +18,14 @@ namespace Phantasma.Wallet.DTOs
         public DateTime LastUpdated;
         public Transaction[] Transactions;
         public Holding[] Holdings;
-        public Token[] Tokens;
+        public BalanceSheetDto[] Tokens;
     }
 
     public struct Holding
     {
         public string Name;
         public string Symbol;
+        public string Chain;
         public string Icon;
         public decimal Amount;
         public decimal Rate;

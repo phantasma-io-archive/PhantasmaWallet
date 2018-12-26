@@ -7,14 +7,13 @@ using Phantasma.Blockchain.Contracts.Native;
 using Phantasma.Blockchain.Tokens;
 using Phantasma.Cryptography;
 using Phantasma.Numerics;
-using Phantasma.Wallet.DTOs;
-using Token = Phantasma.Wallet.DTOs.Token;
+using Phantasma.RpcClient.DTOs;
 
 namespace Phantasma.Wallet.Helpers
 {
     public static class Utils
     {
-        public static string GetTxDescription(AccountTx tx, List<ChainElement> phantasmaChains, List<Token> phantasmaTokens)
+        public static string GetTxDescription(TransactionDto tx, List<ChainDto> phantasmaChains, List<TokenDto> phantasmaTokens)
         {
             string description = null;
 
@@ -130,7 +129,7 @@ namespace Phantasma.Wallet.Helpers
             return description;
         }
 
-        private static string GetChainName(string address, List<ChainElement> phantasmaChains)
+        private static string GetChainName(string address, List<ChainDto> phantasmaChains)
         {
             foreach (var element in phantasmaChains)
             {

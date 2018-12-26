@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Phantasma.Wallet.DTOs;
+using Phantasma.RpcClient.DTOs;
 
 namespace Phantasma.Wallet.Helpers
 {
     public static class SendUtils
     {
-        public static List<ChainElement> SelectShortestPath(string from, string to, List<string> paths, List<ChainElement> phantasmaChains)
+        public static List<ChainDto> SelectShortestPath(string from, string to, List<string> paths, List<ChainDto> phantasmaChains)
         {
             var finalPath = "";
             foreach (var path in paths)
@@ -26,7 +26,7 @@ namespace Phantasma.Wallet.Helpers
                 }
             }
             var listStrLineElements = finalPath.Split(',').ToList();
-            List<ChainElement> chainPath = new List<ChainElement>();
+            List<ChainDto> chainPath = new List<ChainDto>();
             foreach (var element in listStrLineElements)
             {
                 chainPath.Add(phantasmaChains.Find(p => p.Name == element.Trim()));
@@ -34,7 +34,7 @@ namespace Phantasma.Wallet.Helpers
             return chainPath;
         }
 
-        public static List<ChainElement> GetShortestPath(string from, string to, List<ChainElement> phantasmaChains)
+        public static List<ChainDto> GetShortestPath(string from, string to, List<ChainDto> phantasmaChains)
         {
             var vertices = new List<string>();
             var edges = new List<Tuple<string, string>>();

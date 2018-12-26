@@ -5,6 +5,7 @@ using LunarLabs.WebServer.HTTP;
 using LunarLabs.WebServer.Templates;
 using Phantasma.Blockchain.Contracts.Native;
 using Phantasma.Cryptography;
+using Phantasma.RpcClient.DTOs;
 using Phantasma.Wallet.Controllers;
 using Phantasma.Wallet.DTOs;
 
@@ -63,14 +64,12 @@ namespace Phantasma.Wallet
             var cache = FindCache(keyPair.Address);
 
             var availableChains = new List<string>();
-            foreach (var token in cache.Tokens)
+
+            foreach (var balanceChain in cache.Tokens)
             {
-                foreach (var balanceChain in token.Chains)
+                if (!availableChains.Contains(balanceChain.ChainName))
                 {
-                    if (!availableChains.Contains(balanceChain.ChainName))
-                    {
-                        availableChains.Add(balanceChain.ChainName);
-                    }
+                    availableChains.Add(balanceChain.ChainName);
                 }
             }
 
@@ -107,7 +106,7 @@ namespace Phantasma.Wallet
                 cache = _accountCaches[address];
                 var diff = currentTime - cache.LastUpdated;
 
-                if (diff.TotalMinutes < 5)
+                if (diff.TotalMinutes < 0.1)
                 {
                     return cache;
                 }
@@ -316,7 +315,7 @@ namespace Phantasma.Wallet
             var amountOrId = request.GetVariable(isFungible ? "amount" : "id");
 
             var keyPair = GetLoginKey(request);
-            SendRawTx result;
+            SendRawTxDto result;
 
             if (chainName == destinationChain)
             {
