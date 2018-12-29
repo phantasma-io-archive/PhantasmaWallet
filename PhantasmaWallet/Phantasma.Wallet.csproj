@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <AssemblyName>Phantasma.Wallet</AssemblyName>
     <RootNamespace>Phantasma.Wallet</RootNamespace>
     <PackageId>Phantasma.Wallet</PackageId>

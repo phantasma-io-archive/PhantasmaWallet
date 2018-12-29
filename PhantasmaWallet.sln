@@ -23,6 +23,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Phantasma.Storage", "..\Pha
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Phantasma.RpcClient", "..\PhantasmaRpcClient\Phantasma.RpcClient\Phantasma.RpcClient.csproj", "{9520C2A7-8E93-40E2-81EF-4DC90DBC8E93}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Phantasma.P2P", "..\PhantasmaChain\Phantasma.P2P\Phantasma.P2P.csproj", "{6B2C0A88-36C8-4A83-8FD0-EDF9826E2481}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Phantasma.API", "..\PhantasmaChain\Phantasma.API\Phantasma.API.csproj", "{5E806FAA-2DD5-46EF-B15C-FAFAE70AC49C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +73,14 @@ Global
 		{9520C2A7-8E93-40E2-81EF-4DC90DBC8E93}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9520C2A7-8E93-40E2-81EF-4DC90DBC8E93}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9520C2A7-8E93-40E2-81EF-4DC90DBC8E93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B2C0A88-36C8-4A83-8FD0-EDF9826E2481}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B2C0A88-36C8-4A83-8FD0-EDF9826E2481}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B2C0A88-36C8-4A83-8FD0-EDF9826E2481}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B2C0A88-36C8-4A83-8FD0-EDF9826E2481}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E806FAA-2DD5-46EF-B15C-FAFAE70AC49C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E806FAA-2DD5-46EF-B15C-FAFAE70AC49C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E806FAA-2DD5-46EF-B15C-FAFAE70AC49C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E806FAA-2DD5-46EF-B15C-FAFAE70AC49C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
