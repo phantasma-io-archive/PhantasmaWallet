@@ -18,7 +18,7 @@ namespace Phantasma.Wallet.Models
         public DateTime LastUpdated;
         public Transaction[] Transactions;
         public Holding[] Holdings;
-        public TokenDto[] Tokens;
+        public BalanceSheetDto[] Tokens;
     }
 
     public struct Holding
