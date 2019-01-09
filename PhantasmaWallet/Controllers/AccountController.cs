@@ -150,7 +150,7 @@ namespace Phantasma.Wallet.Controllers
             return new Transaction[0];
         }
 
-        public async Task<SendRawTxDto> SettleBlockTransfer(KeyPair keyPair, string sourceChainAddress, string blockHash,
+        public async Task<string> SettleBlockTransfer(KeyPair keyPair, string sourceChainAddress, string blockHash,
             string destinationChainAddress)
         {
             try
@@ -178,16 +178,16 @@ namespace Phantasma.Wallet.Controllers
             catch (RpcResponseException rpcEx)
             {
                 Debug.WriteLine($"RPC Exception occurred: {rpcEx.RpcError.Message}");
-                return new SendRawTxDto { Error = rpcEx.RpcError.Message };
+                return null;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Exception occurred: {ex.Message}");
-                return new SendRawTxDto { Error = "Something bad happened when trying to settle transaction." };
+                return null;
             }
         }
 
-        public async Task<SendRawTxDto> CrossChainTransferToken(bool isFungible, KeyPair keyPair, string addressTo,
+        public async Task<string> CrossChainTransferToken(bool isFungible, KeyPair keyPair, string addressTo,
             string chainName, string destinationChain, string symbol, string amountId)
         {
             try
@@ -226,16 +226,16 @@ namespace Phantasma.Wallet.Controllers
             catch (RpcResponseException rpcEx)
             {
                 Debug.WriteLine($"RPC Exception occurred: {rpcEx.RpcError.Message}");
-                return new SendRawTxDto { Error = rpcEx.RpcError.Message };
+                return null;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Exception occurred: {ex.Message}");
-                return new SendRawTxDto { Error = "Something bad happened when trying to send tx." };
+                return null;
             }
         }
 
-        public async Task<SendRawTxDto> TransferTokens(bool isFungible, KeyPair keyPair, string addressTo, string chainName, string symbol, string amountId)
+        public async Task<string> TransferTokens(bool isFungible, KeyPair keyPair, string addressTo, string chainName, string symbol, string amountId)
         {
             try
             {
@@ -268,12 +268,12 @@ namespace Phantasma.Wallet.Controllers
             catch (RpcResponseException rpcEx)
             {
                 Debug.WriteLine($"RPC Exception occurred: {rpcEx.RpcError.Message}");
-                return new SendRawTxDto { Error = rpcEx.RpcError.Message };
+                return null;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Exception occurred: {ex.Message}");
-                return new SendRawTxDto { Error = "Something bad happened when trying to send tx." };
+                return null;
             }
         }
 
@@ -296,7 +296,7 @@ namespace Phantasma.Wallet.Controllers
             return new TxConfirmationDto { Confirmations = 0 };
         }
 
-        public async Task<SendRawTxDto> RegisterName(KeyPair keyPair, string name)
+        public async Task<string> RegisterName(KeyPair keyPair, string name)
         {
             try
             {
@@ -318,12 +318,12 @@ namespace Phantasma.Wallet.Controllers
             catch (RpcResponseException rpcEx)
             {
                 Debug.WriteLine($"RPC Exception occurred: {rpcEx.RpcError.Message}");
-                return new SendRawTxDto { Error = rpcEx.RpcError.Message };
+                return null;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Exception occurred: {ex.Message}");
-                return new SendRawTxDto { Error = "Something bad happened when trying to send tx." };
+                return null;
             }
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Phantasma.Cryptography;
 using Phantasma.RpcClient.DTOs;
 
 namespace Phantasma.Wallet.Helpers
@@ -32,6 +33,11 @@ namespace Phantasma.Wallet.Helpers
                 chainPath.Add(phantasmaChains.Find(p => p.Name == element.Trim()));
             }
             return chainPath;
+        }
+
+        public static bool IsTxHashValid(string data)
+        {
+            return Hash.TryParse(data, out Hash result);
         }
 
         public static List<ChainDto> GetShortestPath(string from, string to, List<ChainDto> phantasmaChains)

@@ -7,6 +7,7 @@ using Phantasma.Blockchain.Contracts.Native;
 using Phantasma.Cryptography;
 using Phantasma.RpcClient.DTOs;
 using Phantasma.Wallet.Controllers;
+using Phantasma.Wallet.Helpers;
 using Phantasma.Wallet.Models;
 
 namespace Phantasma.Wallet
@@ -314,7 +315,7 @@ namespace Phantasma.Wallet
             var amountOrId = request.GetVariable(isFungible ? "amount" : "id");
 
             var keyPair = GetLoginKey(request);
-            SendRawTxDto result;
+            string result;
 
             if (chainName == destinationChain)
             {
@@ -351,7 +352,7 @@ namespace Phantasma.Wallet
                 {
                     result = AccountController.CrossChainTransferToken(isFungible, keyPair, addressTo, chainName, destinationChain, symbol, amountOrId).Result;
                 }
-                if (!result.HasError)
+                if (SendUtils.IsTxHashValid(result))
                 {
                     request.session.SetBool("isCrossTransfer", true);
                     request.session.SetStruct<SettleTx>("settleTx",
@@ -364,13 +365,13 @@ namespace Phantasma.Wallet
                 }
             }
 
-            if (result.HasError)
+            if (!SendUtils.IsTxHashValid(result))
             {
-                PushError(request, result.Error);
+                PushError(request, result);
                 return "";
             }
 
-            return result.Hash;
+            return result;
         }
 
         private object RouteWaitingTx(HTTPRequest request)
@@ -414,12 +415,12 @@ namespace Phantasma.Wallet
                     // clear
                     request.session.SetBool("isCrossTransfer", false);
 
-                    if (!settleTx.HasError)
+                    if (SendUtils.IsTxHashValid(settleTx))
                     {
                         context["confirmingTxHash"] = settleTx;
                         return "settling";
                     }
-                    PushError(request, settleTx.Error);
+                    PushError(request, settleTx);
                     return "unconfirmed";
                 }
                 else
@@ -454,12 +455,12 @@ namespace Phantasma.Wallet
                     {
                         var keyPair = GetLoginKey(request);
                         var registerTx = AccountController.RegisterName(keyPair, name).Result;
-                        if (!registerTx.HasError)
+                        if (SendUtils.IsTxHashValid(registerTx))
                         {
-                            return registerTx.Hash;
+                            return registerTx;
                         }
 
-                        PushError(request, registerTx.Error);
+                        PushError(request, registerTx);
                     }
                     else
                     {
