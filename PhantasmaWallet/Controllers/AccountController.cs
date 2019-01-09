@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using LunarLabs.WebServer.Core;
 using Phantasma.Blockchain;
 using Phantasma.Blockchain.Tokens;
 using Phantasma.Core.Types;
 using Phantasma.Cryptography;
-using Phantasma.Wallet.Interfaces;
 using Phantasma.Numerics;
 using Phantasma.RpcClient.Client;
 using Phantasma.RpcClient.DTOs;
@@ -20,7 +20,6 @@ namespace Phantasma.Wallet.Controllers
 {
     public class AccountController
     {
-        // private readonly IPhantasmaRestService _phantasmaApi; todo remove 
         private readonly IPhantasmaRpcService _phantasmaRpcService;
 
         private List<BalanceSheetDto> AccountHoldings { get; set; }
@@ -39,17 +38,17 @@ namespace Phantasma.Wallet.Controllers
 
             foreach (var holding in AccountHoldings)
             {
-                if (decimal.Parse(balanceChain.Balance) > 0)
+                if (decimal.Parse(holding.Amount) > 0)
                 {
                     holdingList.Add(new SendHolding
                     {
-                        Amount = TokenUtils.ToDecimal(BigInteger.Parse(balanceChain.Balance), GetTokenDecimals(holding.Symbol)),
-                        ChainName = balanceChain.ChainName,
+                        Amount = TokenUtils.ToDecimal(BigInteger.Parse(holding.Amount), GetTokenDecimals(holding.Symbol)),
+                        ChainName = holding.ChainName,
                         Name = GetTokenName(holding.Symbol),
                         Symbol = holding.Symbol,
                         Icon = "phantasma_logo",
-                        Fungible = holding.Fungible,
-                        Ids = balanceChain.Ids
+                        Fungible = IsTokenFungible(holding.Symbol),
+                        Ids = holding.Ids
                     });
                 }
             }
@@ -72,7 +71,8 @@ namespace Phantasma.Wallet.Controllers
                         Symbol = token.Symbol,
                         Icon = "phantasma_logo",
                         Name = GetTokenName(token.Symbol),
-                        Rate = rateUsd
+                        Rate = rateUsd,
+                        ChainName = token.ChainName.FirstLetterToUpper()
                     };
                     decimal amount = 0;
 
@@ -194,7 +194,7 @@ namespace Phantasma.Wallet.Controllers
             {
                 var toChain = PhantasmaChains.Find(p => p.Name == destinationChain);
                 var destinationAddress = Address.FromText(addressTo);
-                int decimals = AccountHoldings.SingleOrDefault(t => t.Symbol == symbol).Decimals;
+                int decimals = PhantasmaTokens.SingleOrDefault(t => t.Symbol == symbol).Decimals;
                 var bigIntAmount = TokenUtils.ToBigInteger(decimal.Parse(amountId), decimals);
                 var fee = TokenUtils.ToBigInteger(0.0001m, 8);
 
@@ -240,7 +240,7 @@ namespace Phantasma.Wallet.Controllers
             try
             {
                 var destinationAddress = Address.FromText(addressTo);
-                int decimals = AccountHoldings.SingleOrDefault(t => t.Symbol == symbol).Decimals;
+                int decimals = PhantasmaTokens.SingleOrDefault(t => t.Symbol == symbol).Decimals;
                 var bigIntAmount = TokenUtils.ToBigInteger(decimal.Parse(amountId), decimals);
 
                 var script = isFungible
@@ -416,5 +416,8 @@ namespace Phantasma.Wallet.Controllers
 
         private string GetTokenName(string symbol) =>
             PhantasmaTokens.SingleOrDefault(p => p.Symbol.Equals(symbol))?.Name;
+
+        private bool IsTokenFungible(string symbol) =>
+            PhantasmaTokens.SingleOrDefault(p => p.Symbol.Equals(symbol)).Fungible;
     }
 }

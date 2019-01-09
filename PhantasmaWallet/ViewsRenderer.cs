@@ -66,12 +66,9 @@ namespace Phantasma.Wallet
             var availableChains = new List<string>();
             foreach (var token in cache.Tokens)
             {
-                foreach (var balanceChain in token.Chains)
+                if (!availableChains.Contains(token.ChainName))
                 {
-                    if (!availableChains.Contains(balanceChain.ChainName))
-                    {
-                        availableChains.Add(balanceChain.ChainName);
-                    }
+                    availableChains.Add(token.ChainName);
                 }
             }
 

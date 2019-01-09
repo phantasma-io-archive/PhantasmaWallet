@@ -24,6 +24,7 @@ namespace Phantasma.Wallet.Models
     public struct Holding
     {
         public string Name;
+        public string ChainName;
         public string Symbol;
         public string Icon;
         public decimal Amount;
