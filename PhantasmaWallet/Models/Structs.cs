@@ -1,7 +1,7 @@
 ﻿using System;
 using Phantasma.RpcClient.DTOs;
 
-namespace Phantasma.Wallet.DTOs
+namespace Phantasma.Wallet.Models
 {
     public class MenuEntry
     {
@@ -24,6 +24,7 @@ namespace Phantasma.Wallet.DTOs
     public struct Holding
     {
         public string Name;
+        public string ChainName;
         public string Symbol;
         public string Chain;
         public string Icon;

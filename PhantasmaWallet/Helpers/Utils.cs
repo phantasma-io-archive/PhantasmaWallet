@@ -29,16 +29,16 @@ namespace Phantasma.Wallet.Helpers
 
             foreach (var evt in tx.Events) //todo move this
             {
-                Blockchain.Contracts.Event nativeEvent;
+                Event nativeEvent;
                 if (evt.Data != null)
                 {
-                    nativeEvent = new Blockchain.Contracts.Event((EventKind)evt.EvtKind,
+                    nativeEvent = new Event((EventKind)evt.EvtKind,
                         Address.FromText(evt.EventAddress), evt.Data.Decode());
                 }
                 else
                 {
                     nativeEvent =
-                        new Blockchain.Contracts.Event((EventKind)evt.EvtKind, Address.FromText(evt.EventAddress));
+                        new Event((EventKind)evt.EvtKind, Address.FromText(evt.EventAddress));
                 }
 
                 switch (evt.EvtKind)

@@ -3,24 +3,24 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Phantasma.Blockchain;
+using LunarLabs.WebServer.Core;
+using Phantasma.Blockchain.Contracts;
 using Phantasma.Blockchain.Tokens;
 using Phantasma.Core.Types;
 using Phantasma.Cryptography;
-using Phantasma.Wallet.DTOs;
-using Phantasma.Wallet.Interfaces;
 using Phantasma.Numerics;
 using Phantasma.RpcClient.Client;
 using Phantasma.RpcClient.DTOs;
 using Phantasma.RpcClient.Interfaces;
+using Phantasma.VM.Utils;
 using Phantasma.Wallet.Helpers;
-using Transaction = Phantasma.Wallet.DTOs.Transaction;
+using Phantasma.Wallet.Models;
+using Transaction = Phantasma.Wallet.Models.Transaction;
 
 namespace Phantasma.Wallet.Controllers
 {
     public class AccountController
     {
-        private readonly IPhantasmaRestService _phantasmaApi;
         private readonly IPhantasmaRpcService _phantasmaRpcService;
 
         private List<BalanceSheetDto> AccountHoldings { get; set; }
@@ -29,28 +29,26 @@ namespace Phantasma.Wallet.Controllers
 
         public AccountController()
         {
-            _phantasmaApi = (IPhantasmaRestService)Backend.AppServices.GetService(typeof(IPhantasmaRestService));
             _phantasmaRpcService = (IPhantasmaRpcService)Backend.AppServices.GetService(typeof(IPhantasmaRpcService));
         }
 
         public List<SendHolding> PrepareSendHoldings()
         {
             var holdingList = new List<SendHolding>();
-            if (AccountHoldings == null || AccountHoldings.Count == 0) return holdingList;
+            if (AccountHoldings == null || !AccountHoldings.Any()) return holdingList;
 
             foreach (var holding in AccountHoldings)
             {
                 if (decimal.Parse(holding.Amount) > 0)
                 {
-                    var token = GetToken(holding.Symbol);
                     holdingList.Add(new SendHolding
                     {
-                        Amount = TokenUtils.ToDecimal(BigInteger.Parse(holding.Amount), token.Decimals),
+                        Amount = TokenUtils.ToDecimal(BigInteger.Parse(holding.Amount), GetTokenDecimals(holding.Symbol)),
                         ChainName = holding.ChainName,
-                        Name = token.Name,
+                        Name = GetTokenName(holding.Symbol),
                         Symbol = holding.Symbol,
                         Icon = "phantasma_logo",
-                        Fungible = token.Fungible,
+                        Fungible = IsTokenFungible(holding.Symbol),
                         Ids = holding.Ids
                     });
                 }
@@ -73,18 +71,19 @@ namespace Phantasma.Wallet.Controllers
                     {
                         Symbol = token.Symbol,
                         Icon = "phantasma_logo",
-                        Chain = token.ChainName,
-                        Name = GetToken(token.Symbol).Name,
-                        Rate = rateUsd
+                        Name = GetTokenName(token.Symbol),
+                        Rate = rateUsd,
+                        ChainName = token.ChainName.FirstLetterToUpper()
                     };
-
                     decimal amount = 0;
+
                     if (BigInteger.TryParse(token.Amount, out var balance))
                     {
-                        var decimals = GetToken(token.Symbol).Decimals;
-                        decimal chainAmount = TokenUtils.ToDecimal(balance, decimals);
+                        decimal chainAmount = TokenUtils.ToDecimal(balance, GetTokenDecimals(token.Symbol));
                         amount += chainAmount;
                     }
+
+
                     holding.Amount = amount;
                     holdings.Add(holding);
                 }
@@ -152,7 +151,7 @@ namespace Phantasma.Wallet.Controllers
             return new Transaction[0];
         }
 
-        public async Task<SendRawTxDto> SettleBlockTransfer(KeyPair keyPair, string sourceChainAddress, string blockHash,
+        public async Task<string> SettleBlockTransfer(KeyPair keyPair, string sourceChainAddress, string blockHash,
             string destinationChainAddress)
         {
             try
@@ -180,23 +179,23 @@ namespace Phantasma.Wallet.Controllers
             catch (RpcResponseException rpcEx)
             {
                 Debug.WriteLine($"RPC Exception occurred: {rpcEx.RpcError.Message}");
-                return new SendRawTxDto { Error = rpcEx.RpcError.Message };
+                return null;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Exception occurred: {ex.Message}");
-                return new SendRawTxDto { Error = "Something bad happened when trying to settle transaction." };
+                return null;
             }
         }
 
-        public async Task<SendRawTxDto> CrossChainTransferToken(bool isFungible, KeyPair keyPair, string addressTo,
+        public async Task<string> CrossChainTransferToken(bool isFungible, KeyPair keyPair, string addressTo,
             string chainName, string destinationChain, string symbol, string amountId)
         {
             try
             {
                 var toChain = PhantasmaChains.Find(p => p.Name == destinationChain);
                 var destinationAddress = Address.FromText(addressTo);
-                int decimals = GetToken(symbol).Decimals;
+                int decimals = PhantasmaTokens.SingleOrDefault(t => t.Symbol == symbol).Decimals;
                 var bigIntAmount = TokenUtils.ToBigInteger(decimal.Parse(amountId), decimals);
                 var fee = TokenUtils.ToBigInteger(0.0001m, 8);
 
@@ -228,21 +227,21 @@ namespace Phantasma.Wallet.Controllers
             catch (RpcResponseException rpcEx)
             {
                 Debug.WriteLine($"RPC Exception occurred: {rpcEx.RpcError.Message}");
-                return new SendRawTxDto { Error = rpcEx.RpcError.Message };
+                return null;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Exception occurred: {ex.Message}");
-                return new SendRawTxDto { Error = "Something bad happened when trying to send tx." };
+                return null;
             }
         }
 
-        public async Task<SendRawTxDto> TransferTokens(bool isFungible, KeyPair keyPair, string addressTo, string chainName, string symbol, string amountId)
+        public async Task<string> TransferTokens(bool isFungible, KeyPair keyPair, string addressTo, string chainName, string symbol, string amountId)
         {
             try
             {
                 var destinationAddress = Address.FromText(addressTo);
-                int decimals = GetToken(symbol).Decimals;
+                int decimals = PhantasmaTokens.SingleOrDefault(t => t.Symbol == symbol).Decimals;
                 var bigIntAmount = TokenUtils.ToBigInteger(decimal.Parse(amountId), decimals);
 
                 var script = isFungible
@@ -270,12 +269,12 @@ namespace Phantasma.Wallet.Controllers
             catch (RpcResponseException rpcEx)
             {
                 Debug.WriteLine($"RPC Exception occurred: {rpcEx.RpcError.Message}");
-                return new SendRawTxDto { Error = rpcEx.RpcError.Message };
+                return null;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Exception occurred: {ex.Message}");
-                return new SendRawTxDto { Error = "Something bad happened when trying to send tx." };
+                return null;
             }
         }
 
@@ -298,7 +297,7 @@ namespace Phantasma.Wallet.Controllers
             return new TxConfirmationDto { Confirmations = 0 };
         }
 
-        public async Task<SendRawTxDto> RegisterName(KeyPair keyPair, string name)
+        public async Task<string> RegisterName(KeyPair keyPair, string name)
         {
             try
             {
@@ -320,12 +319,12 @@ namespace Phantasma.Wallet.Controllers
             catch (RpcResponseException rpcEx)
             {
                 Debug.WriteLine($"RPC Exception occurred: {rpcEx.RpcError.Message}");
-                return new SendRawTxDto { Error = rpcEx.RpcError.Message };
+                return null;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Exception occurred: {ex.Message}");
-                return new SendRawTxDto { Error = "Something bad happened when trying to send tx." };
+                return null;
             }
         }
 
@@ -333,23 +332,6 @@ namespace Phantasma.Wallet.Controllers
         {
             return SendUtils.GetShortestPath(chainName, destinationChain, PhantasmaChains);
         }
-
-
-        private TokenDto GetToken(string symbol)
-        {
-            return PhantasmaTokens.SingleOrDefault(p => p.Symbol == symbol);
-        }
-
-        //private void CreateAccountHoldings(List<BalanceSheetDto> balances)
-        //{
-        //    List<TokenDto> tokens = new List<TokenDto>();
-        //    foreach (var balanceSheetDto in balances)
-        //    {
-        //        var token = GetToken(balanceSheetDto.Symbol);
-        //        token.Chains = balances;
-        //        tokens.Add();
-        //    }
-        //}
 
         #region Public Lists
         public List<ChainDto> PhantasmaChains
@@ -407,7 +389,7 @@ namespace Phantasma.Wallet.Controllers
             List<TokenDto> tokens = null;
             try
             {
-                tokens = _phantasmaRpcService.GetTokens.SendRequestAsync().Result.Tokens;
+                tokens = _phantasmaRpcService.GetTokens.SendRequestAsync().Result;
             }
             catch (RpcResponseException rpcEx)
             {
@@ -421,5 +403,22 @@ namespace Phantasma.Wallet.Controllers
             return tokens;
         }
         #endregion
+
+        private int GetTokenDecimals(string symbol)
+        {
+            var token = PhantasmaTokens.SingleOrDefault(p => p.Symbol.Equals(symbol));
+            if (token != null)
+            {
+                return token.Decimals;
+            }
+
+            return 0;
+        }
+
+        private string GetTokenName(string symbol) =>
+            PhantasmaTokens.SingleOrDefault(p => p.Symbol.Equals(symbol))?.Name;
+
+        private bool IsTokenFungible(string symbol) =>
+            PhantasmaTokens.SingleOrDefault(p => p.Symbol.Equals(symbol)).Fungible;
     }
 }

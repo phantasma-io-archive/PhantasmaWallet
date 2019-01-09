@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace Phantasma.Wallet.DTOs
+namespace Phantasma.Wallet.Models
 {
     public class SendHolding
     {
-        public string ChainName  { get; set; }
+        public string ChainName { get; set; }
         public string Symbol { get; set; }
         public string Name { get; set; }
         public string Icon { get; set; }

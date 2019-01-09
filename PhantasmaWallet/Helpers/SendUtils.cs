@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Phantasma.Cryptography;
 using Phantasma.RpcClient.DTOs;
 
 namespace Phantasma.Wallet.Helpers
@@ -34,16 +35,32 @@ namespace Phantasma.Wallet.Helpers
             return chainPath;
         }
 
+        public static bool IsTxHashValid(string data)
+        {
+            return Hash.TryParse(data, out Hash result);
+        }
+
         public static List<ChainDto> GetShortestPath(string from, string to, List<ChainDto> phantasmaChains)
         {
             var vertices = new List<string>();
             var edges = new List<Tuple<string, string>>();
+
+            var children = new Dictionary<string, List<ChainDto>>();
+            foreach (var chain in phantasmaChains)
+            {
+                var childs = phantasmaChains.Where(p => p.ParentAddress.Equals(chain.Address));
+                if (childs.Any())
+                {
+                    children[chain.Name] = childs.ToList();
+                }
+            }
+
             foreach (var chain in phantasmaChains)
             {
                 vertices.Add(chain.Name);
-                if (chain.Children != null)
+                if (children.ContainsKey(chain.Name))
                 {
-                    foreach (var child in chain.Children)
+                    foreach (var child in children[chain.Name])
                     {
                         edges.Add(new Tuple<string, string>(chain.Name, child.Name));
                     }
