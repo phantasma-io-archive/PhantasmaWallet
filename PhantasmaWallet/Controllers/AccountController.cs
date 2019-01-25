@@ -15,6 +15,7 @@ using Phantasma.RpcClient.Interfaces;
 using Phantasma.VM.Utils;
 using Phantasma.Wallet.Helpers;
 using Phantasma.Wallet.Models;
+using TokenFlags = Phantasma.RpcClient.DTOs.TokenFlags;
 using Transaction = Phantasma.Wallet.Models.Transaction;
 
 namespace Phantasma.Wallet.Controllers
@@ -127,8 +128,8 @@ namespace Phantasma.Wallet.Controllers
             try
             {
                 var txs = new List<Transaction>();
-                var accountTxs = await _phantasmaRpcService.GetAddressTxs.SendRequestAsync(address, amount);
-                foreach (var tx in accountTxs.Txs)
+                var accountTxs = await _phantasmaRpcService.GetAddressTxs.SendRequestAsync(address, 1, amount);
+                foreach (var tx in accountTxs.AccountTransactionsDto.Txs)
                 {
                     txs.Add(new Transaction
                     {
@@ -169,7 +170,7 @@ namespace Phantasma.Wallet.Controllers
                     .SpendGas(keyPair.Address)
                     .EndScript();
 
-                var settleTx = new Blockchain.Transaction(nexusName, destinationChainName, settleTxScript, DateTime.UtcNow + TimeSpan.FromHours(1), 0);
+                var settleTx = new Blockchain.Transaction(nexusName, destinationChainName, settleTxScript, DateTime.UtcNow + TimeSpan.FromHours(1));
                 settleTx.Sign(keyPair);
 
                 var settleResult =
@@ -218,7 +219,7 @@ namespace Phantasma.Wallet.Controllers
 
                 var nexusName = "simnet";
 
-                var tx = new Blockchain.Transaction(nexusName, chainName, script, DateTime.UtcNow + TimeSpan.FromHours(1), 0);
+                var tx = new Blockchain.Transaction(nexusName, chainName, script, DateTime.UtcNow + TimeSpan.FromHours(1));
                 tx.Sign(keyPair);
 
                 var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(tx.ToByteArray(true).Encode());
@@ -260,7 +261,7 @@ namespace Phantasma.Wallet.Controllers
                 var nexusName = "simnet";
 
                 var tx = new Blockchain.Transaction(nexusName, chainName, script,
-                    DateTime.UtcNow + TimeSpan.FromHours(1), 0);
+                    DateTime.UtcNow + TimeSpan.FromHours(1));
                 tx.Sign(keyPair);
 
                 var txResult = await _phantasmaRpcService.SendRawTx.SendRequestAsync(tx.ToByteArray(true).Encode());
@@ -309,7 +310,7 @@ namespace Phantasma.Wallet.Controllers
 
                 // TODO this should be a dropdown in the wallet settings!!
                 var nexusName = "simnet";
-                var tx = new Blockchain.Transaction(nexusName, "main", script, DateTime.UtcNow + TimeSpan.FromHours(1), 0);
+                var tx = new Blockchain.Transaction(nexusName, "main", script, DateTime.UtcNow + TimeSpan.FromHours(1));
 
                 tx.Sign(keyPair);
 
@@ -386,7 +387,7 @@ namespace Phantasma.Wallet.Controllers
 
         private List<TokenDto> GetPhantasmaTokens()
         {
-            List<TokenDto> tokens = null;
+            IList<TokenDto> tokens = null;
             try
             {
                 tokens = _phantasmaRpcService.GetTokens.SendRequestAsync().Result;
@@ -400,7 +401,7 @@ namespace Phantasma.Wallet.Controllers
                 Debug.WriteLine($"Exception occurred: {ex.Message}");
             }
 
-            return tokens;
+            return tokens as List<TokenDto>;
         }
         #endregion
 
@@ -419,6 +420,6 @@ namespace Phantasma.Wallet.Controllers
             PhantasmaTokens.SingleOrDefault(p => p.Symbol.Equals(symbol))?.Name;
 
         private bool IsTokenFungible(string symbol) =>
-            PhantasmaTokens.SingleOrDefault(p => p.Symbol.Equals(symbol)).Fungible;
+            (PhantasmaTokens.Single(p => p.Symbol.Equals(symbol)).Flags & TokenFlags.Fungible) != 0;
     }
 }
