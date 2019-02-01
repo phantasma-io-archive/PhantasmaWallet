@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Net;
 using LunarLabs.Parser.JSON;
-using Phantasma.Blockchain.Contracts;
 using Phantasma.Blockchain.Contracts.Native;
 using Phantasma.Blockchain.Tokens;
 using Phantasma.Cryptography;
+using Phantasma.IO;
 using Phantasma.Numerics;
 using Phantasma.RpcClient.DTOs;
 
@@ -29,70 +29,57 @@ namespace Phantasma.Wallet.Helpers
 
             foreach (var evt in tx.Events) //todo move this
             {
-                Event nativeEvent;
-                if (evt.Data != null)
+                switch (evt.EventKind)
                 {
-                    nativeEvent = new Event((EventKind)evt.EvtKind,
-                        Address.FromText(evt.EventAddress), evt.Data.Decode());
-                }
-                else
-                {
-                    nativeEvent =
-                        new Event((EventKind)evt.EvtKind, Address.FromText(evt.EventAddress));
-                }
-
-                switch (evt.EvtKind)
-                {
-                    case EvtKind.TokenSend:
+                    case EventKind.TokenSend:
                         {
-                            var data = nativeEvent.GetContent<TokenEventData>();
+                            var data = Serialization.Unserialize<TokenEventData>(evt.Data.Decode());
                             amount = data.value;
-                            senderAddress = nativeEvent.Address;
-                            senderToken = (data.symbol);
+                            senderAddress = Address.FromText(evt.EventAddress);
+                            senderToken = data.symbol;
                         }
                         break;
 
-                    case EvtKind.TokenReceive:
+                    case EventKind.TokenReceive:
                         {
-                            var data = nativeEvent.GetContent<TokenEventData>();
+                            var data = Serialization.Unserialize<TokenEventData>(evt.Data.Decode());
                             amount = data.value;
-                            receiverAddress = nativeEvent.Address;
+                            receiverAddress = Address.FromText(evt.EventAddress);
                             receiverChain = data.chainAddress;
                             receiverToken = data.symbol;
                         }
                         break;
 
-                    case EvtKind.TokenEscrow:
+                    case EventKind.TokenEscrow:
                         {
-                            var data = nativeEvent.GetContent<TokenEventData>();
+                            var data = Serialization.Unserialize<TokenEventData>(evt.Data.Decode());
                             amount = data.value;
-                            var amountDecimal = TokenUtils.ToDecimal(amount,
-                                phantasmaTokens.SingleOrDefault(p => p.Symbol == data.symbol).Decimals);
-                            receiverAddress = nativeEvent.Address;
+                            var amountDecimal = TokenUtils.ToDecimal(amount, phantasmaTokens.Single(p => p.Symbol == data.symbol).Decimals);
+                            receiverAddress = Address.FromText(evt.EventAddress);
                             receiverChain = data.chainAddress;
                             var chain = GetChainName(receiverChain.Text, phantasmaChains);
                             description =
                                 $"{amountDecimal} {data.symbol} tokens escrowed for address {receiverAddress} in {chain}";
                         }
                         break;
-                    case EvtKind.AddressRegister:
+                    case EventKind.AddressRegister:
                         {
-                            var name = nativeEvent.GetContent<string>();
-                            description = $"{nativeEvent.Address} registered the name '{name}'";
+                            var name = Serialization.Unserialize<string>(evt.Data.Decode());
+                            description = $"{evt.EventAddress} registered the name '{name}'";
                         }
                         break;
 
-                    case EvtKind.FriendAdd:
+                    case EventKind.FriendAdd:
                         {
-                            var address = nativeEvent.GetContent<Address>();
-                            description = $"{nativeEvent.Address} added '{address} to friends.'";
+                            var address = Serialization.Unserialize<Address>(evt.Data.Decode());
+                            description = $"{evt.EventAddress} added '{address.ToString()} to friends.'";
                         }
                         break;
 
-                    case EvtKind.FriendRemove:
+                    case EventKind.FriendRemove:
                         {
-                            var address = nativeEvent.GetContent<Address>();
-                            description = $"{nativeEvent.Address} removed '{address} from friends.'";
+                            var address = Serialization.Unserialize<Address>(evt.Data.Decode());
+                            description = $"{evt.EventAddress} removed '{address.ToString()} from friends.'";
                         }
                         break;
                 }
@@ -103,15 +90,15 @@ namespace Phantasma.Wallet.Helpers
                 if (amount > 0 && senderAddress != Address.Null && receiverAddress != Address.Null &&
                     senderToken != null && senderToken == receiverToken)
                 {
-                    var amountDecimal = TokenUtils.ToDecimal(amount,
-                        phantasmaTokens.SingleOrDefault(p => p.Symbol == senderToken).Decimals);
+                    var amountDecimal = TokenUtils.ToDecimal(amount, phantasmaTokens.Single(p => p.Symbol == senderToken).Decimals);
+
                     description =
-                        $"{amountDecimal} {senderToken} sent from {senderAddress.Text} to {receiverAddress.Text}";
+                        $"{amountDecimal} {senderToken} sent from {senderAddress.ToString()} to {receiverAddress.ToString()}";
                 }
                 else if (amount > 0 && receiverAddress != Address.Null && receiverToken != null)
                 {
-                    var amountDecimal = TokenUtils.ToDecimal(amount,
-                        phantasmaTokens.SingleOrDefault(p => p.Symbol == receiverToken).Decimals);
+                    var amountDecimal = TokenUtils.ToDecimal(amount, phantasmaTokens.Single(p => p.Symbol == receiverToken).Decimals);
+
                     description = $"{amountDecimal} {receiverToken} received on {receiverAddress.Text} ";
                 }
                 else

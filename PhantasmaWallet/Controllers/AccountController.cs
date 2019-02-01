@@ -166,7 +166,7 @@ namespace Phantasma.Wallet.Controllers
 
                 var settleTxScript = ScriptUtils.BeginScript()
                     .CallContract("token", "SettleBlock", sourceChain, block)
-                    .AllowGas(keyPair.Address, 1, 9999)
+                    .AllowGas(keyPair.Address, Address.Null, 1, 9999)
                     .SpendGas(keyPair.Address)
                     .EndScript();
 
@@ -202,7 +202,7 @@ namespace Phantasma.Wallet.Controllers
 
                 var script = isFungible
                     ? ScriptUtils.BeginScript()
-                        .AllowGas(keyPair.Address, 1, 9999)
+                        .AllowGas(keyPair.Address, Address.Null, 1, 9999)
                         .CrossTransferToken(Address.FromText(toChain.Address), symbol, keyPair.Address,
                             keyPair.Address, fee)
                         .CrossTransferToken(Address.FromText(toChain.Address), symbol, keyPair.Address,
@@ -211,7 +211,7 @@ namespace Phantasma.Wallet.Controllers
                         .EndScript()
 
                     : ScriptUtils.BeginScript()
-                        .AllowGas(keyPair.Address, 1, 9999)
+                        .AllowGas(keyPair.Address, Address.Null, 1, 9999)
                         .CrossTransferNFT(Address.FromText(toChain.Address), symbol, keyPair.Address,
                             destinationAddress, bigIntAmount)
                         .SpendGas(keyPair.Address)
@@ -247,12 +247,12 @@ namespace Phantasma.Wallet.Controllers
 
                 var script = isFungible
                     ? ScriptUtils.BeginScript()
-                        .AllowGas(keyPair.Address, 1, 9999)
+                        .AllowGas(keyPair.Address, Address.Null, 1, 9999)
                         .TransferTokens(symbol, keyPair.Address, destinationAddress, bigIntAmount)
                         .SpendGas(keyPair.Address)
                         .EndScript()
                     : ScriptUtils.BeginScript()
-                        .AllowGas(keyPair.Address, 1, 9999)
+                        .AllowGas(keyPair.Address, Address.Null, 1, 9999)
                         .TransferNFT(symbol, keyPair.Address, destinationAddress, bigIntAmount)
                         .SpendGas(keyPair.Address)
                         .EndScript();
@@ -303,7 +303,7 @@ namespace Phantasma.Wallet.Controllers
             try
             {
                 var script = ScriptUtils.BeginScript()
-                       .AllowGas(keyPair.Address, 1, 9999)
+                       .AllowGas(keyPair.Address, Address.Null, 1, 9999)
                        .CallContract("account", "Register", keyPair.Address, name)
                        .SpendGas(keyPair.Address)
                        .EndScript();

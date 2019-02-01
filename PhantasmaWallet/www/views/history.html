@@ -3,7 +3,7 @@
 {{#if confirmedHash}}
 <!--<div class="table-responsive">-->
 <div class="alert alert-success" style="overflow: auto">
-    The transaction <a href="http://explorer.phantasma.io/tx/{{confirmedHash}}">{{confirmedHash}}</a> was sent with <strong>success</strong>!
+    The transaction <a href="http://localhost:7072/tx/{{confirmedHash}}">{{confirmedHash}}</a> was sent with <strong>success</strong>!
 </div>
 <!--</div>-->
 {{/if}}
@@ -22,7 +22,7 @@
             {{#each transactions}}
             <tr>
                 <td class="col-1">{{#date Date}}</td>
-                <td class="col-4"><small><a href="http://explorer.phantasma.io/tx/{{Hash}}">{{Hash}}</a></small></td>
+                <td class="col-4"><small><a href="http://localhost:7072/tx/{{Hash}}">{{Hash}}</a></small></td>
                 <td class="col-7">{{Description}}</td>
             </tr>
             {{/each}}

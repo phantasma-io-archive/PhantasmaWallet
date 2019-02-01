@@ -4,8 +4,6 @@ using System.Net.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Phantasma.RpcClient;
 using Phantasma.RpcClient.Interfaces;
-using Phantasma.Wallet.Interfaces;
-using Phantasma.Wallet.Services;
 
 namespace Phantasma.Wallet
 {
@@ -41,7 +39,6 @@ namespace Phantasma.Wallet
 
         private void ConfigureServices(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddScoped<IPhantasmaRestService, PhantasmaRestService>();
             serviceCollection.AddScoped<IPhantasmaRpcService>(provider => new PhantasmaRpcService(new RpcClient.Client.RpcClient(new Uri("http://localhost:7077/rpc"), httpClientHandler: new HttpClientHandler
             {
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate

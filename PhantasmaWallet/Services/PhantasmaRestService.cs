@@ -12,7 +12,7 @@ namespace Phantasma.Wallet.Services
 
         public PhantasmaRestService()
         {
-            _restClient = new HttpClient() { BaseAddress = new Uri("http://localhost:7074/api/") };
+            _restClient = new HttpClient() { BaseAddress = new Uri("http://localhost:7072/api/") }; //todo disabled atm
         }
 
         public async Task<AccountDto> GetAccount(string address)
