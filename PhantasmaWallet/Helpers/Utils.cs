@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net;
 using LunarLabs.Parser.JSON;
 using Phantasma.Blockchain.Contracts.Native;
-using Phantasma.Blockchain.Tokens;
 using Phantasma.Cryptography;
 using Phantasma.IO;
 using Phantasma.Numerics;
@@ -54,7 +53,7 @@ namespace Phantasma.Wallet.Helpers
                         {
                             var data = Serialization.Unserialize<TokenEventData>(evt.Data.Decode());
                             amount = data.value;
-                            var amountDecimal = TokenUtils.ToDecimal(amount, phantasmaTokens.Single(p => p.Symbol == data.symbol).Decimals);
+                            var amountDecimal = UnitConversion.ToDecimal(amount, phantasmaTokens.Single(p => p.Symbol == data.symbol).Decimals);
                             receiverAddress = Address.FromText(evt.EventAddress);
                             receiverChain = data.chainAddress;
                             var chain = GetChainName(receiverChain.Text, phantasmaChains);
@@ -90,14 +89,14 @@ namespace Phantasma.Wallet.Helpers
                 if (amount > 0 && senderAddress != Address.Null && receiverAddress != Address.Null &&
                     senderToken != null && senderToken == receiverToken)
                 {
-                    var amountDecimal = TokenUtils.ToDecimal(amount, phantasmaTokens.Single(p => p.Symbol == senderToken).Decimals);
+                    var amountDecimal = UnitConversion.ToDecimal(amount, phantasmaTokens.Single(p => p.Symbol == senderToken).Decimals);
 
                     description =
                         $"{amountDecimal} {senderToken} sent from {senderAddress.ToString()} to {receiverAddress.ToString()}";
                 }
                 else if (amount > 0 && receiverAddress != Address.Null && receiverToken != null)
                 {
-                    var amountDecimal = TokenUtils.ToDecimal(amount, phantasmaTokens.Single(p => p.Symbol == receiverToken).Decimals);
+                    var amountDecimal = UnitConversion.ToDecimal(amount, phantasmaTokens.Single(p => p.Symbol == receiverToken).Decimals);
 
                     description = $"{amountDecimal} {receiverToken} received on {receiverAddress.Text} ";
                 }

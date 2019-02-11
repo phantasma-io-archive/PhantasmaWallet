@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using LunarLabs.WebServer.Core;
 using Phantasma.Blockchain.Contracts;
-using Phantasma.Blockchain.Tokens;
 using Phantasma.Core.Types;
 using Phantasma.Cryptography;
 using Phantasma.Numerics;
@@ -44,7 +43,7 @@ namespace Phantasma.Wallet.Controllers
                 {
                     holdingList.Add(new SendHolding
                     {
-                        Amount = TokenUtils.ToDecimal(BigInteger.Parse(holding.Amount), GetTokenDecimals(holding.Symbol)),
+                        Amount = UnitConversion.ToDecimal(BigInteger.Parse(holding.Amount), GetTokenDecimals(holding.Symbol)),
                         ChainName = holding.ChainName,
                         Name = GetTokenName(holding.Symbol),
                         Symbol = holding.Symbol,
@@ -80,7 +79,7 @@ namespace Phantasma.Wallet.Controllers
 
                     if (BigInteger.TryParse(token.Amount, out var balance))
                     {
-                        decimal chainAmount = TokenUtils.ToDecimal(balance, GetTokenDecimals(token.Symbol));
+                        decimal chainAmount = UnitConversion.ToDecimal(balance, GetTokenDecimals(token.Symbol));
                         amount += chainAmount;
                     }
 
@@ -197,8 +196,8 @@ namespace Phantasma.Wallet.Controllers
                 var toChain = PhantasmaChains.Find(p => p.Name == destinationChain);
                 var destinationAddress = Address.FromText(addressTo);
                 int decimals = PhantasmaTokens.SingleOrDefault(t => t.Symbol == symbol).Decimals;
-                var bigIntAmount = TokenUtils.ToBigInteger(decimal.Parse(amountId), decimals);
-                var fee = TokenUtils.ToBigInteger(0.0001m, 8);
+                var bigIntAmount = UnitConversion.ToBigInteger(decimal.Parse(amountId), decimals);
+                var fee = UnitConversion.ToBigInteger(0.0001m, 8);
 
                 var script = isFungible
                     ? ScriptUtils.BeginScript()
@@ -243,7 +242,7 @@ namespace Phantasma.Wallet.Controllers
             {
                 var destinationAddress = Address.FromText(addressTo);
                 int decimals = PhantasmaTokens.SingleOrDefault(t => t.Symbol == symbol).Decimals;
-                var bigIntAmount = TokenUtils.ToBigInteger(decimal.Parse(amountId), decimals);
+                var bigIntAmount = UnitConversion.ToBigInteger(decimal.Parse(amountId), decimals);
 
                 var script = isFungible
                     ? ScriptUtils.BeginScript()
