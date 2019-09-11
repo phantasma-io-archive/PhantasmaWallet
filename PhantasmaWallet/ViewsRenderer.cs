@@ -400,7 +400,7 @@ namespace Phantasma.Wallet
             request.session.SetStruct<ErrorContext>("error", new ErrorContext { ErrorCode = "", ErrorDescription = $"{txHash} is still not confirmed." });
             var confirmationDto = AccountController.GetTxConfirmations(txHash).Result;
 
-            if (confirmationDto.IsConfirmed)
+            if (confirmationDto.Confirmations > 0)
             {
                 request.session.SetString("confirmedHash", txHash);
                 if (request.session.GetBool("isCrossTransfer"))
@@ -410,7 +410,7 @@ namespace Phantasma.Wallet
                     var settleTx = AccountController.SettleBlockTransfer(
                         GetLoginKey(request),
                         settle.ChainAddress,
-                        confirmationDto.Hash, settle.DestinationChainAddress).Result;
+                        confirmationDto.Txid, settle.DestinationChainAddress).Result;
 
                     // clear
                     request.session.SetBool("isCrossTransfer", false);
@@ -446,7 +446,7 @@ namespace Phantasma.Wallet
         {
             var name = request.GetVariable("name");
             var context = InitContext(request);
-            if (AccountContract.ValidateAddressName(name))
+            if (AccountContract.ValidateName(name))
             {
                 if (context["holdings"] is Holding[] balance)
                 {

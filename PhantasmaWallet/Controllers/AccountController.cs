@@ -278,11 +278,11 @@ namespace Phantasma.Wallet.Controllers
             }
         }
 
-        public async Task<TxConfirmationDto> GetTxConfirmations(string txHash)
+        public async Task<TransactionDto> GetTxConfirmations(string txHash)
         {
             try
             {
-                var txConfirmation = await _phantasmaRpcService.GetTxConfirmations.SendRequestAsync(txHash);
+                var txConfirmation = await _phantasmaRpcService.GetTxByHash.SendRequestAsync(txHash);
                 return txConfirmation;
             }
             catch (RpcResponseException rpcEx)
@@ -294,7 +294,7 @@ namespace Phantasma.Wallet.Controllers
                 Debug.WriteLine($"Exception occurred: {ex.Message}");
             }
 
-            return new TxConfirmationDto { Confirmations = 0 };
+            return new TransactionDto{ Confirmations = 0 };
         }
 
         public async Task<string> RegisterName(KeyPair keyPair, string name)

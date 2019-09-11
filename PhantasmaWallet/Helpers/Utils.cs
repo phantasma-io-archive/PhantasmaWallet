@@ -4,7 +4,7 @@ using System.Net;
 using LunarLabs.Parser.JSON;
 using Phantasma.Blockchain.Contracts.Native;
 using Phantasma.Cryptography;
-using Phantasma.IO;
+using Phantasma.Storage;
 using Phantasma.Numerics;
 using Phantasma.RpcClient.DTOs;
 
@@ -68,14 +68,14 @@ namespace Phantasma.Wallet.Helpers
                         }
                         break;
 
-                    case EventKind.FriendAdd:
+                    case EventKind.AddressAdd:
                         {
                             var address = Serialization.Unserialize<Address>(evt.Data.Decode());
                             description = $"{evt.EventAddress} added '{address.ToString()} to friends.'";
                         }
                         break;
 
-                    case EventKind.FriendRemove:
+                    case EventKind.AddressRemove:
                         {
                             var address = Serialization.Unserialize<Address>(evt.Data.Decode());
                             description = $"{evt.EventAddress} removed '{address.ToString()} from friends.'";
